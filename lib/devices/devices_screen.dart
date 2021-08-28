@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfiurator/components/bloc/errorbanner_bloc.dart';
 import 'package:inavconfiurator/serial/serialport_model.dart';
 
 import 'bloc/devices_bloc.dart';
 
-class ConnectionScreen extends StatefulWidget {
-  const ConnectionScreen({
+class DevicesScreen extends StatefulWidget {
+  const DevicesScreen({
     Key? key,
   }) : super(key: key);
 
   @override
-  ConnectionScreenState createState() {
-    return ConnectionScreenState();
+  DevicesScreenState createState() {
+    return DevicesScreenState();
   }
 }
 
-class ConnectionScreenState extends State<ConnectionScreen> {
-  ConnectionScreenState();
+class DevicesScreenState extends State<DevicesScreen> {
+  DevicesScreenState();
 
   @override
   void dispose() {
@@ -28,8 +29,7 @@ class ConnectionScreenState extends State<ConnectionScreen> {
     super.initState();
   }
 
-  Widget _foundDevices(FoundDevicesState currentState) {
-    List<SerialPortInfo> serialPorts = currentState.serialPorts;
+  Widget _foundDevices(List<SerialPortInfo> serialPorts) {
     List<Widget> portCards =
         serialPorts.map((serialPort) => _portCard(serialPort)).toList();
 
@@ -54,6 +54,11 @@ class ConnectionScreenState extends State<ConnectionScreen> {
       width: size,
       child: InkWell(
         onTap: () {
+
+          // Clear any banners
+          // BlocProvider.of<ErrorBannerBloc>(context)
+          //     .add(CloseErrorBannerEvent());
+
           BlocProvider.of<DevicesPageBloc>(context)
               .add(DevicesPageEvent.connectToDeviceEvent(serialPort));
         },
@@ -81,10 +86,7 @@ class ConnectionScreenState extends State<ConnectionScreen> {
       DevicesPageState currentState,
     ) {
       if (currentState is FoundDevicesState) {
-        return _foundDevices(currentState);
-        // return Center(
-        //   child: CircularProgressIndicator(),
-        // );
+        return _foundDevices(currentState.serialPorts);
       }
 
       if (currentState is ConnectingState) {
@@ -94,15 +96,12 @@ class ConnectionScreenState extends State<ConnectionScreen> {
       }
 
       if (currentState is ConnectedState) {
-        // // Redirect now connected
-        // BlocProvider.of<AppBloc>(context).add(AppEvent.changePage(AppPage.home));
-
         return Center(
           child: Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [                
+              children: [
                 Icon(Icons.done, size: 100),
                 Text(currentState.serialPort.name),
                 Text("Connected"),
@@ -112,23 +111,9 @@ class ConnectionScreenState extends State<ConnectionScreen> {
         );
       }
 
-      // if (currentState is ErrorConnectionState) {
-      //   return Center(
-      //       child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: <Widget>[
-      //       Text(currentState.errorMessage ),
-      //       Padding(
-      //         padding: const EdgeInsets.only(top: 32.0),
-      //         child: RaisedButton(
-      //           color: Colors.blue,
-      //           child: Text('reload'),
-      //           onPressed: _load,
-      //         ),
-      //       ),
-      //     ],
-      //   ));
-      // }
+      if (currentState is ErrorConnectionState) {
+        return _foundDevices(currentState.serialPorts);
+      }
 
       return Center(
         child: Column(

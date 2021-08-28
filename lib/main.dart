@@ -2,20 +2,40 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/bloc/app_bloc.dart';
+import 'package:inavconfiurator/components/bloc/errorbanner_bloc.dart';
 import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 import 'package:libserialport/libserialport.dart';
 
+import 'app/bloc/app_bloc.dart';
+import 'components/bloc/errormessage_repository.dart';
 import 'devices/devices_page.dart';
 import 'home/home_page.dart';
 // https://github.com/iNavFlight/inav/wiki/MSP-V2
 
 void main() {
   runApp(
-    RepositoryProvider<SerialDeviceRepository>(
-      create: (_) => SerialDeviceRepository(),
-      child: BlocProvider(
-        create: (context) => AppBloc(),
+    MultiRepositoryProvider(
+      // create: (_) => SerialDeviceRepository(),
+      providers: [
+        RepositoryProvider<SerialDeviceRepository>(
+            create: (_) => SerialDeviceRepository()),
+        RepositoryProvider<ErrorMessageRepository>(
+            create: (_) => ErrorMessageRepository()),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AppBloc(
+              serialDeviceRepository:
+                  RepositoryProvider.of<SerialDeviceRepository>(context),
+            ),
+          ),
+          BlocProvider(
+              create: (context) => ErrorBannerBloc(
+                    errorMessageRepository:
+                        RepositoryProvider.of<ErrorMessageRepository>(context),
+                  ))
+        ],
         child: MyApp(),
       ),
     ),

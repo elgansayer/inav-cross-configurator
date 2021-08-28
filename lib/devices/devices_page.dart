@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfiurator/components/ErrorBanner.dart';
+import 'package:inavconfiurator/components/bloc/errormessage_repository.dart';
 import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 import 'package:inavconfiurator/serial/serialport_repository.dart';
 import 'bloc/devices_bloc.dart';
@@ -24,16 +26,18 @@ class _DevicesPageState extends State<DevicesPage> {
         body: BlocProvider(
           create: (context) {
             DevicesPageBloc bloc = DevicesPageBloc(
+                errorMessageRepository:
+                    RepositoryProvider.of<ErrorMessageRepository>(context),              
                 serialPortRepository:
                     RepositoryProvider.of<SerialPortRepository>(context),
                 serialDeviceRepository:
                     RepositoryProvider.of<SerialDeviceRepository>(context));
 
             // Fire event to load ports
-            bloc.add(new GetPortsEvent());
+            bloc.add(new GetDevicesEvent());
             return bloc;
           },
-          child: ConnectionScreen(),
+          child: ErrorWrapper(child: DevicesScreen()),
         ),
       ),
     );

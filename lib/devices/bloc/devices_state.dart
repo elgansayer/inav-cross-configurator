@@ -31,3 +31,9 @@ class ConnectedState extends DevicesPageState {
   ConnectedState(List<SerialPortInfo> serialPorts, this.serialPort)
       : super(serialPorts, ConnectionScreenState.connected);
 }
+
+class ErrorConnectionState extends DevicesPageState {
+  final String errorMessage;
+  ErrorConnectionState(this.errorMessage, List<SerialPortInfo> serialPorts)
+      : super(serialPorts, ConnectionScreenState.idle);
+}
