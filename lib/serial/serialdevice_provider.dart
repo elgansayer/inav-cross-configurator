@@ -9,9 +9,11 @@ class SerialDeviceProvider {
     if (!serialPort.openReadWrite()) {
       return null;
     }
-
+    
     return serialPort;
   }
+
+  
 }
 
 class MSPProvider {}

@@ -6,19 +6,21 @@ import 'package:libserialport/libserialport.dart';
 
 class SerialDeviceRepository {
   SerialDeviceRepository();
-  final SerialDeviceProvider _serialDevicesProvider = SerialDeviceProvider();
 
-  final _serialPortStreamController = StreamController<SerialPort?>();
   final _errorStreamController = StreamController<String>();
+  final SerialDeviceProvider _serialDevicesProvider = SerialDeviceProvider();
+  final _serialPortStreamController = StreamController<SerialPort?>.broadcast();
 
   StreamSink<SerialPort?> get _serialPortDeviceSink =>
       _serialPortStreamController.sink;
+
   Stream<SerialPort?> get serialPortDevice =>
       _serialPortStreamController.stream;
 
   //
   StreamSink<String> get _serialPortDeviceErrorSink =>
       _errorStreamController.sink;
+
   Stream<String> get serialPortDeviceError =>
       _errorStreamController.stream;
 

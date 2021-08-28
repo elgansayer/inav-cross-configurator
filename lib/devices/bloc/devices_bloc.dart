@@ -19,7 +19,7 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
         _errorMessageRepository = errorMessageRepository,
         _serialDeviceRepository = serialDeviceRepository,
         super(DevicesPageInitial()) {
-    listenToSerialPorts();
+    setupListeners();
   }
 
   final ErrorMessageRepository _errorMessageRepository;
@@ -30,18 +30,29 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
   Stream<DevicesPageState> mapEventToState(
     DevicesPageEvent event,
   ) async* {
-    if (event is GetDevicesEvent) {
-      List<SerialPortInfo> ports = this._serialPortRepository.ports;
-      yield new FoundDevicesState(ports);
+
+    // Cancel
+    if (event is FoundDevicesEvent) {
+      yield new FoundDevicesState(event.serialPorts);
     }
 
-    if (event is ErrorConnectionEvent) {
-      List<SerialPortInfo> ports = state.serialPorts;
-      String error = event.error;
-      yield new ErrorConnectionState(error, ports);
+    if (event is ConnectedDeviceEvent) {
+      this._serialPortRepository.cancelPolling();
     }
+
+    if (event is GetDevicesEvent) {
+      this._serialPortRepository.startPolling();
+    }
+
+    // if (event is ErrorConnectionEvent) {
+    //   List<SerialPortInfo> ports = state.serialPorts;
+    //   String error = event.error;
+    //   yield new ErrorConnectionState(error, ports);
+    // }
 
     if (event is ConnectToDeviceEvent) {
+      this._serialPortRepository.cancelPolling();
+
       SerialPortInfo serialPortInfo = event.serialPortInfo;
       yield new ConnectingState(state.serialPorts, serialPortInfo);
 
@@ -54,17 +65,23 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
     }
   }
 
-  listenToSerialPorts() {
+  setupListeners() {
     // Handle connected
     this
         ._serialDeviceRepository
         .serialPortDevice
         .listen((SerialPort? serialPort) {
+
       if (serialPort == null) {
         return;
       }
 
       this.add(ConnectedDeviceEvent());
+    });
+
+    // Handle serial ports
+    this._serialPortRepository.serialPorts.listen((serialPorts) {
+      this.add(FoundDevicesEvent(serialPorts));
     });
 
     // Handle errors
@@ -74,5 +91,9 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
       // Go back to ports view
       this.add(GetDevicesEvent());
     });
+  }
+
+  void dispose() {
+    _serialPortRepository.dispose();
   }
 }

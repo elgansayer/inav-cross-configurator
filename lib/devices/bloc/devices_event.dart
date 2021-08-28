@@ -13,6 +13,12 @@ abstract class DevicesPageEvent {
 }
 
 class GetDevicesEvent extends DevicesPageEvent {}
+
+class FoundDevicesEvent extends DevicesPageEvent {
+  final List<SerialPortInfo> serialPorts;
+  FoundDevicesEvent(this.serialPorts);
+}
+
 class ConnectToDeviceEvent extends DevicesPageEvent {
   final SerialPortInfo serialPortInfo;
   ConnectToDeviceEvent(this.serialPortInfo);

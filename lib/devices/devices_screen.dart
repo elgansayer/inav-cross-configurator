@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/components/bloc/errorbanner_bloc.dart';
 import 'package:inavconfiurator/serial/serialport_model.dart';
 
 import 'bloc/devices_bloc.dart';
@@ -21,6 +20,7 @@ class DevicesScreenState extends State<DevicesScreen> {
 
   @override
   void dispose() {
+    BlocProvider.of<DevicesPageBloc>(context).dispose();
     super.dispose();
   }
 
@@ -54,7 +54,6 @@ class DevicesScreenState extends State<DevicesScreen> {
       width: size,
       child: InkWell(
         onTap: () {
-
           // Clear any banners
           // BlocProvider.of<ErrorBannerBloc>(context)
           //     .add(CloseErrorBannerEvent());
@@ -85,6 +84,7 @@ class DevicesScreenState extends State<DevicesScreen> {
       BuildContext context,
       DevicesPageState currentState,
     ) {
+      
       if (currentState is FoundDevicesState) {
         return _foundDevices(currentState.serialPorts);
       }

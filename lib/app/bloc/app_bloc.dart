@@ -9,38 +9,50 @@ part 'app_event.dart';
 part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
-  late SerialDeviceRepository _serialDeviceRepository;
-
   AppBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
-        super(AppInitial());
+        super(AppInitial()) {
+    setupListeners();
+  }
+
+  late SerialDeviceRepository _serialDeviceRepository;
 
   @override
   Stream<AppState> mapEventToState(
     AppEvent event,
   ) async* {
     // Setup listeners
-    if (event is AppInitEvent) {
-      yield* mapAppInitialToState(event);
-    }
+    // if (event is AppInitEvent) {
+    //   yield* mapAppInitialToState(event);
+    // }
 
     if (event is ChangePageEvent) {
       yield AppState(event.appPage);
     }
   }
 
-  mapAppInitialToState(AppInitEvent event) async* {
-    
-    _serialDeviceRepository.serialPortDevice
-        .listen((SerialPort? serialPort) async* {
-
-      if (serialPort == null || serialPort.isOpen) {
-        yield AppState(AppPage.home);
+  setupListeners() {
+    _serialDeviceRepository.serialPortDevice.listen((SerialPort? serialPort) {
+      if (serialPort != null && serialPort.isOpen) {
+        this.add(ChangePageEvent(AppPage.home));
       } else {
-        yield AppState(AppPage.devices);
+        this.add(ChangePageEvent(AppPage.devices));
       }
     });
-
-    yield AppState.init();
   }
+
+  // mapAppInitialToState(AppInitEvent event) async* {
+
+  //   _serialDeviceRepository.serialPortDevice
+  //       .listen((SerialPort? serialPort) async* {
+
+  //     if (serialPort != null && serialPort.isOpen) {
+  //       yield AppState(AppPage.home);
+  //     } else {
+  //       yield AppState(AppPage.devices);
+  //     }
+  //   });
+
+  //   yield AppState.init();
+  // }
 }
