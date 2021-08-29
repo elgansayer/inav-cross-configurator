@@ -24,21 +24,30 @@ class SerialDeviceRepository {
 
   Stream<String> get serialPortDeviceError => _errorStreamController.stream;
 
-  bool connect(SerialPortInfo serialPortInfo) {
-    SerialPort? port = _serialDevicesProvider.open(serialPortInfo.name);
-    _serialPortDeviceSink.add(port);
-
-    if (port == null) {
-      var error = SerialPort.lastError;
-      if (error != null) {
-        _serialPortDeviceErrorSink.add(error.message);
-      }
+  Future<bool> connect(SerialPortInfo serialPortInfo) async {
+    // SerialPort? port =
+    try {
+      await _serialDevicesProvider.open(serialPortInfo.name);
+    } catch (e) {
+      _serialPortDeviceErrorSink.add(e.toString());
     }
 
-    return port != null;
+    // _serialPortDeviceSink.add(port);
+
+    // if (port == null) {
+    //   var error = SerialPort.lastError;
+    //   if (error != null) {
+    //     _serialPortDeviceErrorSink.add(error.message);
+    //   }
+    // }
+
+    // return port != null;
+    return false;
   }
 
   dispose() {
+    _serialPortDeviceSink.close();
+    _serialPortDeviceErrorSink.close();
     _serialPortStreamController.close();
     _errorStreamController.close();
   }
