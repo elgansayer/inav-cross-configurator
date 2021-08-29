@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inavconfiurator/home/index.dart';
-import 'package:inavconfiurator/setup/bloc/setup_bloc.dart';
-import 'package:inavconfiurator/setup/setup_screen.dart';
+import 'package:inavconfiurator/setup/setup_page.dart';
 
 import 'bloc/home_bloc.dart';
 
@@ -15,7 +14,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final _homeBloc = HomeBloc();
-  final _setupBloc = SetupBloc();
   late TabController _tabController;
 
   @override
@@ -54,7 +52,7 @@ class _HomePageState extends State<HomePage>
       body: TabBarView(
         controller: _tabController,
         children: [
-          SetupScreen(setupBloc: _setupBloc),
+          SetupPage(),
           HomeScreen(homeBloc: _homeBloc),
           HomeScreen(homeBloc: _homeBloc),
         ],

@@ -84,7 +84,6 @@ class DevicesScreenState extends State<DevicesScreen> {
       BuildContext context,
       DevicesPageState currentState,
     ) {
-      
       if (currentState is FoundDevicesState) {
         return _foundDevices(currentState.serialPorts);
       }

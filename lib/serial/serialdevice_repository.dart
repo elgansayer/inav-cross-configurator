@@ -27,25 +27,18 @@ class SerialDeviceRepository {
   Future<bool> connect(SerialPortInfo serialPortInfo) async {
     // SerialPort? port =
     try {
-      await _serialDevicesProvider.open(serialPortInfo.name);
+      var port = await _serialDevicesProvider.open(serialPortInfo.name);
+      _serialPortDeviceSink.add(port);
     } catch (e) {
       _serialPortDeviceErrorSink.add(e.toString());
     }
-
-    // _serialPortDeviceSink.add(port);
-
-    // if (port == null) {
-    //   var error = SerialPort.lastError;
-    //   if (error != null) {
-    //     _serialPortDeviceErrorSink.add(error.message);
-    //   }
-    // }
 
     // return port != null;
     return false;
   }
 
   dispose() {
+    _serialDevicesProvider.dispose();
     _serialPortDeviceSink.close();
     _serialPortDeviceErrorSink.close();
     _serialPortStreamController.close();

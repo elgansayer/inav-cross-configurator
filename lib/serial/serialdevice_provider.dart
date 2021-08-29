@@ -9,11 +9,14 @@ import 'package:libserialport/libserialport.dart';
 
 class SerialDeviceProvider {
   SerialDeviceProvider();
-  late SerialPortReader _reader;
-  Map<int, StreamController<MSPMessageResponse>> maps = {};
 
+  late Map<int, StreamController<MSPMessageResponse>> streamMaps = {};
+
+  late SerialPortReader _reader;
   final _responseMessagesStreamController =
       StreamController<MSPMessageResponse>.broadcast();
+
+  late SerialPort _serialPort;
 
   StreamSink<MSPMessageResponse> get responseMessagesSink =>
       _responseMessagesStreamController.sink;
@@ -22,13 +25,13 @@ class SerialDeviceProvider {
       _responseMessagesStreamController.stream;
 
   Stream<MSPMessageResponse> streams(int wanted) {
-    if (!maps.containsKey(wanted)) {
+    if (!this.streamMaps.containsKey(wanted)) {
       // ignore: close_sinks
       var newStream = StreamController<MSPMessageResponse>.broadcast();
-      maps[wanted] = newStream;
+      this.streamMaps[wanted] = newStream;
     }
 
-    return maps[wanted]!.stream;
+    return this.streamMaps[wanted]!.stream;
   }
 
   Future<MSPMessageResponse> response(Stream<MSPMessageResponse> stream) async {
@@ -54,36 +57,34 @@ class SerialDeviceProvider {
   }
 
   Future<SerialPort?> open(String portWanted) async {
-    SerialPort serialPort = SerialPort(portWanted);
+    this._serialPort = SerialPort(portWanted);
 
     this._closeMaps();
 
-    if (!serialPort.openReadWrite()) {
-      serialPort.close();
+    if (!this._serialPort.openReadWrite()) {
+      this._serialPort.close();
       throw new Exception("Failed to open port for read/write operations");
     }
 
     // Setup reader
-    this._reader = SerialPortReader(serialPort);
+    this._reader = SerialPortReader(this._serialPort);
     this._reader.stream.listen(this.gotData);
 
-    MSPApiVersion apiVersion = await this
-        .writeWithResponseAs<MSPApiVersion>(serialPort, MSPCodes.mspApiVersion);
-
-    print(apiVersion.apiVersion);
+    MSPApiVersion apiVersion = await this.writeWithResponseAs<MSPApiVersion>(
+        this._serialPort, MSPCodes.mspApiVersion);
 
     // Check we are version compatible?
     if (apiVersion.apiVersionMajor < 2) {
-      serialPort.close();
+      this._serialPort.close();
       throw new Exception("Failed version check. ${apiVersion.apiVersion}");
     }
 
-    MSPFcVariant mspFcVariant = await this
-        .writeWithResponseAs<MSPFcVariant>(serialPort, MSPCodes.mspFcVariant);
+    MSPFcVariant mspFcVariant = await this.writeWithResponseAs<MSPFcVariant>(
+        this._serialPort, MSPCodes.mspFcVariant);
 
     // Check we are using INAV on the board
     if (mspFcVariant.flightControllerIdentifier != "INAV") {
-      serialPort.close();
+      this._serialPort.close();
       throw new Exception(
           "Failed flight controller identification. ${mspFcVariant.flightControllerIdentifier}");
     }
@@ -97,15 +98,15 @@ class SerialDeviceProvider {
     print(apiVersion.apiVersion);
     print(mspFcVariant);
 
-    return serialPort;
+    return this._serialPort;
   }
 
   void gotData(Uint8List event) {
     MSPMessageResponse respone = new MSPMessageResponse(event);
     var code = respone.function;
 
-    if (maps.containsKey(code)) {
-      maps[code]!.sink.add(respone);
+    if (this.streamMaps.containsKey(code)) {
+      this.streamMaps[code]!.sink.add(respone);
     }
 
     responseMessagesSink.add(respone);
@@ -115,13 +116,16 @@ class SerialDeviceProvider {
     this._reader.close();
     _responseMessagesStreamController.close();
     this._closeMaps();
+    if (this._serialPort.isOpen) {
+      this._serialPort.close();
+    }
   }
 
   _closeMaps() {
-    this.maps.forEach((key, value) {
-      this.maps[key]!.close();
+    this.streamMaps.forEach((key, value) {
+      this.streamMaps[key]!.close();
     });
-    this.maps.clear();
+    this.streamMaps.clear();
   }
 }
 
