@@ -8,6 +8,7 @@ class SerialDeviceRepository {
   SerialDeviceRepository();
 
   final _errorStreamController = StreamController<String>();
+
   final SerialDeviceProvider _serialDevicesProvider = SerialDeviceProvider();
   final _serialPortStreamController = StreamController<SerialPort?>.broadcast();
 
@@ -21,8 +22,7 @@ class SerialDeviceRepository {
   StreamSink<String> get _serialPortDeviceErrorSink =>
       _errorStreamController.sink;
 
-  Stream<String> get serialPortDeviceError =>
-      _errorStreamController.stream;
+  Stream<String> get serialPortDeviceError => _errorStreamController.stream;
 
   bool connect(SerialPortInfo serialPortInfo) {
     SerialPort? port = _serialDevicesProvider.open(serialPortInfo.name);
