@@ -17,7 +17,7 @@ Since Inav-configurator is great but a bit aging. I wanted to build something fo
 
 
 *A LOT TO DO!*
-There is a lot to doto catchup and not everything will be implemented. Always use INav-configurator but hopefully over some years i may get close
+There is a lot to do to catchup and not everything will be implemented. Always use INav-configurator but hopefully over some years i may get close
 and at least be able to configure what i need in the field.
 
 ![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/model.png)
