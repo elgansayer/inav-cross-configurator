@@ -95,7 +95,7 @@ class MSPMessage {
   // uint16 (little endian) payload size in bytes
   late int payloadSize;
   // n (up to 65535 bytes) payload
-  late Uint8List payload;
+  late ByteData payload;
   // uint8, (n= payload size), crc8_dvb_s2 checksum
   late int checksum;
   late int payloadLength = 0;
@@ -122,9 +122,10 @@ class MSPMessage {
     return new MSPMessageRequest(function, payloadData: payload);
   }
 
-  _checksum(Uint8List buffer) {
+  _checksum(Int8List buffer) {
     int tempChecksum = 0;
     for (int ii = 3; ii < this.msgLength - 1; ii++) {
+      // tempChecksum = this._crc8DVBS2(tempChecksum, buffer[ii]);
       tempChecksum = this._crc8DVBS2(tempChecksum, buffer[ii]);
     }
     return tempChecksum;
@@ -145,69 +146,40 @@ class MSPMessage {
   }
 }
 
-// class MSPMessageReader<T extends MSPDataHandler> extends MSPMessageResponse {
-//   // MSPMessageReader(Uint8List payloadData) : super(payloadData) {
-//   //   var d = MSPDataBuilders.classBuilder;
-//   //   var dd = d[1];
-//   //   if (dd != null) {
-//   //     T ddd = dd();
-//   //   }
-//   // }
-
-//   // Stream<T> readme<T>() {
-//   //   final reader = SerialPortReader(serialPort);
-//   //   reader.stream.listen((data) {
-//   //     // T data;
-//   //     // data.code = new T(data);
-
-//   //     var d = MSPDataBuilders.classBuilder;
-//   //     var dd = d[1];
-//   //     T m ;
-//   //     if (dd != null) {
-//   //       m = dd(data);
-//   //       if(m.)
-//   //     }
-
-//   //   });
-//   // }
-
-//   // T read(serialPort) {
-//   //   final reader = SerialPortReader(serialPort);
-//   //   reader.stream.listen((data) {
-//   //     // T data;
-//   //     // data.code = new T(data);
-
-//   //     var d = MSPDataBuilders.classBuilder;
-//   //     var dd = d[1];
-//   //     if (dd != null) {
-//   //       return dd(data);
-//   //     }
-//   //   });
-//   // }
-// }
-
 class MSPMessageResponse extends MSPMessage {
-  final Uint8List _payloadData;
+  late ByteData _payloadData;
+  late Uint8List _payloadResponse;
 
-  MSPMessageResponse(Uint8List payloadData) : _payloadData = payloadData {
+  MSPMessageResponse(Uint8List payloadResponse)
+      : _payloadResponse = payloadResponse {
+    this._payloadData = new ByteData.view(payloadResponse.buffer);
     _readData();
   }
 
   _readData() {
-    this.payloadLength = this._payloadData[6];
-    this.function = this._payloadData[4];
+    this.payloadLength = this._payloadData.getInt8(6);
+    this.function = this._payloadData.getInt8(4);
     this.msgLength = this.payloadLength + MSPMessage.structLength;
 
-    // int rChecksum = data[8 + tLen];
-    try {
-      List<int> rData =
-          this._payloadData.getRange(8, 8 + this.payloadLength).toList();
+    //TODO: COme and fix me
+    var checksums = _checksum(_payloadData.buffer.asInt8List());
 
-      this.payload = new Uint8List.fromList(rData);
+// this._payloadData
+    // int checksum = data[8 + tLen];
+    try {
+      List<int> rData = this
+          ._payloadData
+          .buffer
+          .asInt8List()
+          .getRange(8, 8 + this.payloadLength)
+          .toList();
+
+      this.payload = new ByteData.view(
+          Uint8List.fromList(rData).buffer); //.fromList(rData);
     } catch (e) {
       print(
           "Read error payloadLength ${this.payloadLength}, func: ${this.function}, len ${this.msgLength} ");
-      this.payload = new Uint8List(8 + this.payloadLength);
+      this.payload = new ByteData(8 + this.payloadLength);
     }
   }
 }
@@ -218,13 +190,14 @@ class MSPMessageRequest extends MSPMessage {
 
   MSPMessageRequest(int code, {Uint8List? payloadData}) {
     if (payloadData != null) {
-      this.payload = payloadData;
+      this.payload = new ByteData.view(payloadData.buffer);
     } else {
-      this.payload = Uint8List(MSPMessage.structLength);
+      this.payload = new ByteData(MSPMessage.structLength);
     }
 
     this.function = code;
-    this.payloadLength = this.payload.length > 0 ? this.payload.length : 0;
+    int length = this.payload.buffer.lengthInBytes;
+    this.payloadLength = length > 0 ? length : 0;
     this.msgLength = this.payloadLength + MSPMessage.structLength;
     this._buildRequest();
   }
@@ -245,7 +218,8 @@ class MSPMessageRequest extends MSPMessage {
 
     this._addData();
 
-    this._buffer[this.msgLength - 1] = this._checksum(this._buffer);
+    this._buffer[this.msgLength - 1] =
+        this._checksum(this._buffer.buffer.asInt8List());
 
     return this._buffer;
   }

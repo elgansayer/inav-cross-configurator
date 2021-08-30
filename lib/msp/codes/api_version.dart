@@ -16,10 +16,11 @@ class MSPApiVersion implements MSPDataHandler {
       "${this.apiVersionMajor}.${this.apiVersionMinor}.${this.apiVersionPatch}";
 
   MSPApiVersion(this.messageResponse) {
-    Uint8List payload = this.messageResponse.payload;
-    this.mspProtocolVersion = payload[0];
-    this.apiVersionMajor = payload[1];
-    this.apiVersionMinor = payload[2];
+    ByteData payload = this.messageResponse.payload;
+
+    this.mspProtocolVersion = payload.getInt8(0);
+    this.apiVersionMajor = payload.getInt8(1);
+    this.apiVersionMinor = payload.getInt8(2);
     this.apiVersionPatch = 0;
   }
 }

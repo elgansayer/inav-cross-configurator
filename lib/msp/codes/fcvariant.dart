@@ -10,8 +10,8 @@ class MSPFcVariant implements MSPDataHandler {
   late String flightControllerIdentifier;
 
   MSPFcVariant(this.messageResponse) {
-    Uint8List payload = this.messageResponse.payload;
-    List<int> identifiers = payload.getRange(0, 4).toList();
+    ByteData payload = this.messageResponse.payload;
+    List<int> identifiers = payload.buffer.asInt8List().getRange(0, 4).toList();
     this.flightControllerIdentifier = ascii.decode(identifiers);
   }
 }

@@ -103,7 +103,7 @@ class SerialDeviceRepository {
 
     // Setup reader
     this._reader = SerialPortReader(this._serialPort);
-    this._reader.stream.listen(this.gotData);
+    this._reader.stream.listen(this._gotData);
 
     MSPApiVersion apiVersion =
         await this.writeWithResponseAs<MSPApiVersion>(MSPCodes.mspApiVersion);
@@ -137,7 +137,7 @@ class SerialDeviceRepository {
     return this._serialPort;
   }
 
-  void gotData(Uint8List event) {
+  void _gotData(Uint8List event) {
     MSPMessageResponse respone = new MSPMessageResponse(event);
     var code = respone.function;
 

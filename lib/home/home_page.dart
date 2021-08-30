@@ -35,9 +35,9 @@ class _HomePageState extends State<HomePage>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(icon: Icon(Icons.directions_car)),
-            Tab(icon: Icon(Icons.directions_transit)),
-            Tab(icon: Icon(Icons.directions_bike)),
+            Tab(icon: Icon(Icons.directions_car), child: Text("Setup")),
+            Tab(icon: Icon(Icons.align_vertical_bottom), child: Text("To do")),
+            Tab(icon: Icon(Icons.directions_bike), child: Text("Calibration")),
           ],
         ),
         title: const Text('INav'),

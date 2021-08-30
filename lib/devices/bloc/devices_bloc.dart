@@ -65,7 +65,7 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
 
     // Try and connect
     try {
-      this._serialDeviceRepository.connect(serialPortInfo);
+      await this._serialDeviceRepository.connect(serialPortInfo);
     } catch (e) {
       _errorMessageRepository.errorSink.add(e.toString());
     }
@@ -93,10 +93,10 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
     this._serialDeviceRepository.serialPortDeviceError.listen((error) {
       _errorMessageRepository.errorSink.add(error);
 
-      this._serialDeviceRepository.disconnect();
-
       // Go back to ports view
       this.add(GetDevicesEvent());
+
+      this._serialDeviceRepository.disconnect();
     });
   }
 

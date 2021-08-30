@@ -19,8 +19,8 @@ class MSPRawImu implements MSPDataHandler {
   final Vector3 magnetometer = new Vector3.zero();
 
   MSPRawImu(this.messageResponse) {
-    Uint8List payload = this.messageResponse.payload;
-    ByteData byteData = new ByteData.view(payload.buffer);
+    ByteData byteData = this.messageResponse.payload;
+    // ByteData byteData = new ByteData.view(payload.buffer);
 
     // unit: it depends on ACC sensor and is based on ACC_1G definition
     // MMA7455 64 / MMA8451Q 512 / ADXL345 265 / BMA180 255 / BMA020 63 / NUNCHUCK 200 / LIS3LV02 256 / LSM303DLx_ACC 256 / MPU6050 512 / LSM330 256

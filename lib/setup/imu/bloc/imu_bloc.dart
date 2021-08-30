@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_cube/flutter_cube.dart';
 import 'package:inavconfiurator/msp/codes.dart';
-import 'package:inavconfiurator/msp/codes/raw_imu.dart';
+import 'package:inavconfiurator/msp/codes/attitude.dart';
 import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 import 'package:meta/meta.dart';
 // Silly object naming
@@ -38,11 +37,11 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
 
   _setupListeners() {
     _serialDeviceRepository
-        .responseStreams(MSPCodes.mspRawImu)
+        .responseStreams(MSPCodes.mspAttitude)
         .listen((messageResponse) {
       //
-      MSPRawImu? rawImu = _serialDeviceRepository.transform(
-          MSPCodes.mspRawImu, messageResponse);
+      MSPAttitude? rawImu = _serialDeviceRepository.transform(
+          MSPCodes.mspAttitude, messageResponse);
       if (rawImu == null) {
         return;
       }
@@ -54,14 +53,14 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
   }
 
   void _updateImu(Timer timer) {
-    _serialDeviceRepository.write(MSPCodes.mspRawImu);
+    _serialDeviceRepository.write(MSPCodes.mspAttitude);
   }
 
   dispose() {
     this._timer.cancel();
   }
 
-  void _updateObjectOrientation(MSPRawImu rawImu) {
+  void _updateObjectOrientation(MSPAttitude rawImu) {
     CubeObject.Object? mdlObject = this.state.object;
     Scene? scene = this.state.scene;
 
@@ -69,13 +68,10 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
       return;
     }
 
-    print(rawImu.gyroscope);
-
-    mdlObject.rotation
-        .setValues(rawImu.gyroscope.x, rawImu.gyroscope.y, rawImu.gyroscope.z);
+    mdlObject.rotation.setValues(
+        (rawImu.kinematics.y), (rawImu.kinematics.z), (rawImu.kinematics.x));
 
     mdlObject.updateTransform();
-
     scene.update();
   }
 }
