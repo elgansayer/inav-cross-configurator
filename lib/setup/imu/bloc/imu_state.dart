@@ -1,6 +1,13 @@
 part of 'imu_bloc.dart';
 
 @immutable
-abstract class ImuViewState {}
+class ImuViewState {
+  final Object? object;
+  final Scene? scene;
 
-class ImuViewInitial extends ImuViewState {}
+  ImuViewState(this.object, this.scene);
+}
+
+class ImuViewInitial extends ImuViewState {
+  ImuViewInitial() : super(null, null);
+}

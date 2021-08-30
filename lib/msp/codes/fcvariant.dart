@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:inavconfiurator/msp/builders/data_handler.dart';
+import 'package:inavconfiurator/msp/codes/base_data_handler.dart';
 import 'package:inavconfiurator/msp/codes.dart';
 import 'package:inavconfiurator/msp/mspmessage.dart';
 

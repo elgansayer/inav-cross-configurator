@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 import 'package:inavconfiurator/setup/imu/bloc/imu_bloc.dart';
 
 import 'bloc/setup_bloc.dart';
@@ -18,7 +19,9 @@ class _SetupPageState extends State<SetupPage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<ImuViewBloc>(
-          create: (context) => ImuViewBloc(),
+          create: (context) => ImuViewBloc(
+              serialDeviceRepository:
+                  RepositoryProvider.of<SerialDeviceRepository>(context)),
         ),
         BlocProvider<SetupBloc>(
           create: (context) => SetupBloc(),

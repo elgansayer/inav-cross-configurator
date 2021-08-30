@@ -19,7 +19,7 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
         _errorMessageRepository = errorMessageRepository,
         _serialDeviceRepository = serialDeviceRepository,
         super(DevicesPageInitial()) {
-    setupListeners();
+    _setupListeners();
   }
 
   final ErrorMessageRepository _errorMessageRepository;
@@ -30,7 +30,6 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
   Stream<DevicesPageState> mapEventToState(
     DevicesPageEvent event,
   ) async* {
-
     // Cancel
     if (event is FoundDevicesEvent) {
       yield new FoundDevicesState(event.serialPorts);
@@ -51,27 +50,33 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
     // }
 
     if (event is ConnectToDeviceEvent) {
-      this._serialPortRepository.cancelPolling();
-
-      SerialPortInfo serialPortInfo = event.serialPortInfo;
-      yield new ConnectingState(state.serialPorts, serialPortInfo);
-
-      // Clear any banners
-      // Now done through the bloc in UI
-      _errorMessageRepository.errorSink.add("");
-
-      // Try and connect
-      this._serialDeviceRepository.connect(serialPortInfo);
+      yield* _tryToConnect(event);
     }
   }
 
-  setupListeners() {
+  Stream<DevicesPageState> _tryToConnect(ConnectToDeviceEvent event) async* {
+    this._serialPortRepository.cancelPolling();
+
+    SerialPortInfo serialPortInfo = event.serialPortInfo;
+    yield new ConnectingState(state.serialPorts, serialPortInfo);
+
+    // Clear any banners
+    _errorMessageRepository.errorSink.add("");
+
+    // Try and connect
+    try {
+      this._serialDeviceRepository.connect(serialPortInfo);
+    } catch (e) {
+      _errorMessageRepository.errorSink.add(e.toString());
+    }
+  }
+
+  _setupListeners() {
     // Handle connected
     this
         ._serialDeviceRepository
         .serialPortDevice
         .listen((SerialPort? serialPort) {
-
       if (serialPort == null) {
         return;
       }
@@ -87,6 +92,8 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
     // Handle errors
     this._serialDeviceRepository.serialPortDeviceError.listen((error) {
       _errorMessageRepository.errorSink.add(error);
+
+      this._serialDeviceRepository.disconnect();
 
       // Go back to ports view
       this.add(GetDevicesEvent());

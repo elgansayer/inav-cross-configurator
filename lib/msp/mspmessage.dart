@@ -199,10 +199,16 @@ class MSPMessageResponse extends MSPMessage {
     this.msgLength = this.payloadLength + MSPMessage.structLength;
 
     // int rChecksum = data[8 + tLen];
-    List<int> rData =
-        this._payloadData.getRange(8, 8 + this.payloadLength).toList();
+    try {
+      List<int> rData =
+          this._payloadData.getRange(8, 8 + this.payloadLength).toList();
 
-    this.payload = new Uint8List.fromList(rData);
+      this.payload = new Uint8List.fromList(rData);
+    } catch (e) {
+      print(
+          "Read error payloadLength ${this.payloadLength}, func: ${this.function}, len ${this.msgLength} ");
+      this.payload = new Uint8List(8 + this.payloadLength);
+    }
   }
 }
 
