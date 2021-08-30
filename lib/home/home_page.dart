@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage>
           tabs: [
             Tab(icon: Icon(Icons.directions_car), child: Text("Setup")),
             Tab(icon: Icon(Icons.align_vertical_bottom), child: Text("To do")),
-            Tab(icon: Icon(Icons.directions_bike), child: Text("Calibration")),
+            Tab(icon: Icon(Icons.computer), child: Text("Cli")),
           ],
         ),
         title: const Text('INav'),
