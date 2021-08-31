@@ -83,7 +83,5 @@ flutter:
   assets:
     - assets/cube/cube.obj
     - assets/cube/cube.mtl
-    - assets/cube/flutter.png
-    - assets/drone/drone.obj
-    - assets/drone/drone.mtl
-    - assets/drone/flutter.png
+    - assets/cube/fallback.png
+    
