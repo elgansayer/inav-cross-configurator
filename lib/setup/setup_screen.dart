@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/setup_bloc.dart';
+import 'imu/bloc/imu_bloc.dart';
 import 'imu/imu_view_screen.dart';
 
 class SetupScreen extends StatefulWidget {
@@ -35,8 +36,39 @@ class SetupScreenState extends State<SetupScreen> {
       SetupState currentState,
     ) {
       return Center(
-        child: ImuViewer(),
+        child: Stack(
+          children: [_buildModelView(), _buildinfoGraph()],
+        ),
       );
     });
+  }
+
+  _buildModelView() {
+    return InkWell(
+      child: ImuViewer(),
+      onTap: () {
+        BlocProvider.of<ImuViewBloc>(context).add(ResetYawEvent());
+      },
+    );
+  }
+
+  _buildinfoGraph() {
+    return BlocBuilder<ImuViewBloc, ImuViewState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Heading: ${state.kinematics.heading}"),
+              Text("Roll: ${state.kinematics.roll}"),
+              Text("Pitch: ${state.kinematics.pitch}"),
+            ],
+          )),
+        );
+      },
+    );
   }
 }

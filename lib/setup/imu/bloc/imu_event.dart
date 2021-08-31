@@ -12,3 +12,12 @@ class ImuAddSceneEvent extends ImuViewEvent {
   final Scene scene;
   ImuAddSceneEvent(this.scene);
 }
+
+class ResetYawEvent extends ImuViewEvent {
+  ResetYawEvent();
+}
+
+class UpdateKinematicsEvent extends ImuViewEvent {
+  final Kinematics kinematics;
+  UpdateKinematicsEvent(this.kinematics);
+}
