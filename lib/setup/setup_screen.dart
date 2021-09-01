@@ -26,6 +26,7 @@ class SetupScreenState extends State<SetupScreen> {
 
   @override
   void dispose() {
+    BlocProvider.of<ImuViewBloc>(context).dispose();
     super.dispose();
   }
 

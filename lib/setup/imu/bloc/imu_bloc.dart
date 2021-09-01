@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_cube/flutter_cube.dart';
 import 'package:inavconfiurator/msp/codes.dart';
 import 'package:inavconfiurator/msp/codes/attitude.dart';
+import 'package:inavconfiurator/msp/mspmessage.dart';
 import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 import 'package:meta/meta.dart';
 // Silly object naming
@@ -21,6 +22,7 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
   // TEMP. TODO: Move these to state
   late MSPAttitude lastImu;
   late double yawFix = 0;
+  late StreamSubscription<MSPMessageResponse> _steamListener;
 
   ImuViewBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
@@ -51,7 +53,7 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
   }
 
   _setupListeners() {
-    _serialDeviceRepository
+    this._steamListener = _serialDeviceRepository
         .responseStreams(MSPCodes.mspAttitude)
         .listen((messageResponse) {
       //
@@ -72,6 +74,7 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
   }
 
   dispose() {
+    this._steamListener.cancel();
     this._timer.cancel();
   }
 
