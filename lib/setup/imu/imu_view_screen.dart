@@ -34,7 +34,7 @@ class ImuViewerState extends State<ImuViewer> {
         BlocProvider.of<ImuViewBloc>(context).add(ImuAdd3DObjectEvent(o));
       },
       onSceneCreated: (Scene scene) {
-        scene.world.add(Object(fileName: 'assets/cube/cube.obj'));
+        scene.world.add(Object(fileName: 'assets/models/iNav-plane.obj'));
         scene.camera.zoom = 8;
         scene.update();
         BlocProvider.of<ImuViewBloc>(context).add(ImuAddSceneEvent(scene));

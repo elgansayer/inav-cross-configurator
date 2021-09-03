@@ -37,6 +37,7 @@ dependencies:
   # model_viewer: ^0.8.1
   flutter_gl: ^0.0.3
   flutter_cube: ^0.1.1
+  flutter_svg: ^0.22.0
 
 
 dev_dependencies:
@@ -84,4 +85,13 @@ flutter:
     - assets/cube/cube.obj
     - assets/cube/cube.mtl
     - assets/cube/fallback.png
-    
+    - assets/images/cf_logo_white.svg
+    - assets/models/iNav-Flying-wing.obj
+    - assets/models/iNav-Flying-wing.mtl
+    - assets/models/iNav-plane.obj
+    - assets/models/iNav-plane.mtl
+    - assets/models/iNav-rudderless-plane.obj
+    - assets/models/iNav-rudderless-plane.mtl
+    - assets/models/iNav-Vtail.obj
+    - assets/models/iNav-Vtail.mtl
+            

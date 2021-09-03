@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inavconfiurator/cli/cli_page.dart';
 import 'package:inavconfiurator/home/index.dart';
 import 'package:inavconfiurator/setup/setup_page.dart';
 
@@ -40,7 +41,9 @@ class _HomePageState extends State<HomePage>
             Tab(icon: Icon(Icons.computer), child: Text("Cli")),
           ],
         ),
-        title: const Text('INav'),
+        // title: const Text('INav'),
+        title:
+            Image.asset('assets/images/cf_logo_white.svg', fit: BoxFit.cover),
         actions: [
           TextButton(
               child: const Text('Disconnect'),
@@ -54,7 +57,7 @@ class _HomePageState extends State<HomePage>
         children: [
           SetupPage(),
           HomeScreen(homeBloc: _homeBloc),
-          HomeScreen(homeBloc: _homeBloc),
+          CliPage(),
         ],
       ),
       // body: HomeScreen(homeBloc: _homeBloc),
