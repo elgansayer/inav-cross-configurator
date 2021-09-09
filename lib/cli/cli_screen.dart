@@ -75,14 +75,18 @@ class CliScreenState extends State<CliScreen> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Expanded(
-              child: TextField(
-                maxLines: null,
-                minLines: null,
-                expands: true,
-                decoration: InputDecoration(
-                    hintText: "Cli Command",
-                    hintStyle: TextStyle(color: Colors.black54),
-                    border: InputBorder.none),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: TextField(
+                  readOnly: true,
+                  maxLines: null,
+                  minLines: null,
+                  expands: true,
+                  decoration: InputDecoration(
+                      fillColor: Colors.black54,
+                      filled: true,
+                      border: InputBorder.none),
+                ),
               ),
               flex: 1),
           Container(
@@ -94,23 +98,23 @@ class CliScreenState extends State<CliScreen> {
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
-                        hintText: "Cli Command",
-                        hintStyle: TextStyle(color: Colors.black54),
-                        border: InputBorder.none),
+                      hintText: "Cli Command",
+                    ),
                   ),
                 ),
                 SizedBox(
                   width: 15,
                 ),
-                FloatingActionButton(
+                ElevatedButton(
                   onPressed: () {},
-                  child: Icon(
-                    Icons.send,
-                    // size: 18,
+                  child: Icon(Icons.send, color: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(20),
+                    primary: Colors.blue, // <-- Button color
+                    onPrimary: Colors.red, // <-- Splash color
                   ),
-                  // backgroundColor: Colors.blue,
-                  elevation: 0,
-                ),
+                )
               ],
             ),
           ),
