@@ -22,7 +22,7 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
   // TEMP. TODO: Move these to state
   late MSPAttitude lastImu;
   late double yawFix = 0;
-  late StreamSubscription<MSPMessageResponse> _steamListener;
+  late StreamSubscription<MSPMessageResponse> _streamListener;
 
   ImuViewBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
@@ -53,10 +53,9 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
   }
 
   _setupListeners() {
-    this._steamListener = _serialDeviceRepository
+    this._streamListener = _serialDeviceRepository
         .responseStreams(MSPCodes.mspAttitude)
         .listen((messageResponse) {
-      //
       MSPAttitude? rawImu = _serialDeviceRepository.transform(
           MSPCodes.mspAttitude, messageResponse);
       if (rawImu == null) {
@@ -69,13 +68,20 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
     this._timer = Timer.periodic(Duration(microseconds: 500), this._updateImu);
   }
 
-  void _updateImu(Timer timer) {
-    _serialDeviceRepository.write(MSPCodes.mspAttitude);
+  Future<void> _updateImu(Timer timer) async {
+    try {
+      await _serialDeviceRepository.write(MSPCodes.mspAttitude);
+    } catch (e) {
+      this.close();
+    }
   }
 
-  dispose() {
-    this._steamListener.cancel();
+  @override
+  Future<void> close() {
+    //cancel streams
     this._timer.cancel();
+    this._streamListener.cancel();
+    return super.close();
   }
 
   void _resetOrientation() {

@@ -27,11 +27,6 @@ class BigpacktestScreenState extends State<BigpacktestScreen> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<BigpacktestBloc, BigpacktestState>(
         bloc: widget._bigpacktestBloc,

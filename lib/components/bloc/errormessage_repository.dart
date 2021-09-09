@@ -8,7 +8,7 @@ class ErrorMessageRepository {
   StreamSink<String> get errorSink => _errorStreamController.sink;
   Stream<String> get errors => _errorStreamController.stream;
 
-  dispose() {
+  close() {
     _errorStreamController.close();
   }
 }

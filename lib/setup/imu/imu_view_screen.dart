@@ -17,16 +17,6 @@ class ImuViewer extends StatefulWidget {
 class ImuViewerState extends State<ImuViewer> {
   ImuViewerState();
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   _buildBody() {
     return Cube(
       interactive: false,

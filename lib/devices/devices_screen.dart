@@ -18,17 +18,6 @@ class DevicesScreen extends StatefulWidget {
 class DevicesScreenState extends State<DevicesScreen> {
   DevicesScreenState();
 
-  @override
-  void dispose() {
-    BlocProvider.of<DevicesPageBloc>(context).dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Widget _foundDevices(List<SerialPortInfo> serialPorts) {
     List<Widget> portCards =
         serialPorts.map((serialPort) => _portCard(serialPort)).toList();
@@ -54,10 +43,6 @@ class DevicesScreenState extends State<DevicesScreen> {
       width: size,
       child: InkWell(
         onTap: () {
-          // Clear any banners
-          // BlocProvider.of<ErrorBannerBloc>(context)
-          //     .add(CloseErrorBannerEvent());
-
           BlocProvider.of<DevicesPageBloc>(context)
               .add(DevicesPageEvent.connectToDeviceEvent(serialPort));
         },

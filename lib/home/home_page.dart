@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfiurator/app/bloc/app_bloc.dart';
 import 'package:inavconfiurator/cli/cli_page.dart';
 import 'package:inavconfiurator/home/index.dart';
 import 'package:inavconfiurator/setup/setup_page.dart';
@@ -48,7 +50,8 @@ class _HomePageState extends State<HomePage>
           TextButton(
               child: const Text('Disconnect'),
               onPressed: () {
-                print('Pressed');
+                var appBloc = BlocProvider.of<AppBloc>(context);
+                appBloc.add(DisconnectEvent());
               })
         ],
       ),

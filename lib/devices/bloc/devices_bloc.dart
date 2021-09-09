@@ -11,6 +11,10 @@ part 'devices_state.dart';
 part 'devices_event.dart';
 
 class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
+  late StreamSubscription<SerialPort?> _serialDeviceListenr;
+  late StreamSubscription<List<SerialPortInfo>> _serialPortListener;
+  late StreamSubscription<String> _errorListener;
+
   DevicesPageBloc(
       {required ErrorMessageRepository errorMessageRepository,
       required SerialPortRepository serialPortRepository,
@@ -19,6 +23,8 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
         _errorMessageRepository = errorMessageRepository,
         _serialDeviceRepository = serialDeviceRepository,
         super(DevicesPageInitial()) {
+    // Ensure we are disconnected
+
     _setupListeners();
   }
 
@@ -67,13 +73,15 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
     try {
       await this._serialDeviceRepository.connect(serialPortInfo);
     } catch (e) {
+      this.add(GetDevicesEvent());
+
       _errorMessageRepository.errorSink.add(e.toString());
     }
   }
 
   _setupListeners() {
     // Handle connected
-    this
+    this._serialDeviceListenr = this
         ._serialDeviceRepository
         .serialPortDevice
         .listen((SerialPort? serialPort) {
@@ -85,22 +93,28 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
     });
 
     // Handle serial ports
-    this._serialPortRepository.serialPorts.listen((serialPorts) {
+    this._serialPortListener =
+        this._serialPortRepository.serialPorts.listen((serialPorts) {
       this.add(FoundDevicesEvent(serialPorts));
     });
 
     // Handle errors
-    this._serialDeviceRepository.serialPortDeviceError.listen((error) {
+    this._errorListener =
+        this._serialDeviceRepository.serialPortDeviceError.listen((error) {
       _errorMessageRepository.errorSink.add(error);
-
       // Go back to ports view
       this.add(GetDevicesEvent());
-
       this._serialDeviceRepository.disconnect();
     });
   }
 
-  void dispose() {
-    _serialPortRepository.dispose();
+  @override
+  Future<void> close() {
+    //cancel streams
+    this._errorListener.cancel();
+    this._serialPortListener.cancel();
+    this._serialDeviceListenr.cancel();
+    _serialPortRepository.close();
+    return super.close();
   }
 }

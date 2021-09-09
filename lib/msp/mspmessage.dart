@@ -104,6 +104,8 @@ class MSPMessage {
 
   MSPMessage();
 
+  get _timeout => 10000;
+
   // factory MSPMessage.fromString(String data) {
   //   return new MSPMessage(0, ascii.encode(data));
   // }
@@ -230,7 +232,7 @@ class MSPMessageRequest extends MSPMessage {
     }
   }
 
-  void write(SerialPort serialPort) {
-    serialPort.write(this._buffer);
+  int write(SerialPort serialPort) {
+    return serialPort.write(this._buffer, timeout: this._timeout);
   }
 }

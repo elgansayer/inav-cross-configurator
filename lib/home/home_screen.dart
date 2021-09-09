@@ -21,16 +21,6 @@ class HomeScreenState extends State<HomeScreen> {
   HomeScreenState();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
         bloc: widget._homeBloc,
@@ -38,47 +28,6 @@ class HomeScreenState extends State<HomeScreen> {
           BuildContext context,
           HomeState currentState,
         ) {
-          // if (currentState is UnHomeState) {
-          //   return Center(
-          //     child: CircularProgressIndicator(),
-          //   );
-          // }
-          // if (currentState is ErrorHomeState) {
-          //   return Center(
-          //       child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: <Widget>[
-          //       Text(currentState.errorMessage),
-          //       Padding(
-          //         padding: const EdgeInsets.only(top: 32.0),
-          //         child: RaisedButton(
-          //           color: Colors.blue,
-          //           child: Text('reload'),
-          //           onPressed: _load,
-          //         ),
-          //       ),
-          //     ],
-          //   ));
-          // }
-          // if (currentState is InHomeState) {
-          //   return Center(
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: <Widget>[
-          //         Text(currentState.hello),
-          //         const Text('Flutter files: done'),
-          //         Padding(
-          //           padding: const EdgeInsets.only(top: 32.0),
-          //           child: RaisedButton(
-          //             color: Colors.red,
-          //             child: Text('throw error'),
-          //             onPressed: () => _load(true),
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   );
-          // }
           return _buildTabs();
         });
   }

@@ -24,11 +24,6 @@ class CliScreenState extends State<CliScreen> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<CliBloc, CliState>(builder: (
       BuildContext context,
@@ -76,51 +71,47 @@ class CliScreenState extends State<CliScreen> {
   _buildBody() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Stack(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 100),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListView(
-                  children: [Text("dasd"), Text("dasd")],
-                ),
+          Expanded(
+              child: TextField(
+                maxLines: null,
+                minLines: null,
+                expands: true,
+                decoration: InputDecoration(
+                    hintText: "Cli Command",
+                    hintStyle: TextStyle(color: Colors.black54),
+                    border: InputBorder.none),
               ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Card(
-              child: Container(
-                padding: EdgeInsets.only(left: 10, bottom: 0, top: 0),
-                // height: 60,
-                width: double.infinity,
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                            hintText: "Write message...",
-                            hintStyle: TextStyle(color: Colors.black54),
-                            border: InputBorder.none),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    FloatingActionButton(
-                      onPressed: () {},
-                      child: Icon(
-                        Icons.send,
-                        // size: 18,
-                      ),
-                      // backgroundColor: Colors.blue,
-                      elevation: 0,
-                    ),
-                  ],
+              flex: 1),
+          Container(
+            padding: EdgeInsets.only(left: 0, bottom: 0, top: 0),
+            // height: 60,
+            width: double.infinity,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: "Cli Command",
+                        hintStyle: TextStyle(color: Colors.black54),
+                        border: InputBorder.none),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  width: 15,
+                ),
+                FloatingActionButton(
+                  onPressed: () {},
+                  child: Icon(
+                    Icons.send,
+                    // size: 18,
+                  ),
+                  // backgroundColor: Colors.blue,
+                  elevation: 0,
+                ),
+              ],
             ),
           ),
         ],

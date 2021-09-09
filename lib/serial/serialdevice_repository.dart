@@ -9,11 +9,13 @@ import 'package:inavconfiurator/serial/serialport_model.dart';
 import 'package:libserialport/libserialport.dart';
 
 class SerialDeviceRepository {
+  late StreamSubscription<Uint8List> _readerListener;
+
   SerialDeviceRepository();
 
   late Map<int, StreamController<MSPMessageResponse>> streamMaps = {};
 
-  final _errorStreamController = StreamController<String>();
+  final _errorStreamController = StreamController<String>.broadcast();
   late SerialPortReader _reader;
   final _responseMessagesStreamController =
       StreamController<MSPMessageResponse>.broadcast();
@@ -49,10 +51,13 @@ class SerialDeviceRepository {
   }
 
   Future<MSPMessageResponse> response(Stream<MSPMessageResponse> stream) async {
+    Stream<MSPMessageResponse> newStream = stream.timeout(Duration(seconds: 5));
+
     var value;
-    await for (var data in stream) {
+    await for (var data in newStream) {
       return data;
     }
+
     return value;
   }
 
@@ -93,35 +98,53 @@ class SerialDeviceRepository {
   Future<SerialPort?> connect(SerialPortInfo portcode) async {
     String portPath = portcode.name;
     this._serialPort = SerialPort(portPath);
+    print("Opening $portPath");
 
     this._closeMaps();
 
     if (!this._serialPort.openReadWrite()) {
-      this._serialPort.close();
+      print("Failed to open port for read/write operations");
+
+      this.closeDevice();
       throw new Exception("Failed to open port for read/write operations");
     }
 
     // Setup reader
     this._reader = SerialPortReader(this._serialPort);
-    this._reader.stream.listen(this._gotData);
+    this._readerListener = this._reader.stream.listen(this._gotData);
 
-    MSPApiVersion apiVersion =
-        await this.writeWithResponseAs<MSPApiVersion>(MSPCodes.mspApiVersion);
+    print("Getting API versions");
 
-    // Check we are version compatible?
-    if (apiVersion.apiVersionMajor < 2) {
-      this._serialPort.close();
-      throw new Exception("Failed version check. ${apiVersion.apiVersion}");
+    try {
+      MSPApiVersion apiVersion =
+          await this.writeWithResponseAs<MSPApiVersion>(MSPCodes.mspApiVersion);
+
+      // Check we are version compatible?
+      if (apiVersion.apiVersionMajor < 2) {
+        print("Failed version check. ${apiVersion.apiVersion}");
+
+        this.closeDevice();
+        throw new Exception("Failed version check. ${apiVersion.apiVersion}");
+      }
+    } catch (e) {
+      throw new Exception("Failed to get API version");
     }
 
-    MSPFcVariant mspFcVariant =
-        await this.writeWithResponseAs<MSPFcVariant>(MSPCodes.mspFcVariant);
+    try {
+      MSPFcVariant mspFcVariant =
+          await this.writeWithResponseAs<MSPFcVariant>(MSPCodes.mspFcVariant);
 
-    // Check we are using INAV on the board
-    if (mspFcVariant.flightControllerIdentifier != "INAV") {
-      this._serialPort.close();
-      throw new Exception(
-          "Failed flight controller identification. ${mspFcVariant.flightControllerIdentifier}");
+      // Check we are using INAV on the board
+      if (mspFcVariant.flightControllerIdentifier != "INAV") {
+        print(
+            "Failed flight controller identification. ${mspFcVariant.flightControllerIdentifier}");
+
+        this.closeDevice();
+        throw new Exception(
+            "Failed flight controller identification. ${mspFcVariant.flightControllerIdentifier}");
+      }
+    } catch (e) {
+      throw new Exception("Failed flight controller identification");
     }
 
     // Last error is never reset
@@ -130,8 +153,8 @@ class SerialDeviceRepository {
     //   throw new Exception(SerialPort.lastError);
     // }
 
-    print(apiVersion.apiVersion);
-    print(mspFcVariant);
+    // print(apiVersion.apiVersion);
+    // print(mspFcVariant);
 
     this._serialPortDeviceSink.add(this._serialPort);
     return this._serialPort;
@@ -148,7 +171,7 @@ class SerialDeviceRepository {
     responseMessagesSink.add(respone);
   }
 
-  dispose() {
+  close() {
     this.disconnect();
 
     _errorStreamController.close();
@@ -164,10 +187,16 @@ class SerialDeviceRepository {
   }
 
   void disconnect() {
-    this._reader.close();
+    this._readerListener.cancel();
+    this.closeDevice();
     this._closeMaps();
+  }
+
+  void closeDevice() {
     if (this._serialPort.isOpen) {
+      this._reader.close();
       this._serialPort.close();
     }
+    this._serialPort.dispose();
   }
 }

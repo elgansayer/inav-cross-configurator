@@ -20,17 +20,6 @@ class SetupScreenState extends State<SetupScreen> {
   SetupScreenState();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    BlocProvider.of<ImuViewBloc>(context).dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<SetupBloc, SetupState>(builder: (
       BuildContext context,

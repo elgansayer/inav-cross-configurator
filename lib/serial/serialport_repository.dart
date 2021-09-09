@@ -10,7 +10,8 @@ class SerialPortRepository {
 
   SerialPortRepository();
 
-  final _serialPortsStreamController = StreamController<List<SerialPortInfo>>();
+  final _serialPortsStreamController =
+      StreamController<List<SerialPortInfo>>.broadcast();
 
   StreamSink<List<SerialPortInfo>> get _serialPortsSink =>
       _serialPortsStreamController.sink;
@@ -28,14 +29,14 @@ class SerialPortRepository {
     this._timer = Timer.periodic(oneSec, (Timer t) => _updatePorts());
   }
 
-  void dispose() {
+  void close() {
     this.cancelPolling();
     _serialPortsStreamController.close();
   }
 
   void cancelPolling() {
     if (this._timer != null) {
-      this._timer!.cancel();            
+      this._timer!.cancel();
     }
   }
 }
