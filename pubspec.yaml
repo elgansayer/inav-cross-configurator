@@ -86,6 +86,9 @@ flutter:
     - assets/cube/cube.mtl
     - assets/cube/fallback.png
     - assets/images/cf_logo_white.svg
+    - assets/images/light-wide-2.svg
+    - assets/images/inav_icon_128.png
+
     - assets/models/iNav-Flying-wing.obj
     - assets/models/iNav-Flying-wing.mtl
     - assets/models/iNav-plane.obj

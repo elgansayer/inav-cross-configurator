@@ -35,30 +35,50 @@ class DevicesScreenState extends State<DevicesScreen> {
   }
 
   Widget _portCard(SerialPortInfo serialPort) {
-    var cardColour = serialPort.isINav ? Colors.blue.shade500 : null;
-    double size = 150;
+    double size = 100;
 
     return Container(
       height: size,
       width: size,
       child: InkWell(
-        onTap: () {
-          BlocProvider.of<DevicesPageBloc>(context)
-              .add(DevicesPageEvent.connectToDeviceEvent(serialPort));
-        },
-        child: Card(
-          color: cardColour,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              Text(serialPort.manufacturer),
-              Expanded(child: Icon(Icons.computer, size: 50.0)),
-              Text(
-                serialPort.name,
-              ),
-            ]),
+          onTap: () {
+            BlocProvider.of<DevicesPageBloc>(context)
+                .add(DevicesPageEvent.connectToDeviceEvent(serialPort));
+          },
+          child: _portCardBody(serialPort)),
+    );
+  }
+
+  _portCardBody(SerialPortInfo serialPort) {
+    var icon = serialPort.isINav
+        ? Image.asset('assets/images/inav_icon_128.png',
+            fit: BoxFit.cover)
+        : Icon(Icons.computer, size: 50.0);
+
+    final CardTheme cardTheme = CardTheme.of(context);
+
+    ShapeBorder? cardColour = serialPort.isINav
+        ? const RoundedRectangleBorder(
+            side: BorderSide(color: Colors.blue)
+            borderRadius: BorderRadius.all(Radius.circular(4.0)))
+        : cardTheme.shape;
+
+    return Card(
+      shape: cardColour,
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Column(
+          children: <Widget>[
+          Text(
+            serialPort.manufacturer,
+            overflow: TextOverflow.ellipsis,
           ),
-        ),
+          Expanded(child: icon),
+          Text(
+            serialPort.name,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ]),
       ),
     );
   }

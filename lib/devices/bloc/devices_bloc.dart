@@ -4,14 +4,13 @@ import 'package:inavconfiurator/components/bloc/errormessage_repository.dart';
 import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 import 'package:inavconfiurator/serial/serialport_model.dart';
 import 'package:inavconfiurator/serial/serialport_repository.dart';
-import 'package:libserialport/libserialport.dart';
 import 'package:meta/meta.dart';
 
 part 'devices_state.dart';
 part 'devices_event.dart';
 
 class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
-  late StreamSubscription<SerialPort?> _serialDeviceListenr;
+  late StreamSubscription<SerialDeviceEvent> _serialDeviceListenr;
   late StreamSubscription<List<SerialPortInfo>> _serialPortListener;
   late StreamSubscription<String> _errorListener;
 
@@ -84,12 +83,10 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
     this._serialDeviceListenr = this
         ._serialDeviceRepository
         .serialPortDevice
-        .listen((SerialPort? serialPort) {
-      if (serialPort == null) {
-        return;
+        .listen((SerialDeviceEvent serialDeviceEvent) {
+      if (serialDeviceEvent.type == SerialDeviceEventType.connected) {
+        this.add(ConnectedDeviceEvent());
       }
-
-      this.add(ConnectedDeviceEvent());
     });
 
     // Handle serial ports

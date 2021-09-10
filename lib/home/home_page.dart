@@ -35,17 +35,18 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text('INav'),
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(icon: Icon(Icons.directions_car), child: Text("Setup")),
-            Tab(icon: Icon(Icons.align_vertical_bottom), child: Text("To do")),
+            Tab(icon: Icon(Icons.directions_car), child: Text("Overview")),
+            Tab(
+                icon: Icon(Icons.align_vertical_bottom),
+                child: Text("Calibration")),
             Tab(icon: Icon(Icons.computer), child: Text("Cli")),
           ],
         ),
         // title: const Text('INav'),
-        title:
-            Image.asset('assets/images/cf_logo_white.svg', fit: BoxFit.cover),
         actions: [
           TextButton(
               child: const Text('Disconnect'),

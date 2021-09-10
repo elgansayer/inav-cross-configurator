@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:inavconfiurator/serial/serialdevice_repository.dart';
-import 'package:libserialport/libserialport.dart';
 import 'package:meta/meta.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
-  late StreamSubscription<SerialPort?> _deviceListenrer;
+  late StreamSubscription<SerialDeviceEvent> _deviceListenrer;
 
   AppBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
@@ -39,9 +38,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   _setupListeners() {
     this._deviceListenrer = _serialDeviceRepository.serialPortDevice
-        .listen((SerialPort? serialPort) {
-      if (serialPort != null && serialPort.isOpen) {
+        .listen((SerialDeviceEvent serialDeviceEvent) {
+      if (serialDeviceEvent.type == SerialDeviceEventType.connected) {
         this.add(ChangePageEvent(AppPage.home));
+      } else if (serialDeviceEvent.type == SerialDeviceEventType.disconnected) {
+        this.disconnect();
       } else {
         this.add(ChangePageEvent(AppPage.devices));
       }

@@ -13,6 +13,6 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   Stream<CliState> mapEventToState(
     CliEvent event,
   ) async* {
-    // TODO: implement mapEventToState
+    //
   }
 }

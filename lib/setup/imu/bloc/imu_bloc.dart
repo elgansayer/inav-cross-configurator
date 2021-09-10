@@ -58,6 +58,7 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
         .listen((messageResponse) {
       MSPAttitude? rawImu = _serialDeviceRepository.transform(
           MSPCodes.mspAttitude, messageResponse);
+
       if (rawImu == null) {
         return;
       }

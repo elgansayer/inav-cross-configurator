@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/cli_bloc.dart';
@@ -119,19 +118,6 @@ class CliScreenState extends State<CliScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  _buildTextField() {
-    return Flexible(
-      child: Container(
-        child: TextField(
-          style: TextStyle(fontSize: 15.0),
-          decoration: InputDecoration.collapsed(
-            hintText: 'Type a message',
-          ),
-        ),
       ),
     );
   }

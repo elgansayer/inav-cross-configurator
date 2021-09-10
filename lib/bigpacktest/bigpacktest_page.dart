@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:inavconfiurator/bigpacktest/index.dart';
 
 class BigpacktestPage extends StatefulWidget {
@@ -16,9 +15,7 @@ class _BigpacktestPageState extends State<BigpacktestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: Text('Bigpacktest'),
-        title: SvgPicture.asset('assets/images/cf_logo_white.svg',
-            fit: BoxFit.cover),
+        title: Text('INav'),
       ),
       body: BigpacktestScreen(bigpacktestBloc: _bigpacktestBloc),
     );
