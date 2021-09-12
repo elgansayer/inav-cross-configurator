@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inavconfiurator/serial/serialdevice_repository.dart';
-import 'package:inavconfiurator/setup/imu/bloc/imu_bloc.dart';
 
 import 'bloc/setup_bloc.dart';
+import 'imu/bloc/imu_bloc.dart';
 import 'setup_screen.dart';
 
 class SetupPage extends StatefulWidget {

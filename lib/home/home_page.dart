@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inavconfiurator/app/bloc/app_bloc.dart';
 import 'package:inavconfiurator/cli/cli_page.dart';
 import 'package:inavconfiurator/home/index.dart';
-import 'package:inavconfiurator/setup/setup_page.dart';
 
 import 'bloc/home_bloc.dart';
+import 'info/info_page.dart';
+import 'setup/setup_page.dart';
 
 class HomePage extends StatefulWidget {
   static const String routeName = '/home';
@@ -39,6 +40,7 @@ class _HomePageState extends State<HomePage>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
+            Tab(icon: Icon(Icons.check), child: Text("Checks")),
             Tab(icon: Icon(Icons.directions_car), child: Text("Overview")),
             Tab(
                 icon: Icon(Icons.align_vertical_bottom),
@@ -59,6 +61,7 @@ class _HomePageState extends State<HomePage>
       body: TabBarView(
         controller: _tabController,
         children: [
+          InfoPage(),
           SetupPage(),
           HomeScreen(homeBloc: _homeBloc),
           CliPage(),
