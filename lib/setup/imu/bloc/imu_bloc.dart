@@ -19,16 +19,15 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
 
   late Timer _timer;
 
-  // TEMP. TODO: Move these to state
   late MSPAttitude lastImu;
   late double yawFix = 0;
   late StreamSubscription<MSPMessageResponse> _streamListener;
 
+  bool doneFirst = false;
+
   ImuViewBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
-        super(ImuViewInitial()) {
-    this._setupListeners();
-  }
+        super(ImuViewInitial());
 
   @override
   Stream<ImuViewState> mapEventToState(
@@ -37,6 +36,8 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
     if (event is ImuAdd3DObjectEvent) {
       yield new ImuViewState(
           event.mdlObject, this.state.scene, Kinematics.zero());
+      this._setupScene();
+      this._setupListeners();
     }
     if (event is ImuAddSceneEvent) {
       yield new ImuViewState(this.state.object, event.scene, Kinematics.zero());
@@ -93,7 +94,7 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
       return;
     }
 
-    this.yawFix = this.lastImu.kinematics.z * -1.0;
+    this.yawFix = this.lastImu.kinematics.z;
     mdlObject.rotation.setZero();
 
     mdlObject.updateTransform();
@@ -110,14 +111,30 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
 
     this.lastImu = rawImu;
 
-    double roll = rawImu.kinematics.x;
-    double heading = ((rawImu.kinematics.z * -1.0) - this.yawFix);
-    double pitch = rawImu.kinematics.y;
+    // double roll = (rawImu.kinematics.x * -1.0);
+    // double heading = ((rawImu.kinematics.z * -1.0) - this.yawFix);
+    // double pitch = (rawImu.kinematics.y * -1.0);
+
+    if (!this.doneFirst) {
+      this.doneFirst = true;
+      this.yawFix = rawImu.kinematics.z;
+    }
+
+    double kinematicsRoll = rawImu.kinematics.x;
+    double kinematicsHeading = rawImu.kinematics.z;
+    double kinematicsPitch = rawImu.kinematics.y;
+
+    double roll = (kinematicsRoll * -1.0);
+    double heading = ((kinematicsHeading - this.yawFix) * -1.0);
+    double pitch = (kinematicsPitch * -1.0);
 
     // interactive_block > a.reset
     // self.yaw_fix = SENSOR_DATA.kinematics[2] * - 1.0
-    mdlObject.rotation.setZero();
+    // mdlObject.rotation.setZero();
+    // mdlObject.rotation.setValues(pitch, heading, roll);
+    // mdlObject.rotation.setValues(35, 15, 0);
     mdlObject.rotation.setValues(pitch, heading, roll);
+    mdlObject.updateTransform();
 
     // look in this.render3D = function () {
     // compute the changes
@@ -125,11 +142,25 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
     // modelWrapper.rotation.y = ((SENSOR_DATA.kinematics[2] * -1.0) - self.yaw_fix) * 0.017453292519943295;
     // model.rotation.z = (SENSOR_DATA.kinematics[0] * -1.0) * 0.017453292519943295;
 
-    mdlObject.updateTransform();
+    // scene.world.rotation.setValues(0, 180, 0);
+    // scene.world.updateTransform();
     scene.update();
 
     // Add event to update the display
-    var kinematics = new Kinematics(heading, roll * -1.0, pitch * -1.0);
+    Kinematics kinematics =
+        new Kinematics(kinematicsHeading, kinematicsRoll, kinematicsPitch);
     this.add(UpdateKinematicsEvent(kinematics));
+  }
+
+  void _setupScene() {
+    Scene? scene = this.state.scene;
+
+    if (scene == null) {
+      return;
+    }
+
+    scene.world.rotation.setValues(0, 180, 0);
+    scene.world.updateTransform();
+    scene.update();
   }
 }

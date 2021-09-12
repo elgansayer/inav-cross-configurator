@@ -53,8 +53,8 @@ class SetupScreenState extends State<SetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Heading: ${state.kinematics.heading}"),
-              Text("Roll: ${state.kinematics.roll}"),
               Text("Pitch: ${state.kinematics.pitch}"),
+              Text("Roll: ${state.kinematics.roll}"),
             ],
           )),
         );

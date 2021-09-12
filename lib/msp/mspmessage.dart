@@ -89,20 +89,6 @@ class ResponseMessageHeader extends MessageHeader {
 class MSPMessage {
   MSPMessage();
 
-  // factory MSPMessage.fromString(String data) {
-  //   return new MSPMessage(0, ascii.encode(data));
-  // }
-
-  // factory MSPMessage.requestfromUint8List(Uint8List data) {
-  //   int rLen = data[6];
-  //   int func = data[4];
-  //   // int rChecksum = data[8 + tLen];
-  //   List<int> rData = data.getRange(8, 8 + rLen).toList();
-  //   Uint8List rPayload = new Uint8List.fromList(rData);
-
-  //   return new MSPMessage(func, rPayload);
-  // }
-
   factory MSPMessage.request(int function, Uint8List? payload) {
     return new MSPMessageRequest(function, payloadData: payload);
   }
@@ -150,6 +136,8 @@ class MSPMessage {
   // Offset
   int get _payloadLengtUpperOffset => 7;
 
+  late String error;
+
   _checksum(Uint8List buffer) {
     int tempChecksum = 0;
     for (int ii = 3; ii < this.msgLength - 1; ii++) {
@@ -177,17 +165,16 @@ class MSPMessage {
 class MSPMessageResponse extends MSPMessage {
   MSPMessageResponse(Uint8List payloadResponse) {
     this._payloadData = new ByteData.view(payloadResponse.buffer);
-    _readData();
   }
 
   late ByteData _payloadData;
 
-  _readData() {
+  bool readData() {
     int packetLength = this._payloadData.lengthInBytes;
 
-    if (packetLength < this._payloadLengthOffset) {
-      throw new Exception(
-          "Packet error: Dropping packet of length $packetLength");
+    if (packetLength <= this._payloadLengthOffset) {
+      this.error = ("Packet error: Dropping packet of length $packetLength");
+      return false;
     }
 
     Uint8List byteData = this._payloadData.buffer.asUint8List();
@@ -200,8 +187,9 @@ class MSPMessageResponse extends MSPMessage {
     this.checksum = _checksum(byteData);
 
     if (this.checksum != recievedChecksum) {
-      throw new Exception(
-          "Read error checksums did not match ${this.checksum}:$recievedChecksum");
+      this.error =
+          ("Read error checksums did not match ${this.checksum}:$recievedChecksum");
+      return false;
     }
 
     List<int> rData = byteData
@@ -209,8 +197,8 @@ class MSPMessageResponse extends MSPMessage {
             this._dataStartOffset, this._dataStartOffset + this.payloadLength)
         .toList();
 
-    this.payload =
-        new ByteData.view(Uint8List.fromList(rData).buffer); //.fromList(rData);
+    this.payload = new ByteData.view(Uint8List.fromList(rData).buffer);
+    return true;
   }
 }
 

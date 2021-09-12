@@ -194,18 +194,23 @@ class SerialDeviceRepository {
   // }
 
   void _gotData(Uint8List event) {
-    try {
-      MSPMessageResponse respone = new MSPMessageResponse(event);
-      int code = respone.function;
-
-      if (this.streamMaps.containsKey(code)) {
-        this.streamMaps[code]!.sink.add(respone);
-      }
-
-      responseMessagesSink.add(respone);
-    } catch (e) {
-      // debugPrint(e.toString());
+    // try {
+    MSPMessageResponse respone = new MSPMessageResponse(event);
+    bool worked = respone.readData();
+    if (!worked) {
+      return;
     }
+
+    int code = respone.function;
+
+    if (this.streamMaps.containsKey(code)) {
+      this.streamMaps[code]!.sink.add(respone);
+    }
+
+    responseMessagesSink.add(respone);
+    // } catch (e) {
+    //   // debugPrint(e.toString());
+    // }
   }
 
   close() {
