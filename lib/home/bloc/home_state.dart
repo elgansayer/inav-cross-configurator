@@ -1,11 +1,13 @@
 part of 'home_bloc.dart';
 
-@immutable
-abstract class HomeState {}
+class HomeState {
+  final List<TabPage> tabPages;
 
-class HomeInitial extends HomeState {}
+  HomeState({
+    required this.tabPages,
+  });
 
-
-class StateA extends HomeInitial {}
-
-class StateB extends HomeInitial {}
+  factory HomeState.init() {
+    return HomeState(tabPages: []);
+  }
+}

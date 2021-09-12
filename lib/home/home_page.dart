@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/app/bloc/app_bloc.dart';
-import 'package:inavconfiurator/cli/cli_page.dart';
-import 'package:inavconfiurator/home/index.dart';
+import 'package:inavconfiurator/home/bloc/home_bloc.dart';
 
-import 'bloc/home_bloc.dart';
-import 'info/info_page.dart';
-import 'setup/setup_page.dart';
+import 'home_screen.dart';
+
+class TabPage {
+  final IconData iconData;
+  final String tabName;
+  final Widget tabPage;
+
+  TabPage(
+    this.iconData,
+    this.tabName,
+    this.tabPage,
+  );
+}
 
 class HomePage extends StatefulWidget {
   static const String routeName = '/home';
@@ -15,59 +23,51 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
-  final _homeBloc = HomeBloc();
-  late TabController _tabController;
+class _HomePageState extends State<HomePage> {
+  // with SingleTickerProviderStateMixin {
+  // late TabController _tabController;
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+  // final List<TabPage> tabPages = [
+  //   new TabPage(Icons.check, "Overview", InfoPage()),
+  //   new TabPage(Icons.directions_car, "IMU", SetupPage()),
+  //   new TabPage(Icons.computer, "Cli", CliPage()),
+  // ];
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(vsync: this, length: 3);
-  }
+  // @override
+  // void dispose() {
+  //   _tabController.dispose();
+  //   super.dispose();
+  // }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _tabController = TabController(vsync: this, length: tabPages.length);
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('INav'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(icon: Icon(Icons.check), child: Text("Checks")),
-            Tab(icon: Icon(Icons.directions_car), child: Text("Overview")),
-            Tab(
-                icon: Icon(Icons.align_vertical_bottom),
-                child: Text("Calibration")),
-            Tab(icon: Icon(Icons.computer), child: Text("Cli")),
-          ],
-        ),
-        // title: const Text('INav'),
-        actions: [
-          TextButton(
-              child: const Text('Disconnect'),
-              onPressed: () {
-                var appBloc = BlocProvider.of<AppBloc>(context);
-                appBloc.add(DisconnectEvent());
-              })
-        ],
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          InfoPage(),
-          SetupPage(),
-          HomeScreen(homeBloc: _homeBloc),
-          CliPage(),
-        ],
-      ),
-      // body: HomeScreen(homeBloc: _homeBloc),
+    return BlocProvider(
+      create: (context) => HomeBloc(),
+      child: HomeScreen(),
     );
+
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: Text('INav'),
+    //     // bottom: TabBar(
+    //     //   controller: _tabController,
+    //     //   tabs: tabPages.map((tp) => tp.tab).toList(),
+    //     // ),
+    //     // title: const Text('INav'),
+    //     actions: [],
+    //   ),
+    //   // body: TabBarView(
+    //   //   controller: _tabController,
+    //   //   children: tabPages.map((tp) => tp.tabPage).toList(),
+    //   // ),
+    //   // body: HomeScreen(homeBloc: _homeBloc),
+    //   drawer: _buildDrawer(),
+    // );
   }
 }

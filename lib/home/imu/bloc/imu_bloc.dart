@@ -72,7 +72,7 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
 
   Future<void> _updateImu(Timer timer) async {
     try {
-      await _serialDeviceRepository.write(MSPCodes.mspAttitude);
+      _serialDeviceRepository.writeFunc(MSPCodes.mspAttitude);
     } catch (e) {
       this.close();
     }

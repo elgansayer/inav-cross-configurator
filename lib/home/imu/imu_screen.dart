@@ -1,36 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfiurator/home/imu/bloc/imu_bloc.dart';
+import 'package:inavconfiurator/home/imu/imu_view_screen.dart';
 
-import 'bloc/setup_bloc.dart';
-import 'imu/bloc/imu_bloc.dart';
-import 'imu/imu_view_screen.dart';
-
-class SetupScreen extends StatefulWidget {
-  const SetupScreen({
+class IMUScreen extends StatefulWidget {
+  const IMUScreen({
     Key? key,
   }) : super(key: key);
 
   @override
-  SetupScreenState createState() {
-    return SetupScreenState();
+  IMUScreenState createState() {
+    return IMUScreenState();
   }
 }
 
-class SetupScreenState extends State<SetupScreen> {
-  SetupScreenState();
+class IMUScreenState extends State<IMUScreen> {
+  IMUScreenState();
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SetupBloc, SetupState>(builder: (
-      BuildContext context,
-      SetupState currentState,
-    ) {
-      return Center(
-        child: Stack(
-          children: [_buildModelView(), _buildinfoGraph()],
-        ),
-      );
-    });
+    return Center(
+      child: Stack(
+        children: [_buildModelView(), _buildinfoGraph()],
+      ),
+    );
   }
 
   _buildModelView() {

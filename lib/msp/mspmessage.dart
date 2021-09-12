@@ -27,10 +27,6 @@ class HeaderProtocol {
 class MessageHeader {
   MessageHeader(this.messageType);
 
-  // Uint8List get() {
-  //   return ascii.encode("${this.lead}${this.protocol}${this.messageType}");
-  // }
-
   // Works out which message header this is
   // from the data
   factory MessageHeader.create(Uint8List data) {
@@ -115,8 +111,6 @@ class MSPMessage {
   late int payloadLength = 0;
   // uint16 (little endian) payload size in bytes
   late int payloadSize;
-
-  get _timeout => 10000;
 
   // Offset in payload buffer for flag
   int get _flagOffset => 3;
@@ -253,7 +247,7 @@ class MSPMessageRequest extends MSPMessage {
     }
   }
 
-  int write(SerialPort serialPort) {
-    return serialPort.write(this._buffer, timeout: this._timeout);
+  int write(SerialPort serialPort, {int timeout = 10}) {
+    return serialPort.write(this._buffer, timeout: timeout);
   }
 }

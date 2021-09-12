@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:inavconfiurator/msp/codes/api_version.dart';
 import 'package:inavconfiurator/msp/codes/fcvariant.dart';
@@ -30,6 +31,7 @@ class SerialDeviceRepository {
   late SerialPortReader _reader;
   final _responseMessagesStreamController =
       StreamController<MSPMessageResponse>.broadcast();
+  final _responseRawStreamController = StreamController<Uint8List>.broadcast();
 
   late SerialPort _serialPort;
   final _serialPortStreamController =
@@ -42,6 +44,11 @@ class SerialDeviceRepository {
 
   Stream<SerialDeviceEvent> get serialPortDevice =>
       _serialPortStreamController.stream;
+
+  StreamSink<Uint8List> get responseRawSink =>
+      _responseRawStreamController.sink;
+
+  Stream<Uint8List> get responseRaw => _responseRawStreamController.stream;
 
   StreamSink<MSPMessageResponse> get responseMessagesSink =>
       _responseMessagesStreamController.sink;
@@ -80,25 +87,28 @@ class SerialDeviceRepository {
     return MSPDataClassTransformers.transform(code, messageResponse);
   }
 
-  Future<T> write<T>(int code) async {
-    if (!this._serialPort.isOpen) {
-      throw new Exception("SerialPort is not open");
-    }
-
+  int writeFunc(int code) {
     MSPMessageRequest request = MSPMessageRequest(code);
-    request.write(this._serialPort);
-
-    // Wait for response
-    return this.responseAs<T>(code);
+    return request.write(this._serialPort);
   }
 
-  Future<T> writeWithResponseAs<T>(int code) async {
+  int writeString(String str) {
+    final Uint8List bytes = ascii.encode(str);
+    return this._serialPort.write(bytes);
+  }
+
+  int writeBytes(Uint8List bytes) {
+    return this._serialPort.write(bytes);
+  }
+
+  Future<T?> writeFuncWithResponseAs<T>(int code) async {
     if (!this._serialPort.isOpen) {
       throw new Exception("SerialPort is not open");
     }
-
-    MSPMessageRequest request = MSPMessageRequest(code);
-    request.write(this._serialPort);
+    int written = this.writeFunc(code);
+    if (written <= 0) {
+      return null;
+    }
 
     // Wait for response
     return this.responseAs<T>(code);
@@ -108,13 +118,13 @@ class SerialDeviceRepository {
     print("Getting API versions");
 
     try {
-      MSPApiVersion apiVersion =
-          await this.writeWithResponseAs<MSPApiVersion>(MSPCodes.mspApiVersion);
+      MSPApiVersion? apiVersion = await this
+          .writeFuncWithResponseAs<MSPApiVersion>(MSPCodes.mspApiVersion);
 
       // Check we are version compatible?
-      if (apiVersion.apiVersionMajor < 2) {
+      if (apiVersion == null || apiVersion.apiVersionMajor < 2) {
         this.closeDevice();
-        throw new Exception("Failed version check. ${apiVersion.apiVersion}");
+        throw new Exception("Failed version check. ${apiVersion?.apiVersion}");
       }
 
       print("Detected API Version ${apiVersion.apiVersion}");
@@ -126,14 +136,15 @@ class SerialDeviceRepository {
 
   _checkFCFvarient() async {
     try {
-      MSPFcVariant mspFcVariant =
-          await this.writeWithResponseAs<MSPFcVariant>(MSPCodes.mspFcVariant);
+      MSPFcVariant? mspFcVariant = await this
+          .writeFuncWithResponseAs<MSPFcVariant>(MSPCodes.mspFcVariant);
 
       // Check we are using INAV on the board
-      if (mspFcVariant.flightControllerIdentifier != "INAV") {
+      if (mspFcVariant == null ||
+          mspFcVariant.flightControllerIdentifier != "INAV") {
         this.closeDevice();
         throw new Exception(
-            "Failed flight controller identification. ${mspFcVariant.flightControllerIdentifier}");
+            "Failed flight controller identification. ${mspFcVariant?.flightControllerIdentifier}");
       }
 
       print(mspFcVariant);
@@ -194,6 +205,8 @@ class SerialDeviceRepository {
   // }
 
   void _gotData(Uint8List event) {
+    responseRawSink.add(event);
+
     // try {
     MSPMessageResponse respone = new MSPMessageResponse(event);
     bool worked = respone.readData();
@@ -216,6 +229,7 @@ class SerialDeviceRepository {
   close() {
     this.disconnect();
 
+    _responseRawStreamController.close();
     _errorStreamController.close();
     _serialPortStreamController.close();
     _responseMessagesStreamController.close();

@@ -1,6 +1,18 @@
 part of 'cli_bloc.dart';
 
-@immutable
-abstract class CliState {}
+class CliState {
+  List<String> messages;
+  String get message => this.messages.reduce((value, str) => value += "$str\n");
 
-class CliInitial extends CliState {}
+  CliState({
+    required this.messages,
+  });
+
+  factory CliState.init() {
+    return CliState(messages: List<String>.empty());
+  }
+
+  factory CliState.data(List<String> messages) {
+    return CliState(messages: messages);
+  }
+}
