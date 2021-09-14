@@ -42,7 +42,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
 
   _info() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 16, 0)
+      padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
       child: Expanded(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
