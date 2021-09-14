@@ -8,6 +8,8 @@ import 'package:meta/meta.dart';
 part 'home_event.dart';
 part 'home_state.dart';
 
+enum HomePages { overview, imu, cli }
+
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeState.init());
 
@@ -15,13 +17,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Stream<HomeState> mapEventToState(
     HomeEvent event,
   ) async* {
-    // switch (event) {
-    //   case MyEvent.eventA:
-    //     yield StateA();
-    //     break;
-    //   case MyEvent.eventB:
-    //     yield StateB();
-    //     break;
-    // }
+    if (event is ChangeHomePageEvent) {
+      yield new HomeState(tabPage: event.tabPage);
+    }
   }
 }

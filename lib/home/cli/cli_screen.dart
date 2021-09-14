@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // Import the language & theme
 // import 'package:highlight/languages/dart.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
-import 'package:inavconfiurator/cli/cli_syntax.dart';
+import 'package:inavconfiurator/home/cli/cli_syntax.dart';
 
 import 'bloc/cli_bloc.dart';
 

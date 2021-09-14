@@ -1,11 +1,12 @@
-# INav Cross configurator
+`# INav Cross configurator
 
+Yeah, ignore the typos. Typing is hard
 ### What is it?
-The purpose of this pet project is to build a Inav compatible configurable app
+The purpose of this pet project is to build an INAV compatible configurable app
 that works on Mobile and Desktop cross platform.
 
 ### Why
-Since Inav-configurator is great but a bit aging. I wanted to build something for fun as a pet project that i could also use to configure Inav using my mobile without bluetooth.
+Since INAV-Configurator is great but aging. I wanted to build something for fun as a pet project that I could also use to configure INAV using my mobile without bluetooth.
 
 ### Aims
 * Work on all systems mobile and Desktop
@@ -17,20 +18,28 @@ Since Inav-configurator is great but a bit aging. I wanted to build something fo
 
 ### Current aims
 - [X] Orientation informatin
-- [ ] Cli
+- [x] Cli
+- [ ] Welcome Screen with info
+- [ ] Desktop View - Navigation left
+- [x] Mobile View - Navigation in drawer
 - [ ] Import dump
 - [ ] Export dump
 - [ ] Advanced params
 - [ ] Modes
+- [ ] Auto Take off screen
 - [ ] Status
-- [ ] Wizzards for model types. calibrations, Planes etc, default setups etc
+- [ ] Wizards for model types. calibrations, Planes etc, default setups etc
 
 ### A LOT TO DO!
-There is a lot to do to catchup and not everything will be implemented. Always use INav-configurator but hopefully over some years i may get close
+There is a lot to do to catchup and not everything will be implemented. Always use INXC-Configurator but hopefully over some years i may get close
 and at least be able to configure what i need in the field.
 
-### Port selection
-![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/model.png)
+### Welcome Screen
+![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/welcome.png)
+
+### Port Selection
+![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/front.png)
 
 ### Orientation
-![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/front.png)
+![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/model.png)
+

@@ -26,12 +26,7 @@ class _IMUPageState extends State<IMUPage> {
         //   create: (context) => SetupBloc(),
         // ),
       ],
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('IMU'),
-        ),
-        body: IMUScreen(),
-      ),
+      child: IMUScreen(),
     );
   }
 }

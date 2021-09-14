@@ -7,7 +7,7 @@ import 'home_screen.dart';
 class TabPage {
   final IconData iconData;
   final String tabName;
-  final Widget tabPage;
+  final HomePages tabPage;
 
   TabPage(
     this.iconData,

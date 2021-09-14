@@ -1,13 +1,13 @@
 part of 'home_bloc.dart';
 
 class HomeState {
-  final List<TabPage> tabPages;
+  final TabPage? tabPage;
 
   HomeState({
-    required this.tabPages,
+    this.tabPage,
   });
 
   factory HomeState.init() {
-    return HomeState(tabPages: []);
+    return HomeState();
   }
 }

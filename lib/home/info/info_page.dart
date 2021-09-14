@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'bloc/info_bloc.dart';
 import 'info_screen.dart';
 
 class InfoPage extends StatefulWidget {
@@ -12,11 +14,9 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Info'),
-      ),
-      body: InfoScreen(),
+    return BlocProvider<InfoBloc>(
+      create: (context) => InfoBloc(),
+      child: InfoScreen(),
     );
   }
 }

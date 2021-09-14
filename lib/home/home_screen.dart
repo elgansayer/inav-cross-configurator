@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:inavconfiurator/app/bloc/app_bloc.dart';
-import 'package:inavconfiurator/cli/cli_page.dart';
+import 'package:inavconfiurator/home/cli/cli_page.dart';
+import 'package:inavconfiurator/home/welcome/welcome_page.dart';
 import 'bloc/home_bloc.dart';
 import 'home_page.dart';
 import 'imu/imu_page.dart';
@@ -23,9 +24,9 @@ class HomeScreenState extends State<HomeScreen> {
   HomeScreenState();
 
   final List<TabPage> tabPages = [
-    new TabPage(Icons.check, "Overview", InfoPage()),
-    new TabPage(Icons.directions_car, "IMU", IMUPage()),
-    new TabPage(Icons.computer, "Cli", CliPage()),
+    new TabPage(Icons.check, "Overview", HomePages.overview),
+    new TabPage(Icons.directions_car, "IMU", HomePages.imu),
+    new TabPage(Icons.computer, "Cli", HomePages.cli),
   ];
 
   @override
@@ -34,9 +35,10 @@ class HomeScreenState extends State<HomeScreen> {
       BuildContext context,
       HomeState currentState,
     ) {
+      final TabPage? tabPage = currentState.tabPage;
       return Scaffold(
         appBar: AppBar(
-          title: Text('INav'),
+          title: Text(tabPage?.tabName ?? 'INav'),
           // bottom: TabBar(
           //   controller: _tabController,
           //   tabs: tabPages.map((tp) => tp.tab).toList(),
@@ -48,10 +50,34 @@ class HomeScreenState extends State<HomeScreen> {
         //   controller: _tabController,
         //   children: tabPages.map((tp) => tp.tabPage).toList(),
         // ),
-        // body: HomeScreen(homeBloc: _homeBloc),
+        body: _getBody(tabPage),
         drawer: _buildDrawer(),
       );
     });
+  }
+
+  _getBody(TabPage? tabPage) {
+    Widget page = InfoPage();
+
+    // Use a switch so we can dispose the page each time.
+    // We could store the state though?
+    // or we could keep the page in memory
+    // and not dispose it.
+    switch (tabPage?.tabPage) {
+      case HomePages.cli:
+        page = CliPage();
+        break;
+      case HomePages.imu:
+        page = IMUPage();
+        break;
+      case HomePages.overview:
+        page = InfoPage();
+        break;
+      default:
+        page = WelcomePage();
+    }
+
+    return page;
   }
 
   _buildDrawer() {
