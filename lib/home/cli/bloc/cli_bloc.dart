@@ -49,6 +49,7 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   Stream<CliState> _recievedRawCliEvent(RecievedRawCliEvent event) async* {
     final newMsg = ascii.decode(event.data);
     final newMsgs = [...state.messages, newMsg];
+    
     yield CliState(
       messages: newMsgs,
     );

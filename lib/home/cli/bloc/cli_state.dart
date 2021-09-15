@@ -2,7 +2,7 @@ part of 'cli_bloc.dart';
 
 class CliState {
   List<String> messages;
-  String get message => this.messages.reduce((value, str) => value += "$str\n");
+  String get message => this.messages.join(); // this.messages.reduce((value, str) => value += "$str\n");
 
   CliState({
     required this.messages,

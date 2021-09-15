@@ -43,3 +43,7 @@ and at least be able to configure what i need in the field.
 ### Orientation
 ![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/model.png)
 
+### Cli
+![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/cli.png)
+
+
