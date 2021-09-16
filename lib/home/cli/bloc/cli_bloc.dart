@@ -31,7 +31,7 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     CliEvent event,
   ) async* {
     if (event is SendCliCmdEvent) {
-      this._sendCliCmd(event);
+      yield* this._handleCliCmd(event);
     }
 
     if (event is RecievedRawCliEvent) {
@@ -49,7 +49,7 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   Stream<CliState> _recievedRawCliEvent(RecievedRawCliEvent event) async* {
     final newMsg = ascii.decode(event.data);
     final newMsgs = [...state.messages, newMsg];
-    
+
     yield CliState(
       messages: newMsgs,
     );
@@ -65,8 +65,26 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     serialDeviceRepository.writeString(cmdEx);
   }
 
-  _sendCliCmd(SendCliCmdEvent event) {
-    final String cmd = event.cliCmd;
+  Stream<CliState> _handleCliCmd(SendCliCmdEvent event) async* {
+    final String cmd = event.cliCmd.toLowerCase();
+
+    // Custom commands?
+    switch (cmd) {
+      case 'clear':
+        yield* _handleClearCmd();
+        break;
+      default:
+        this._sendCliCmd(cmd);
+    }
+  }
+
+  Stream<CliState> _handleClearCmd() async* {
+    yield CliState(
+      messages: List<String>.empty(),
+    );
+  }
+
+  _sendCliCmd(String cmd) {
     final cmdEx = "$cmd\n";
     serialDeviceRepository.writeString(cmdEx);
   }
