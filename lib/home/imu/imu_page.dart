@@ -22,9 +22,6 @@ class _IMUPageState extends State<IMUPage> {
               serialDeviceRepository:
                   RepositoryProvider.of<SerialDeviceRepository>(context)),
         ),
-        // BlocProvider<SetupBloc>(
-        //   create: (context) => SetupBloc(),
-        // ),
       ],
       child: IMUScreen(),
     );

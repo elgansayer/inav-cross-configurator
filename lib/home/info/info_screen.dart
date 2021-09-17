@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfiurator/components/Scaffod.dart';
 
 import 'bloc/info_bloc.dart';
 
@@ -23,8 +24,11 @@ class InfoScreenState extends State<InfoScreen> {
       BuildContext context,
       InfoState currentState,
     ) {
-      return Center(
-        child: CircularProgressIndicator(),
+      return AppScaffold(
+        title: "Overview",
+        body: Center(
+          child: Text("Overview"),
+        ),
       );
     });
   }

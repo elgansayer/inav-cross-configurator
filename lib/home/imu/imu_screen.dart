@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfiurator/components/Scaffod.dart';
 import 'package:inavconfiurator/home/imu/bloc/imu_bloc.dart';
 import 'package:inavconfiurator/home/imu/imu_view_screen.dart';
 
@@ -19,9 +20,12 @@ class IMUScreenState extends State<IMUScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Stack(
-        children: [_buildModelView(), _buildinfoGraph()],
+    return AppScaffold(
+      title: "IMU",
+      body: Center(
+        child: Stack(
+          children: [_buildModelView(), _buildinfoGraph()],
+        ),
       ),
     );
   }
