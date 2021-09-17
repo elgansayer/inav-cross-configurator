@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CliHelpScreen extends StatefulWidget {
   CliHelpScreen({Key? key}) : super(key: key);
@@ -98,7 +99,7 @@ class _CliHelpScreenState extends State<CliHelpScreen> {
               subtitle: Text("Visit Command Line Interface (CLI)"),
               trailing: Icon(Icons.open_in_browser),
               onTap: () {
-                //https://github.com/iNavFlight/inav/blob/master/docs/Cli.md
+                _launchGitHelp();
               }),
           Divider(),
           Padding(
@@ -140,5 +141,10 @@ class _CliHelpScreenState extends State<CliHelpScreen> {
         ],
       ),
     );
+  }
+
+  void _launchGitHelp() async {
+    String url = "https://github.com/iNavFlight/inav/blob/master/docs/Cli.md";
+    await canLaunch(url);
   }
 }

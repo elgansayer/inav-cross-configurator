@@ -68,6 +68,11 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   Stream<CliState> _handleCliCmd(SendCliCmdEvent event) async* {
     final String cmd = event.cliCmd.toLowerCase();
 
+    // Does this cmd start with a #? if so, ignore it
+    if (cmd.startsWith('#')) {
+      return;
+    }
+
     // Custom commands?
     switch (cmd) {
       case 'clear':

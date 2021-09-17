@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:code_text_field/code_text_field.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:file_picker_desktop/file_picker_desktop.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 // Import the language & theme
@@ -83,8 +83,8 @@ class CliScreenState extends State<CliScreen> {
           child: ListTile(
             leading: Icon(Icons.file_download),
             title: Text('Save to file'),
-            onTap: () async {
-// show a dialog to open a file
+            onTap: () {
+              _saveFile();
             },
           ),
         ),
@@ -96,29 +96,83 @@ class CliScreenState extends State<CliScreen> {
               FlutterClipboard.copy(this._textConsoleController.text)
                   .then((value) {
                 final snackBar = SnackBar(content: Text('Copied to clipboard'));
-
-// Find the ScaffoldMessenger in the widget tree
-// and use it to show a SnackBar.
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               });
             },
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           child: ListTile(
             leading: Icon(Icons.import_export),
             title: Text('Import'),
+            onTap: () {
+              this._openFile();
+            },
           ),
         ),
         const PopupMenuDivider(),
-        const PopupMenuItem(
+        PopupMenuItem(
           child: ListTile(
             leading: Icon(Icons.help),
             title: Text('Help'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CliHelpScreen()),
+              );
+            },
           ),
         )
       ],
     );
+  }
+
+  Future<void> _openFile() async {
+    try {
+      final result = await pickFiles(
+        allowMultiple: false,
+      );
+
+      if (result == null) {
+        return;
+      }
+
+      String? path = result.files.single.path;
+      if (path == null) {
+        return;
+      }
+
+      File file = File(path);
+      file.readAsLines().then((lines) => lines.forEach((line) => _send(line)));
+    } catch (e) {
+      final snackBar =
+          SnackBar(content: Text('There was an error. File not opened'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  Future<void> _saveFile() async {
+    try {
+      final String? selectedFileName = await saveFile(
+        defaultFileName: 'inav-dump.txt',
+      );
+
+      if (selectedFileName == null) {
+        return;
+      }
+
+      File file = File(selectedFileName);
+
+      // Write the file
+      file.writeAsString(this._textConsoleController.text);
+
+      final snackBar = SnackBar(content: Text('File saved'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } catch (e) {
+      final snackBar =
+          SnackBar(content: Text('There was an error. File not saved'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   _buildTabBody() {

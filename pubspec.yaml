@@ -43,6 +43,8 @@ dependencies:
   
   file_picker_cross: ^4.4.2
   file_picker: ^3.0.4
+  file_picker_desktop: ^1.1.0
+  url_launcher: ^6.0.10
 
 
 dev_dependencies:
