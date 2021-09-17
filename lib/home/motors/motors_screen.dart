@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inavconfiurator/components/Scaffod.dart';
+import 'package:inavconfiurator/home/motors/bloc/motors_bloc.dart';
 
 class MotorsScreen extends StatefulWidget {
   const MotorsScreen({

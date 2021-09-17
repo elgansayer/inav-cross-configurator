@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfiurator/home/failsafe/bloc/failsafe_bloc.dart';
 import 'failsafe_screen.dart';
 
 class FailsafePage extends StatefulWidget {

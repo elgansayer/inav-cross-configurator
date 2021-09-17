@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfiurator/home/modes/bloc/modes_bloc.dart';
 import 'modes_screen.dart';
 
 class ModesPage extends StatefulWidget {

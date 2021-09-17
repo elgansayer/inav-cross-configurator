@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:inavconfiurator/components/Scaffod.dart';
+
+import 'bloc/modes_bloc.dart';
 
 class ModesScreen extends StatefulWidget {
   const ModesScreen({
