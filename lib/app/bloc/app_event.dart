@@ -25,3 +25,7 @@ class ChangePageEvent extends AppEvent {
 class DisconnectEvent extends AppEvent {
   DisconnectEvent();
 }
+
+class ReconnectEvent extends AppEvent {
+  ReconnectEvent();
+}

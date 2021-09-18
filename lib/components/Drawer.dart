@@ -12,6 +12,7 @@ class SideDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<TabPage> tabPages = [
       new TabPage(Icons.check, "Overview", HomePages.overview),
+      new TabPage(Icons.check, "Failsafe", HomePages.failsafe),
       new TabPage(Icons.directions_car, "IMU", HomePages.imu),
       new TabPage(Icons.computer, "Cli", HomePages.cli),
     ];

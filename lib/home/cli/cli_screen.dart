@@ -71,8 +71,9 @@ class CliScreenState extends State<CliScreen> {
   }
 
   _buildTabBar() {
-    return AppScaffold(
-        title: "Cli", actions: [_buildMenu()], body: _buildTabBody());
+    return Scaffold(
+        appBar: AppBar(title: Text("Cli"), actions: [_buildMenu()]),
+        body: _buildTabBody());
   }
 
   _buildMenu() {

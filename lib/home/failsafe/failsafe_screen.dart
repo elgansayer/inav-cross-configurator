@@ -15,6 +15,10 @@ class FailsafeScreen extends StatefulWidget {
 }
 
 class FailsafeScreenState extends State<FailsafeScreen> {
+  late TextEditingController _delayController = new TextEditingController();
+  late TextEditingController _throttleController = new TextEditingController();
+  late TextEditingController _guardTimeController = new TextEditingController();
+
   FailsafeScreenState();
 
   @override
@@ -28,12 +32,78 @@ class FailsafeScreenState extends State<FailsafeScreen> {
   }
 
   _body() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(50, 8, 50, 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[],
-      ),
+    var _currencies = [
+      "Land",
+      "RTH",
+    ];
+
+    _delayController.text = "30";
+    _throttleController.text = "20";
+    _guardTimeController.text = "10";
+
+    return Column(
+      children: [
+        new ListTile(
+          leading: const Icon(Icons.wallet_giftcard),
+          title: new TextFormField(
+            controller: _guardTimeController,
+            decoration: new InputDecoration(
+              suffixStyle: TextStyle(fontSize: 20),
+              counterText: '1000cm',
+              counterStyle:
+                  TextStyle(fontSize: 10, fontStyle: FontStyle.italic),
+              suffixText: "m",
+              labelText: 'Guard time for activation after signal lost',
+              hintText:
+                  "Guard time for activation after signal lost [1 = 0.1 sec.]",
+            ),
+          ),
+        ),
+        ListTile(
+            leading: const Icon(Icons.merge_type),
+            subtitle: DropdownButtonFormField(
+              items: _currencies.map((String category) {
+                return new DropdownMenuItem(
+                    value: category,
+                    child: Row(
+                      children: <Widget>[
+                        Text(category),
+                      ],
+                    ));
+              }).toList(),
+              value: "Land",
+            )),
+        new ListTile(
+          leading: const Icon(Icons.speed),
+          title: new TextField(
+            controller: _throttleController,
+            decoration: new InputDecoration(
+              suffixStyle: TextStyle(fontSize: 20),
+              counterText: '2000m',
+              counterStyle:
+                  TextStyle(fontSize: 10, fontStyle: FontStyle.italic),
+              suffixText: "m",
+              labelText: 'Throttle value used while landing',
+              hintText: "Throttle value used while landing",
+            ),
+          ),
+        ),
+        new ListTile(
+          leading: const Icon(Icons.time_to_leave),
+          title: new TextField(
+            controller: _delayController,
+            decoration: new InputDecoration(
+              suffixStyle: TextStyle(fontSize: 20),
+              counterText: '3000m',
+              counterStyle:
+                  TextStyle(fontSize: 10, fontStyle: FontStyle.italic),
+              suffixText: "m",
+              labelText: 'Delay for turning off the Motors',
+              hintText: "Delay for turning off the Motors",
+            ),
+          ),
+        )
+      ],
     );
   }
 }

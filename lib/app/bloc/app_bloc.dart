@@ -31,8 +31,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       yield AppState(event.appPage);
     }
 
+    if (event is ReconnectEvent) {
+      this._reconnect();
+    }
+
     if (event is DisconnectEvent) {
-      this.disconnect();
+      this._disconnect();
     }
   }
 
@@ -42,7 +46,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       if (serialDeviceEvent.type == SerialDeviceEventType.connected) {
         this.add(ChangePageEvent(AppPage.home));
       } else if (serialDeviceEvent.type == SerialDeviceEventType.disconnected) {
-        this.disconnect();
+        this._disconnect();
       } else {
         this.add(ChangePageEvent(AppPage.devices));
       }
@@ -53,12 +57,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   Future<void> close() {
     //cancel streams
     _deviceListenrer.cancel();
-    this.disconnect();
+    this._disconnect();
     return super.close();
   }
 
-  void disconnect() {
+  void _disconnect() {
     _serialDeviceRepository.disconnect();
     this.add(ChangePageEvent(AppPage.devices));
+  }
+
+  void _reconnect() {
+    // Disconnect first
+    _serialDeviceRepository.reconnect();
+
+    // this.add(ChangePageEvent(AppPage.devices));
   }
 }

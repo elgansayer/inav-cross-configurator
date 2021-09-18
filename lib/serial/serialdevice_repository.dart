@@ -21,6 +21,9 @@ class SerialDeviceEvent {
 class SerialDeviceRepository {
   late StreamSubscription<Uint8List> _readerListener;
 
+  // Last connected
+  late SerialPortInfo _serialPortInfo;
+
   // late Timer _heartBeatTimer;
 
   SerialDeviceRepository();
@@ -155,8 +158,9 @@ class SerialDeviceRepository {
     }
   }
 
-  Future<SerialPort?> connect(SerialPortInfo portcode) async {
-    String portPath = portcode.name;
+  Future<SerialPort?> connect(SerialPortInfo serialPortInfo) async {
+    String portPath = serialPortInfo.name;
+    this._serialPortInfo = serialPortInfo;
     this._serialPort = SerialPort(portPath);
     print("Opening $portPath");
 
@@ -246,6 +250,17 @@ class SerialDeviceRepository {
     this._readerListener.cancel();
     this.closeDevice();
     this._closeMaps();
+  }
+
+  void reconnect() {
+    final serialPortInfo = this._serialPortInfo;
+
+    this._readerListener.cancel();
+    this.closeDevice();
+    this._closeMaps();
+
+    // Now reconnect
+    this.connect(serialPortInfo);
   }
 
   void closeDevice() {
