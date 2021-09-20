@@ -7,9 +7,10 @@ import 'package:inavconfiurator/msp/codes.dart';
 import 'package:inavconfiurator/msp/data_transformers.dart';
 import 'package:inavconfiurator/msp/mspmessage.dart';
 import 'package:inavconfiurator/serial/serialport_model.dart';
+import 'package:inavconfiurator/serial/serialport_provider.dart';
 import 'package:libserialport/libserialport.dart';
 
-enum SerialDeviceEventType { connected, disconnected }
+enum SerialDeviceEventType { connected, connecting, disconnected }
 
 class SerialDeviceEvent {
   final SerialPort serialPort;
@@ -158,17 +159,26 @@ class SerialDeviceRepository {
     }
   }
 
-  Future<SerialPort?> connect(SerialPortInfo serialPortInfo) async {
+  Future<bool> connect(SerialPortInfo serialPortInfo) async {
     String portPath = serialPortInfo.name;
     this._serialPortInfo = serialPortInfo;
     this._serialPort = SerialPort(portPath);
     print("Opening $portPath");
 
-    this._closeMaps();
+    if (this._serialPort.isOpen) {
+      String msg = "Device already open";
+      this.disconnect(skipReader: true);
+      throw new Exception(msg);
+    }
+
+    // Inform app we are connecting
+    final newConnectingEvent = new SerialDeviceEvent(
+        this._serialPort, SerialDeviceEventType.connecting);
+    this._serialPortDeviceSink.add(newConnectingEvent);
 
     if (!this._serialPort.openReadWrite()) {
       String msg = "Failed to open port for read/write operations";
-      this.closeDevice();
+      this.disconnect(skipReader: true);
       throw new Exception(msg);
     }
 
@@ -183,11 +193,11 @@ class SerialDeviceRepository {
     // this._startHeartBeat();
 
     // Notify app of connection
-    final newEvent = new SerialDeviceEvent(
+    final newConnectedEvent = new SerialDeviceEvent(
         this._serialPort, SerialDeviceEventType.connected);
-    this._serialPortDeviceSink.add(newEvent);
+    this._serialPortDeviceSink.add(newConnectedEvent);
 
-    return this._serialPort;
+    return true;
   }
 
   // Currently cannot tell when device disconnected
@@ -246,21 +256,56 @@ class SerialDeviceRepository {
     this.streamMaps.clear();
   }
 
-  void disconnect() {
-    this._readerListener.cancel();
+  void disconnect({bool skipReader = false}) {
+    if (!skipReader) {
+      this._readerListener.cancel();
+    }
     this.closeDevice();
     this._closeMaps();
   }
 
-  void reconnect() {
+  void reconnect() async {
     final serialPortInfo = this._serialPortInfo;
 
-    this._readerListener.cancel();
-    this.closeDevice();
-    this._closeMaps();
+    // Close everything!
+    this.disconnect();
 
-    // Now reconnect
-    this.connect(serialPortInfo);
+    Completer<SerialPortInfo> completer = new Completer<SerialPortInfo>();
+    SerialPortProvider serialPortProvider = new SerialPortProvider();
+
+    var duration = new Duration(seconds: 1);
+    Timer.periodic(duration, (timer) async {
+      var allPosrts = serialPortProvider.ports;
+
+      // Avoid exceptions
+      SerialPortInfo portAvilable = allPosrts.firstWhere(
+          (element) => element.serialNumber == serialPortInfo.serialNumber,
+          orElse: () {
+        return new SerialPortInfo.empty();
+      });
+
+      // An empty SerialPortInfo has an address of -1
+      if (portAvilable.address != -1) {
+        timer.cancel();
+        completer.complete(portAvilable);
+      }
+    });
+
+    // Wait for confirmation the port is back up!
+    // but is it? We kinda need tow ait for it to init too
+    var portSelected = await completer.future;
+    await Future.delayed(Duration(seconds: 1));
+
+    // Wait a few more seconds and try to connect
+    var connectDuration = new Duration(seconds: 1);
+    Timer.periodic(connectDuration, (d) async {
+      try {
+        var didConnect = await this.connect(portSelected);
+        if (didConnect) {
+          d.cancel();
+        }
+      } catch (e) {}
+    });
   }
 
   void closeDevice() {

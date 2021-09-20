@@ -19,4 +19,8 @@ class SerialPortInfo {
     // print('\tProduct ID: 0x${this.productId.toRadixString(16)}');
     // print('\tVendor ID: 0x${this.vendorId.toRadixString(16)}');
   }
+
+  factory SerialPortInfo.empty() {
+    return SerialPortInfo("", -1, "", "", "");
+  }
 }

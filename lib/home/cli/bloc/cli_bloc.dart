@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
+import 'package:inavconfiurator/app/bloc/app_bloc.dart';
 import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 import 'package:meta/meta.dart';
 
@@ -10,18 +11,19 @@ part 'cli_event.dart';
 part 'cli_state.dart';
 
 class CliBloc extends Bloc<CliEvent, CliState> {
-  CliBloc({required this.serialDeviceRepository}) : super(CliState.init()) {
+  CliBloc({required this.serialDeviceRepository, required this.appBloc})
+      : super(CliState.init()) {
     this._enterCliMode();
     this._listen();
   }
 
-  late SerialDeviceRepository serialDeviceRepository;
+  final AppBloc appBloc;
+  final SerialDeviceRepository serialDeviceRepository;
 
   late StreamSubscription<Uint8List> _rawListener;
 
   @override
   Future<void> close() async {
-    this._exitCliMode();
     _rawListener.cancel();
     super.close();
   }
@@ -32,6 +34,21 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   ) async* {
     if (event is SendCliCmdEvent) {
       yield* this._handleCliCmd(event);
+    }
+
+    if (event is ExitCliEvent) {
+      yield* this._exitCliMode();
+    }
+
+    if (event is ExitedCliEvent) {
+      yield CliState.exited(
+        this.state.messages,
+      );
+
+      // Now reconnect after a short display delay
+      Timer(Duration(milliseconds: 250), () {
+        this.appBloc.add(ReconnectEvent());
+      });
     }
 
     if (event is RecievedRawCliEvent) {
@@ -50,14 +67,23 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     final newMsg = ascii.decode(event.data);
     final newMsgs = [...state.messages, newMsg];
 
-    yield CliState(
-      messages: newMsgs,
+    yield CliState.data(
+      newMsgs,
     );
+
+    // Lazy check, if we are exiting. Then change state
+    // to reflect that
+    if (newMsg.contains('Leaving CLI mode')) {
+      this.add(ExitedCliEvent());
+    }
   }
 
   _exitCliMode() {
-    final cmdEx = "exit\r";
-    serialDeviceRepository.writeString(cmdEx);
+    final cmdEx = "exit";
+    _sendCliCmd(cmdEx);
+
+    // Now we should be back, and have sent exit
+    // but wait a second anyway
   }
 
   _enterCliMode() {
@@ -84,13 +110,11 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   }
 
   Stream<CliState> _handleClearCmd() async* {
-    yield CliState(
-      messages: List<String>.empty(),
-    );
+    yield CliState.init();
   }
 
   _sendCliCmd(String cmd) {
     final cmdEx = "$cmd\n";
-    serialDeviceRepository.writeString(cmdEx);
+    return serialDeviceRepository.writeString(cmdEx);
   }
 }

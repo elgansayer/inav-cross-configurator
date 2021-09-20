@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfiurator/app/bloc/app_bloc.dart';
 import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 
 import 'bloc/cli_bloc.dart';
@@ -18,7 +19,8 @@ class _CliPageState extends State<CliPage> {
     return BlocProvider(
       create: (context) => CliBloc(
           serialDeviceRepository:
-              RepositoryProvider.of<SerialDeviceRepository>(context)),
+              RepositoryProvider.of<SerialDeviceRepository>(context),
+          appBloc: BlocProvider.of<AppBloc>(context)),
       child: CliScreen(),
     );
   }

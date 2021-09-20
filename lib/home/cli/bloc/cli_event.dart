@@ -17,3 +17,11 @@ class RecievedRawCliEvent extends CliEvent {
     required this.data,
   });
 }
+
+class ExitCliEvent extends CliEvent {
+  ExitCliEvent();
+}
+
+class ExitedCliEvent extends CliEvent {
+  ExitedCliEvent();
+}

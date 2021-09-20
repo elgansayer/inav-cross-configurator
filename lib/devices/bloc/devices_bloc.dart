@@ -73,7 +73,6 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
       await this._serialDeviceRepository.connect(serialPortInfo);
     } catch (e) {
       this.add(GetDevicesEvent());
-
       _errorMessageRepository.errorSink.add(e.toString());
     }
   }

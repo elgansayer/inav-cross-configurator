@@ -10,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // Import the language & theme
 // import 'package:highlight/languages/dart.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
-import 'package:inavconfiurator/components/Scaffod.dart';
 import 'package:inavconfiurator/home/cli/cli_syntax.dart';
 
 import 'bloc/cli_bloc.dart';
@@ -57,12 +56,15 @@ class CliScreenState extends State<CliScreen> {
     return BlocConsumer<CliBloc, CliState>(
       listener: (context, state) {
         _textConsoleController.text = state.message;
-        // _codeController?.text = state.message;
 
         _codeController = CodeController(
             text: state.message,
             language: cliSyntax,
             theme: monokaiSublimeTheme);
+
+        if (state.excitedCli) {
+          Navigator.pop(context);
+        }
       },
       builder: (context, state) {
         return _buildTabBar();
@@ -71,9 +73,16 @@ class CliScreenState extends State<CliScreen> {
   }
 
   _buildTabBar() {
-    return Scaffold(
+    return WillPopScope(
+      child: Scaffold(
         appBar: AppBar(title: Text("Cli"), actions: [_buildMenu()]),
-        body: _buildTabBody());
+        body: _buildTabBody(),
+      ),
+      onWillPop: () async {
+        BlocProvider.of<CliBloc>(context).add(ExitCliEvent());
+        return false;
+      },
+    );
   }
 
   _buildMenu() {

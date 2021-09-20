@@ -1,6 +1,6 @@
 part of 'app_bloc.dart';
 
-enum AppPage { devices, home }
+enum AppPage { devices, home, connecting }
 
 @immutable
 class AppState {

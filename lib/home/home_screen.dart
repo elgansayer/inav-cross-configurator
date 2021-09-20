@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/app/bloc/app_bloc.dart';
 import 'package:inavconfiurator/home/cli/cli_page.dart';
 import 'package:inavconfiurator/home/welcome/welcome_page.dart';
 import 'bloc/home_bloc.dart';
@@ -77,6 +76,5 @@ class HomeScreenState extends State<HomeScreen> {
 
     // Coming back from cli we need to reconnect
     print("Closed cli");
-    BlocProvider.of<AppBloc>(context).add(ReconnectEvent());
   }
 }

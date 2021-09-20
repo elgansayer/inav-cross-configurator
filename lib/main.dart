@@ -5,6 +5,7 @@ import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 
 import 'app/bloc/app_bloc.dart';
 import 'components/bloc/errormessage_repository.dart';
+import 'connecting/connecting_scren.dart';
 import 'devices/devices_page.dart';
 import 'home/home_page.dart';
 // https://github.com/iNavFlight/inav/wiki/MSP-V2
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'INav Configurator',
+      title: 'INAV Configurator',
       theme: ThemeData(
         brightness: Brightness.light,
         /* light theme settings */
@@ -61,12 +62,18 @@ class MyApp extends StatelessWidget {
               return _devicesPageView();
             case AppPage.home:
               return _homeView();
+            case AppPage.connecting:
+              return _connectingView();
             default:
               return _homeView();
           }
         },
       ),
     );
+  }
+
+  _connectingView() {
+    return ConnectingScreen();
   }
 
   _homeView() {

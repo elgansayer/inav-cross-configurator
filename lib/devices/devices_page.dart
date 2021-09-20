@@ -21,23 +21,7 @@ class _DevicesPageState extends State<DevicesPage> {
       create: (context) => SerialPortRepository(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text("INav"),
-          // title: Row(
-          //   children: [
-          //     Image.asset('assets/images/inav_icon_128.png',
-          //         height: 32, fit: BoxFit.cover),
-          //     Column(
-          //       mainAxisAlignment: MainAxisAlignment.start,
-          //       children: [
-
-          //       ],
-          //     ),
-          //   ],
-          // ),
-          // title:
-          // Image.asset('assets/images/cf_logo_white.svg', fit: BoxFit.cover),
-          // title: SvgPicture.asset('assets/images/light-wide-2.svg',
-          // fit: BoxFit.cover),
+          title: Text("INAV"),
         ),
         body: BlocProvider(
           create: (context) {
