@@ -43,33 +43,42 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'INAV Configurator',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        /* light theme settings */
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        /* dark theme settings */
-      ),
-      themeMode: ThemeMode.dark,
-      home: BlocBuilder<AppBloc, AppState>(
-        builder: (BuildContext context, AppState state) {
-          switch (state.appPage) {
-            case AppPage.devices:
-              return _devicesPageView();
-            case AppPage.home:
-              return _homeView();
-            case AppPage.connecting:
-              return _connectingView();
-            default:
-              return _homeView();
-          }
-        },
+    return WillPopScope(
+      onWillPop: () => _doNastyStuffsBeforeExit(context),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'INAV Configurator',
+        theme: ThemeData(
+          brightness: Brightness.light,
+          /* light theme settings */
+        ),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          /* dark theme settings */
+        ),
+        themeMode: ThemeMode.dark,
+        home: BlocBuilder<AppBloc, AppState>(
+          builder: (BuildContext context, AppState state) {
+            switch (state.appPage) {
+              case AppPage.devices:
+                return _devicesPageView();
+              case AppPage.home:
+                return _homeView();
+              case AppPage.connecting:
+                return _connectingView();
+              default:
+                return _homeView();
+            }
+          },
+        ),
       ),
     );
+  }
+
+  _doNastyStuffsBeforeExit(BuildContext context) {
+    var repo = RepositoryProvider.of<SerialDeviceRepository>(context);
+    repo.disconnect();
+    return true;
   }
 
   _connectingView() {

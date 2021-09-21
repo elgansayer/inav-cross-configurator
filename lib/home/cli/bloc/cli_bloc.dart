@@ -13,8 +13,13 @@ part 'cli_state.dart';
 class CliBloc extends Bloc<CliEvent, CliState> {
   CliBloc({required this.serialDeviceRepository, required this.appBloc})
       : super(CliState.init()) {
-    this._enterCliMode();
-    this._listen();
+    this._countDown();
+  }
+
+  _countDown() {
+    Future.delayed(new Duration(milliseconds: 10000), () {
+      this.add(EnterCliEvent());
+    });
   }
 
   final AppBloc appBloc;
@@ -32,12 +37,18 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   Stream<CliState> mapEventToState(
     CliEvent event,
   ) async* {
+    if (event is EnterCliEvent) {
+      this._enterCliMode();
+      this._listen();
+    }
+
     if (event is SendCliCmdEvent) {
       yield* this._handleCliCmd(event);
     }
 
     if (event is ExitCliEvent) {
-      yield* this._exitCliMode();
+      this._exitCliMode();
+      yield this.state;
     }
 
     if (event is ExitedCliEvent) {
@@ -52,7 +63,11 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     }
 
     if (event is RecievedRawCliEvent) {
-      yield* this._recievedRawCliEvent(event);
+      try {
+        yield* this._recievedRawCliEvent(event);
+      } catch (e) {
+        yield this.state;
+      }
     }
   }
 
@@ -73,7 +88,8 @@ class CliBloc extends Bloc<CliEvent, CliState> {
 
     // Lazy check, if we are exiting. Then change state
     // to reflect that
-    if (newMsg.contains('Leaving CLI mode')) {
+    List<String> checks = ['Rebooting', 'Leaving CLI mode'];
+    if (checks.any((element) => newMsg.contains(element))) {
       this.add(ExitedCliEvent());
     }
   }
@@ -81,9 +97,6 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   _exitCliMode() {
     final cmdEx = "exit";
     _sendCliCmd(cmdEx);
-
-    // Now we should be back, and have sent exit
-    // but wait a second anyway
   }
 
   _enterCliMode() {

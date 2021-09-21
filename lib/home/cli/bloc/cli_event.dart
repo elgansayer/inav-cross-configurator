@@ -25,3 +25,7 @@ class ExitCliEvent extends CliEvent {
 class ExitedCliEvent extends CliEvent {
   ExitedCliEvent();
 }
+
+class EnterCliEvent extends CliEvent {
+  EnterCliEvent();
+}
