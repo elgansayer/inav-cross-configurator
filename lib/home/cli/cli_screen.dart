@@ -66,17 +66,17 @@ class CliScreenState extends State<CliScreen> {
           Navigator.pop(context);
         }
       },
-      builder: (context, state) {
-        return _buildTabBar();
+      builder: (context, CliState state) {
+        return _buildBar(state);
       },
     );
   }
 
-  _buildTabBar() {
+  _buildBar(CliState state) {
     return WillPopScope(
       child: Scaffold(
         appBar: AppBar(title: Text("Cli"), actions: [_buildMenu()]),
-        body: _buildTabBody(),
+        body: state.connected ? _buildBody() : _buildBodyLoading(),
       ),
       onWillPop: () async {
         BlocProvider.of<CliBloc>(context).add(ExitCliEvent());
@@ -185,8 +185,11 @@ class CliScreenState extends State<CliScreen> {
     }
   }
 
-  _buildTabBody() {
-    return _buildBody();
+  _buildBodyLoading() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(child: CircularProgressIndicator()),
+    );
   }
 
   _buildBody() {

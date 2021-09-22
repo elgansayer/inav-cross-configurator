@@ -36,11 +36,14 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
     if (event is ImuAdd3DObjectEvent) {
       yield new ImuViewState(
           event.mdlObject, this.state.scene, Kinematics.zero());
-      this._setupScene();
-      this._setupListeners();
     }
+
     if (event is ImuAddSceneEvent) {
       yield new ImuViewState(this.state.object, event.scene, Kinematics.zero());
+
+      // Object fires twice, then scene
+      this._setupScene();
+      this._setupListeners();
     }
 
     if (event is ResetYawEvent) {
@@ -83,6 +86,7 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
     //cancel streams
     this._timer.cancel();
     this._streamListener.cancel();
+    this._serialDeviceRepository.flush();
     return super.close();
   }
 

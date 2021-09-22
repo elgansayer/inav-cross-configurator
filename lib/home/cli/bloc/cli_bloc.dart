@@ -17,7 +17,13 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   }
 
   _countDown() {
-    Future.delayed(new Duration(milliseconds: 10000), () {
+    // Try to ensure we are ready for cli
+    this.serialDeviceRepository.flush();
+    this.serialDeviceRepository.drain();
+
+    // Not really needed, but it looks cool
+    // and helps get the board ready
+    Future.delayed(new Duration(milliseconds: 150), () {
       this.add(EnterCliEvent());
     });
   }
@@ -38,8 +44,9 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     CliEvent event,
   ) async* {
     if (event is EnterCliEvent) {
-      this._enterCliMode();
+      print("_enterCliMode");
       this._listen();
+      this._enterCliMode();
     }
 
     if (event is SendCliCmdEvent) {
@@ -79,18 +86,22 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   }
 
   Stream<CliState> _recievedRawCliEvent(RecievedRawCliEvent event) async* {
-    final newMsg = ascii.decode(event.data);
-    final newMsgs = [...state.messages, newMsg];
+    try {
+      final newMsg = ascii.decode(event.data);
+      final newMsgs = [...state.messages, newMsg];
 
-    yield CliState.data(
-      newMsgs,
-    );
+      yield CliState.data(
+        newMsgs,
+      );
 
-    // Lazy check, if we are exiting. Then change state
-    // to reflect that
-    List<String> checks = ['Rebooting', 'Leaving CLI mode'];
-    if (checks.any((element) => newMsg.contains(element))) {
-      this.add(ExitedCliEvent());
+      // Lazy check, if we are exiting. Then change state
+      // to reflect that
+      List<String> checks = ['Rebooting', 'Leaving CLI mode'];
+      if (checks.any((element) => newMsg.contains(element))) {
+        this.add(ExitedCliEvent());
+      }
+    } catch (e) {
+      yield this.state;
     }
   }
 
@@ -101,7 +112,7 @@ class CliBloc extends Bloc<CliEvent, CliState> {
 
   _enterCliMode() {
     final cmdEx = "#";
-    serialDeviceRepository.writeString(cmdEx);
+    _sendCliCmd(cmdEx);
   }
 
   Stream<CliState> _handleCliCmd(SendCliCmdEvent event) async* {

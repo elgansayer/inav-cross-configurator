@@ -264,6 +264,14 @@ class SerialDeviceRepository {
     this._closeMaps();
   }
 
+  void flush() {
+    return this._serialPort.flush();
+  }
+
+  void drain() {
+    return this._serialPort.drain();
+  }
+
   void reconnect() async {
     final serialPortInfo = this._serialPortInfo;
 
@@ -298,11 +306,11 @@ class SerialDeviceRepository {
 
     // Wait a few more seconds and try to connect
     var connectDuration = new Duration(seconds: 1);
-    Timer.periodic(connectDuration, (d) async {
+    Timer.periodic(connectDuration, (Timer conTimer) async {
       try {
         var didConnect = await this.connect(portSelected);
         if (didConnect) {
-          d.cancel();
+          conTimer.cancel();
         }
       } catch (e) {}
     });
