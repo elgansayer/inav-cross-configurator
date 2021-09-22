@@ -134,7 +134,7 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   }
 
   Stream<CliState> _handleClearCmd() async* {
-    yield CliState.init();
+    yield CliState.data(List<String>.empty());
   }
 
   _sendCliCmd(String cmd) {

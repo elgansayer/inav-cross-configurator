@@ -227,20 +227,7 @@ class CliScreenState extends State<CliScreen> {
             width: double.infinity,
             child: Row(
               children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    textInputAction: TextInputAction.go,
-                    onSubmitted: (value) {
-                      this._sendCmd();
-                    },
-                    // focusNode: ,
-                    autofocus: true,
-                    controller: _textInputController,
-                    decoration: InputDecoration(
-                      hintText: "Cli Command",
-                    ),
-                  ),
-                ),
+                Expanded(child: _textinput()),
                 SizedBox(
                   width: 15,
                 ),
@@ -259,6 +246,41 @@ class CliScreenState extends State<CliScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  _textinput() {
+    const List<String> _kOptions = <String>[
+      'aardvark',
+      'bobcat',
+      'chameleon',
+    ];
+// TextField(
+//                     textInputAction: TextInputAction.go,
+//                     onSubmitted: (value) {
+//                       this._sendCmd();
+//                     },
+//                     // focusNode: ,
+//                     autofocus: true,
+//                     controller: _textInputController,
+//                     decoration: InputDecoration(
+//                       hintText: "Cli Command",
+//                     ),
+//                   ),
+    return Autocomplete<String>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text == '') {
+          return const Iterable<String>.empty();
+        }
+
+        return _kOptions.where((String option) {
+          return option.contains(textEditingValue.text.toLowerCase());
+        });
+      },
+      onSelected: (String selection) {
+        print('You just selected $selection');
+        // this._sendCmd();
+      },
     );
   }
 
