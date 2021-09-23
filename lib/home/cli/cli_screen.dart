@@ -252,7 +252,7 @@ class CliScreenState extends State<CliScreen> {
   }
 
   _textinput() {
-    return TypeAheadFormField(
+    return TypeAheadField(
         hideOnLoading: true,
         hideOnEmpty: true,
         hideOnError: true,
@@ -260,6 +260,10 @@ class CliScreenState extends State<CliScreen> {
         autoFlipDirection: true,
         textFieldConfiguration: TextFieldConfiguration(
           controller: _textInputController,
+          textInputAction: TextInputAction.go,
+          onEditingComplete: () {
+            this._sendCmd();
+          },
           decoration:
               InputDecoration(hintText: "", labelText: 'Enter a command'),
         ),
