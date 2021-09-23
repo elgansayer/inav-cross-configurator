@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inavconfiurator/components/Scaffod.dart';
 
-import 'bloc/info_bloc.dart';
+import 'bloc/overview_bloc.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/info_bloc.dart';
-import 'info_screen.dart';
+import 'bloc/overview_bloc.dart';
+import 'overview_screen.dart';
 
 class InfoPage extends StatefulWidget {
   static const String routeName = '/info';

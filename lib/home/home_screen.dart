@@ -6,7 +6,7 @@ import 'bloc/home_bloc.dart';
 import 'failsafe/failsafe_page.dart';
 import 'home_page.dart';
 import 'imu/imu_page.dart';
-import 'info/info_page.dart';
+import 'info/overview_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({

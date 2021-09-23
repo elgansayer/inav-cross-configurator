@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-part 'info_event.dart';
-part 'info_state.dart';
+part 'overview_event.dart';
+part 'overview_state.dart';
 
 class InfoBloc extends Bloc<InfoEvent, InfoState> {
   InfoBloc() : super(InfoInitial());

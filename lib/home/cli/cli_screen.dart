@@ -234,7 +234,7 @@ class CliScreenState extends State<CliScreen> {
                   width: 15,
                 ),
                 ElevatedButton(
-                  onPressed: _sendCmd,
+                  onPressed: this._sendCmd,
                   child: Icon(Icons.send, color: Colors.white),
                   style: ElevatedButton.styleFrom(
                     shape: CircleBorder(),
@@ -259,7 +259,7 @@ class CliScreenState extends State<CliScreen> {
         animationDuration: Duration(milliseconds: 250),
         autoFlipDirection: true,
         textFieldConfiguration: TextFieldConfiguration(
-          controller: _textInputController,
+          controller: this._textInputController,
           textInputAction: TextInputAction.go,
           onEditingComplete: () {
             this._sendCmd();
