@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:inavconfiurator/app/bloc/app_bloc.dart';
-import 'package:inavconfiurator/home/bloc/home_bloc.dart';
-import 'package:inavconfiurator/home/home_page.dart';
+
+import '../app/bloc/app_bloc.dart';
+import '../home/bloc/home_bloc.dart';
+import '../home/home_page.dart';
 
 class SideDrawer extends StatelessWidget {
   const SideDrawer({Key? key}) : super(key: key);

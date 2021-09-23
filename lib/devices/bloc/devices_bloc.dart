@@ -1,13 +1,15 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
-import 'package:inavconfiurator/components/bloc/errormessage_repository.dart';
-import 'package:inavconfiurator/serial/serialdevice_repository.dart';
-import 'package:inavconfiurator/serial/serialport_model.dart';
-import 'package:inavconfiurator/serial/serialport_repository.dart';
 import 'package:meta/meta.dart';
 
-part 'devices_state.dart';
+import '../../components/bloc/errormessage_repository.dart';
+import '../../serial/serialdevice_repository.dart';
+import '../../serial/serialport_model.dart';
+import '../../serial/serialport_repository.dart';
+
 part 'devices_event.dart';
+part 'devices_state.dart';
 
 class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
   late StreamSubscription<SerialDeviceEvent> _serialDeviceListenr;

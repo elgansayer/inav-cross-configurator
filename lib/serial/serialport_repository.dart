@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:inavconfiurator/serial/serialport_model.dart';
-
+import 'serialport_model.dart';
 import 'serialport_provider.dart';
 
 class SerialPortRepository {

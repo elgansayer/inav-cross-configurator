@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/home/servos/bloc/servos_bloc.dart';
+
+import 'bloc/servos_bloc.dart';
 import 'servos_screen.dart';
 
 class ServosPage extends StatefulWidget {

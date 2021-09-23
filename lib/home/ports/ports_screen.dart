@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/components/Scaffod.dart';
-import 'package:inavconfiurator/home/ports/bloc/ports_bloc.dart';
+
+import '../../components/Scaffod.dart';
+import 'bloc/ports_bloc.dart';
 
 class PortsScreen extends StatefulWidget {
   const PortsScreen({

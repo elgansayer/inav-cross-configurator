@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/home/pid/bloc/pid_tuning_bloc.dart';
+
+import 'bloc/pid_tuning_bloc.dart';
 import 'pid_tuning_screen.dart';
 
 class PIDTuningPage extends StatefulWidget {

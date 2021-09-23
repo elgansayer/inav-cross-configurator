@@ -2,14 +2,15 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_cube/flutter_cube.dart';
-import 'package:inavconfiurator/msp/codes.dart';
-import 'package:inavconfiurator/msp/codes/attitude.dart';
-import 'package:inavconfiurator/msp/mspmessage.dart';
-import 'package:inavconfiurator/serial/serialdevice_repository.dart';
-import 'package:meta/meta.dart';
 // Silly object naming
 // ignore: implementation_imports
 import 'package:flutter_cube/src/object.dart' as CubeObject;
+import 'package:meta/meta.dart';
+
+import '../../../msp/codes.dart';
+import '../../../msp/codes/attitude.dart';
+import '../../../msp/mspmessage.dart';
+import '../../../serial/serialdevice_repository.dart';
 
 part 'imu_event.dart';
 part 'imu_state.dart';

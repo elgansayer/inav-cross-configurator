@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/components/ErrorBanner.dart';
-import 'package:inavconfiurator/components/bloc/errormessage_repository.dart';
-import 'package:inavconfiurator/serial/serialdevice_repository.dart';
-import 'package:inavconfiurator/serial/serialport_repository.dart';
+
+import '../components/ErrorBanner.dart';
+import '../components/bloc/errormessage_repository.dart';
+import '../serial/serialdevice_repository.dart';
+import '../serial/serialport_repository.dart';
 import 'bloc/devices_bloc.dart';
 import 'devices_screen.dart';
 

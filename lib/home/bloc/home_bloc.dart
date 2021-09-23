@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:inavconfiurator/home/home_page.dart';
 import 'package:meta/meta.dart';
+
+import '../home_page.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/home/reciever/bloc/reciever_bloc.dart';
+
+import 'bloc/reciever_bloc.dart';
 import 'reciever_screen.dart';
 
 class RecieverPage extends StatefulWidget {

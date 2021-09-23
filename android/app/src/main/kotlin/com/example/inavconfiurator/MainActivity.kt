@@ -1,4 +1,4 @@
-package com.example.inavconfiurator
+package com.example.inavconfigurator
 
 import io.flutter.embedding.android.FlutterActivity
 

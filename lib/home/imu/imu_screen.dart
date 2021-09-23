@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/components/Scaffod.dart';
-import 'package:inavconfiurator/home/imu/bloc/imu_bloc.dart';
-import 'package:inavconfiurator/home/imu/imu_view_screen.dart';
+
+import '../../components/Scaffod.dart';
+import 'bloc/imu_bloc.dart';
+import 'imu_view_screen.dart';
 
 class IMUScreen extends StatefulWidget {
   const IMUScreen({

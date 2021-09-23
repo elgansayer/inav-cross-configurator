@@ -1,9 +1,9 @@
-import 'package:inavconfiurator/msp/codes.dart';
-import 'package:inavconfiurator/msp/codes/api_version.dart';
-import 'package:inavconfiurator/msp/codes/attitude.dart';
-import 'package:inavconfiurator/msp/codes/fcvariant.dart';
-import 'package:inavconfiurator/msp/codes/raw_imu.dart';
-import 'package:inavconfiurator/msp/mspmessage.dart';
+import 'codes/api_version.dart';
+import 'codes/attitude.dart';
+import 'codes/fcvariant.dart';
+import 'codes/raw_imu.dart';
+import 'codes.dart';
+import 'mspmessage.dart';
 
 abstract class MSPDataClassTransformers {
   static Map<int, Function> classBuilder = {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:inavconfiurator/components/ErrorBanner.dart';
+
+import '../components/ErrorBanner.dart';
 
 class ConnectingScreen extends StatefulWidget {
   const ConnectingScreen({

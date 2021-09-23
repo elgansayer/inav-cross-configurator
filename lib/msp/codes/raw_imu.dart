@@ -1,8 +1,10 @@
 import 'dart:typed_data';
+
 import 'package:flutter_cube/flutter_cube.dart';
-import 'package:inavconfiurator/msp/codes/base_data_handler.dart';
-import 'package:inavconfiurator/msp/codes.dart';
-import 'package:inavconfiurator/msp/mspmessage.dart';
+
+import '../codes.dart';
+import '../mspmessage.dart';
+import 'base_data_handler.dart';
 
 class MSPRawImu implements MSPDataHandler {
   final MSPMessageResponse messageResponse;

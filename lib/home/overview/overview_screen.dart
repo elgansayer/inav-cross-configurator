@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/components/Scaffod.dart';
 
+import '../../components/Scaffod.dart';
 import 'bloc/overview_bloc.dart';
+import 'dashboard_screen.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({
@@ -27,7 +28,7 @@ class InfoScreenState extends State<InfoScreen> {
       return AppScaffold(
         title: "Overview",
         body: Center(
-          child: Text("Overview"),
+          child: DashboardScreen(),
         ),
       );
     });

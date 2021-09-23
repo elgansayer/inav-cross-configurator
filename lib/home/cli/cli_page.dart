@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/app/bloc/app_bloc.dart';
-import 'package:inavconfiurator/serial/serialdevice_repository.dart';
+import '../../app/bloc/app_bloc.dart';
+import '../../serial/serialdevice_repository.dart';
 
 import 'bloc/cli_bloc.dart';
 import 'cli_screen.dart';

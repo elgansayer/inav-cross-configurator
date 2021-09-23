@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cube/flutter_cube.dart';
-import 'package:inavconfiurator/home/imu/bloc/imu_bloc.dart';
+
+import 'bloc/imu_bloc.dart';
 
 class ImuViewer extends StatefulWidget {
   const ImuViewer({

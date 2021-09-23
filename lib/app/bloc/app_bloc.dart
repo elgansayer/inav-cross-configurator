@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 import 'package:meta/meta.dart';
+
+import '../../serial/serialdevice_repository.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';

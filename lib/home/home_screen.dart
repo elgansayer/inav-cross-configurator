@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/home/cli/cli_page.dart';
-import 'package:inavconfiurator/home/welcome/welcome_page.dart';
+
 import 'bloc/home_bloc.dart';
+import 'cli/cli_page.dart';
 import 'failsafe/failsafe_page.dart';
 import 'home_page.dart';
 import 'imu/imu_page.dart';
-import 'info/overview_page.dart';
+import 'overview/overview_page.dart';
+import 'welcome/welcome_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({

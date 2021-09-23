@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/components/bloc/errorbanner_bloc.dart';
+
+import 'bloc/errorbanner_bloc.dart';
 
 class ErrorWrapper extends StatelessWidget {
   final Widget child;

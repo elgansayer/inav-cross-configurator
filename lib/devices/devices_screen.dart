@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/serial/serialport_model.dart';
 
+import '../serial/serialport_model.dart';
 import 'bloc/devices_bloc.dart';
 
 class DevicesScreen extends StatefulWidget {

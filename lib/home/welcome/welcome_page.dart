@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/home/welcome/bloc/welcome_bloc.dart';
+
+import 'bloc/welcome_bloc.dart';
 import 'welcome_screen.dart';
 
 class WelcomePage extends StatefulWidget {

@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
-import 'package:inavconfiurator/app/bloc/app_bloc.dart';
-import 'package:inavconfiurator/serial/serialdevice_repository.dart';
 import 'package:meta/meta.dart';
+
+import '../../../app/bloc/app_bloc.dart';
+import '../../../serial/serialdevice_repository.dart';
 
 part 'cli_event.dart';
 part 'cli_state.dart';

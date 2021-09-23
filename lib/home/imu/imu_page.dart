@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inavconfiurator/home/imu/bloc/imu_bloc.dart';
-import 'package:inavconfiurator/serial/serialdevice_repository.dart';
+import 'bloc/imu_bloc.dart';
+import '../../serial/serialdevice_repository.dart';
 
 import 'imu_screen.dart';
 

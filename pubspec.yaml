@@ -1,4 +1,4 @@
-name: inavconfiurator
+name: inavconfigurator
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -31,9 +31,9 @@ dependencies:
   hex: ^0.2.0
   b: ^0.1.0
   convert: ^3.0.1
-  bloc: ^7.1.0
+  bloc: ^7.2.0
 
-  flutter_bloc: ^7.1.0
+  flutter_bloc: ^7.3.0
   # model_viewer: ^0.8.1
   flutter_gl: ^0.0.3
   flutter_cube: ^0.1.1
@@ -46,6 +46,8 @@ dependencies:
   file_picker_desktop: ^1.1.0
   url_launcher: ^6.0.10
   flutter_typeahead: ^3.2.1
+  fl_chart: ^0.40.0
+  data_table_2: ^2.1.1
 
 
 dev_dependencies:

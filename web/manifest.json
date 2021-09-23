@@ -1,6 +1,6 @@
 {
-    "name": "inavconfiurator",
-    "short_name": "inavconfiurator",
+    "name": "inavconfigurator",
+    "short_name": "inavconfigurator",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

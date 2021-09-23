@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:inavconfiurator/msp/codes/api_version.dart';
-import 'package:inavconfiurator/msp/codes/fcvariant.dart';
-import 'package:inavconfiurator/msp/codes.dart';
-import 'package:inavconfiurator/msp/data_transformers.dart';
-import 'package:inavconfiurator/msp/mspmessage.dart';
-import 'package:inavconfiurator/serial/serialport_model.dart';
-import 'package:inavconfiurator/serial/serialport_provider.dart';
+
 import 'package:libserialport/libserialport.dart';
+
+import '../msp/codes.dart';
+import '../msp/codes/api_version.dart';
+import '../msp/codes/fcvariant.dart';
+import '../msp/data_transformers.dart';
+import '../msp/mspmessage.dart';
+import 'serialport_model.dart';
+import 'serialport_provider.dart';
 
 enum SerialDeviceEventType { connected, connecting, disconnected }
 

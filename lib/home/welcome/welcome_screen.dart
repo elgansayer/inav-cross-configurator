@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:inavconfiurator/components/Scaffod.dart';
-import 'package:inavconfiurator/home/welcome/bloc/welcome_bloc.dart';
+
+import '../../components/Scaffod.dart';
+import 'bloc/welcome_bloc.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({

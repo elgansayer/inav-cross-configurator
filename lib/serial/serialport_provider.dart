@@ -1,5 +1,6 @@
-import 'package:inavconfiurator/serial/serialport_model.dart';
 import 'package:libserialport/libserialport.dart';
+
+import 'serialport_model.dart';
 
 class SerialPortProvider {
   List<SerialPortInfo> get ports {
