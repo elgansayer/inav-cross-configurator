@@ -1,4 +1,4 @@
-`# INav Cross configurator
+`# INAV Cross configurator
 
 Yeah, ignore the typos. Typing is hard
 ### What is it?
@@ -17,12 +17,17 @@ Since INAV-Configurator is great but aging. I wanted to build something for fun 
 * More user friendly with extended help and step by step guides
 
 ### Current aims
-- [X] Orientation informatin
-- [x] Cli
+- [X] IMU Orientation information
+- [x] CLI
+- [x] CLI Autocomplete
+- [x] CLI Save to file
+- [x] CLI Copy to clipboard
+- [x] CLI Help Page
+- [x] CLI Import dump
 - [ ] Welcome Screen with info
 - [ ] Desktop View - Navigation left
 - [x] Mobile View - Navigation in drawer
-- [ ] Import dump
+- [x] Import dump 
 - [ ] Export dump
 - [ ] Advanced params
 - [ ] Modes
@@ -40,10 +45,10 @@ and at least be able to configure what i need in the field.
 ### Port Selection
 ![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/front.png)
 
-### Orientation
+### IMU
 ![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/model.png)
 
-### Cli
+### CLI
 ![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/cli.png)
 
 

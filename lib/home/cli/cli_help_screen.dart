@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'commands.dart';
+
 class CliHelpScreen extends StatefulWidget {
   CliHelpScreen({Key? key}) : super(key: key);
 
@@ -19,43 +21,6 @@ class _CliHelpScreenState extends State<CliHelpScreen> {
   _buildBody() {
     final theme = Theme.of(context);
 
-    Set<List<String>> rows = {
-      ['clear', 'clear the console'],
-      ['1wire <esc>', 'passthrough 1wire to the specified esc'],
-      ['adjrange', 'show/set adjustment ranges settings'],
-      ['aux', 'show/set aux settings'],
-      ['beeper', 'show/set beeper (buzzer)'],
-      ['bind_rx', 'Initiate binding for RX_SPI or SRXL2 receivers'],
-      ['mmix', 'design custom motor mixer'],
-      ['smix', 'design custom servo mixer'],
-      ['color', 'configure colors'],
-      ['defaults', 'reset to defaults and reboot'],
-      ['dump', 'print configurable settings'],
-      ['diff', 'print only settings that have been modified'],
-      ['exit', 'exit'],
-      ['feature', 'list or -val or val'],
-      ['get', 'get variable value'],
-      ['gpspassthrough', 'passthrough gps to serial'],
-      ['help', 'help'],
-      ['led', 'configure leds'],
-      ['map', 'mapping of rc channel order'],
-      ['motor', 'get/set motor output value'],
-      ['msc', 'Enter USB Mass storage mode'],
-      ['play_sound', 'index, or none for next'],
-      ['profile', 'index (0 to 2)'],
-      ['rxrange', 'Define safe home locations'],
-      ['save', 'save and reboot'],
-      ['serial', 'Configure serial ports'],
-      [
-        'serialpassthrough <id> <baud> <mode>',
-        'where id is the zero based port index, baud is a standard baud rate, and mode is rx, tx, or both (rxtx)'
-      ],
-      ['set', 'name=value or blank or * for list'],
-      ['status', 'show system status'],
-      ['temp_sensor', 'list or configure temperature sensor(s)'],
-      ['wp', 'list or configure waypoints'],
-      ['version', 'Displays version information']
-    };
 // Text(
 //               "Backup via CLI",
 //               style: theme.textTheme.subtitle1,
@@ -127,11 +92,11 @@ class _CliHelpScreenState extends State<CliHelpScreen> {
                     ),
                   )
                 ],
-                rows: rows.map((e) {
+                rows: CliCommands.commands.map((e) {
                   return DataRow(
                     cells: <DataCell>[
-                      DataCell(Text(e.first)),
-                      DataCell(Text(e.last))
+                      DataCell(Text(e.cmd)),
+                      DataCell(Text(e.description))
                     ],
                   );
                 }).toList(),

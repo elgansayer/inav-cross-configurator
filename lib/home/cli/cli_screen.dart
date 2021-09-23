@@ -5,15 +5,18 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker_desktop/file_picker_desktop.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 // Import the language & theme
 // import 'package:highlight/languages/dart.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:inavconfiurator/home/cli/cli_syntax.dart';
 
 import 'bloc/cli_bloc.dart';
 import 'cli_help_screen.dart';
+import 'commands.dart';
 
 class CliScreen extends StatefulWidget {
   const CliScreen({
@@ -223,7 +226,6 @@ class CliScreenState extends State<CliScreen> {
               flex: 1),
           Container(
             padding: EdgeInsets.only(left: 0, bottom: 0, top: 0),
-            // height: 60,
             width: double.infinity,
             child: Row(
               children: <Widget>[
@@ -250,38 +252,100 @@ class CliScreenState extends State<CliScreen> {
   }
 
   _textinput() {
-    const List<String> _kOptions = <String>[
-      'aardvark',
-      'bobcat',
-      'chameleon',
-    ];
-// TextField(
-//                     textInputAction: TextInputAction.go,
-//                     onSubmitted: (value) {
-//                       this._sendCmd();
-//                     },
-//                     // focusNode: ,
-//                     autofocus: true,
-//                     controller: _textInputController,
-//                     decoration: InputDecoration(
-//                       hintText: "Cli Command",
-//                     ),
-//                   ),
-    return Autocomplete<String>(
-      optionsBuilder: (TextEditingValue textEditingValue) {
-        if (textEditingValue.text == '') {
-          return const Iterable<String>.empty();
-        }
-
-        return _kOptions.where((String option) {
-          return option.contains(textEditingValue.text.toLowerCase());
+    return TypeAheadFormField(
+        hideOnLoading: true,
+        hideOnEmpty: true,
+        hideOnError: true,
+        animationDuration: Duration(milliseconds: 250),
+        autoFlipDirection: true,
+        textFieldConfiguration: TextFieldConfiguration(
+          controller: _textInputController,
+          decoration:
+              InputDecoration(hintText: "", labelText: 'Enter a command'),
+        ),
+        suggestionsCallback: (pattern) {
+          return CliCommands.findCommands(pattern);
+        },
+        itemBuilder: (context, CliCommand suggestion) {
+          return ListTile(
+            dense: true,
+            title: Text(suggestion.cmd,
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(suggestion.description),
+          );
+        },
+        suggestionsBoxDecoration: SuggestionsBoxDecoration(
+            constraints: BoxConstraints(maxHeight: 144)),
+        onSuggestionSelected: (CliCommand suggestion) {
+          this._send(suggestion.cmd);
         });
-      },
-      onSelected: (String selection) {
-        print('You just selected $selection');
-        // this._sendCmd();
-      },
-    );
+
+    // return Autocomplete<CliCommand>(
+    //   optionsBuilder: (TextEditingValue textEditingValue) {
+    //     if (textEditingValue.text == '') {
+    //       return const Iterable<CliCommand>.empty();
+    //     }
+
+    //     return CliCommands.commands.where((CliCommand option) {
+    //       return option.cmd.contains(textEditingValue.text.toLowerCase());
+    //     });
+    //   },
+    //   onSelected: (CliCommand selection) {
+    //     print('You just selected ${selection.cmd}');
+    //     // this._sendCmd();
+    //   },
+    //   // displayStringForOption: (CliCommand option) => option.cmd,
+    //   fieldViewBuilder: (BuildContext context,
+    //       TextEditingController fieldTextEditingController,
+    //       FocusNode fieldFocusNode,
+    //       VoidCallback onFieldSubmitted) {
+    //     return TextField(
+    //       textInputAction: TextInputAction.go,
+    //       onSubmitted: (value) {
+    //         // this._sendCmd();
+    //         onFieldSubmitted();
+    //       },
+    //       focusNode: fieldFocusNode,
+    //       autofocus: true,
+    //       controller: fieldTextEditingController,
+    //       decoration: InputDecoration(
+    //         hintText: "Cli Command",
+    //       ),
+    //     );
+    //   },
+    //   optionsViewBuilder: (BuildContext context,
+    //       AutocompleteOnSelected<CliCommand> onSelected,
+    //       Iterable<CliCommand> options) {
+    //     return Positioned(
+    //       child: Align(
+    //         alignment: Alignment.topLeft,
+    //         child: Material(
+    //           child: Container(
+    //             width: 300,
+    //             color: Colors.teal,
+    //             child: ListView.builder(
+    //               padding: EdgeInsets.all(8.0),
+    //               itemCount: options.length,
+    //               itemBuilder: (BuildContext context, int index) {
+    //                 final CliCommand option = options.elementAt(index);
+
+    //                 return GestureDetector(
+    //                   onTap: () {
+    //                     onSelected(option);
+    //                   },
+    //                   child: ListTile(
+    //                     title: Text(option.cmd),
+    //                     subtitle: Text(option.description),
+    //                   ),
+    //                 );
+    //               },
+    //             ),
+    //           ),
+    //         ),
+    //       ),
+    //     );
+    //   },
+    // );
   }
 
   void _sendCmd() {
