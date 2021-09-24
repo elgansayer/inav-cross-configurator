@@ -1,6 +1,9 @@
 abstract class MSPCodes {
+  // Gets API version
   static int mspApiVersion = 1;
+  // Gets FC String name
   static int mspFcVariant = 2;
+  // Gets FC Inav version
   static int mspFcVersionu = 3;
   static int mspBoardInfo = 4;
   static int mspBuildInfo = 5;
@@ -84,6 +87,7 @@ abstract class MSPCodes {
   static int mspRc = 105;
   static int mspRawGps = 106;
   static int mspCompGps = 107;
+  // Gets pitch, yaw, roll
   static int mspAttitude = 108;
   static int mspAltitude = 109;
   static int mspAnalog = 110;
@@ -101,6 +105,7 @@ abstract class MSPCodes {
   static int mspRcDeadband = 125;
   static int mspSensorAlignment = 126;
   static int mspLedStripModecolor = 127;
+  // cycleTime, i2cError, activeSensors, profile, cpuload, armingFlags
   static int mspStatusEx = 150;
   static int mspSensorStatus = 151;
 

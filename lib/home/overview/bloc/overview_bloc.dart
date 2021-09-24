@@ -1,18 +1,60 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:inavconfigurator/msp/codes.dart';
+import 'package:inavconfigurator/msp/codes/status_ex.dart';
+import 'package:inavconfigurator/msp/mspmessage.dart';
+import 'package:inavconfigurator/serial/serialdevice_repository.dart';
 import 'package:meta/meta.dart';
 
 part 'overview_event.dart';
 part 'overview_state.dart';
 
 class InfoBloc extends Bloc<InfoEvent, InfoState> {
-  InfoBloc() : super(InfoInitial());
+  late StreamSubscription<MSPMessageResponse> _streamListener;
+
+  InfoBloc({required SerialDeviceRepository serialDeviceRepository})
+      : _serialDeviceRepository = serialDeviceRepository,
+        super(InfoInitial()) {
+    _setupListeners();
+  }
+
+  final SerialDeviceRepository _serialDeviceRepository;
 
   @override
   Stream<InfoState> mapEventToState(
     InfoEvent event,
   ) async* {}
+
+  _setupListeners() {
+    this._streamListener = _serialDeviceRepository
+        .responseStreams(MSPCodes.mspStatusEx)
+        .listen((messageResponse) {
+      MSPStatusEx? rawImu = _serialDeviceRepository.transform(
+          MSPCodes.mspStatusEx, messageResponse);
+
+      if (rawImu == null) {
+        return;
+      }
+    });
+
+    _sendRequest();
+  }
+
+  @override
+  Future<void> close() {
+    //cancel streams
+    this._streamListener.cancel();
+    return super.close();
+  }
+
+  Future<void> _sendRequest() async {
+    try {
+      _serialDeviceRepository.writeFunc(MSPCodes.mspStatusEx);
+    } catch (e) {
+      this.close();
+    }
+  }
 }
 
 class BetterInfo {
