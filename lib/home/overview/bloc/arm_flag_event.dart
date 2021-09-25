@@ -1,9 +1,9 @@
-part of 'overview_bloc.dart';
+part of 'arm_flag_bloc.dart';
 
 @immutable
-abstract class InfoEvent {}
+abstract class ArmFlagEvent {}
 
-class GotStatusEvent extends InfoEvent {
+class GotStatusEvent extends ArmFlagEvent {
   final MSPINavStatus inavStatus;
 
   GotStatusEvent({

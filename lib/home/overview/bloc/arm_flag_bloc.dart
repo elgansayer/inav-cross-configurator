@@ -9,21 +9,23 @@ import 'package:inavconfigurator/msp/codes/inav_status.dart';
 import 'package:inavconfigurator/msp/mspmessage.dart';
 import 'package:inavconfigurator/serial/serialdevice_repository.dart';
 
-part 'overview_event.dart';
-part 'overview_state.dart';
+part 'arm_flag_event.dart';
+part 'arm_flag_state.dart';
 
-class InfoBloc extends Bloc<InfoEvent, InfoState> {
+class ArmFlagBloc extends Bloc<ArmFlagEvent, ArmFlagState> {
   late StreamSubscription<MSPMessageResponse> _streamListener;
 
-  InfoBloc({required SerialDeviceRepository serialDeviceRepository})
+  ArmFlagBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
-        super(InfoState.init());
+        super(ArmFlagState.init()) {
+    _setupListeners();
+  }
 
   final SerialDeviceRepository _serialDeviceRepository;
 
   @override
-  Stream<InfoState> mapEventToState(
-    InfoEvent event,
+  Stream<ArmFlagState> mapEventToState(
+    ArmFlagEvent event,
   ) async* {
     if (event is GotStatusEvent) {
       yield* _mapGotStatusEvent(event.inavStatus);
@@ -73,16 +75,20 @@ class InfoBloc extends Bloc<InfoEvent, InfoState> {
     }
   }
 
-  Stream<InfoState> _mapGotStatusEvent(MSPINavStatus inavStatus) async* {
+  Stream<ArmFlagState> _mapGotStatusEvent(MSPINavStatus inavStatus) async* {
     var allFlags = ArmFlags.allFlags;
     var armingFlags = inavStatus.armingFlags;
 
     // Go through each flag and create a list if they are enabled
-    Iterable<ArmFlag> preArmChecks = allFlags.map((ArmFlag armFlag) {
+    List<ArmFlag> preArmChecks = allFlags.map((ArmFlag armFlag) {
       return armFlag.copyWith(enabled: armFlag.isEnabled(armingFlags));
     }).toList();
 
-    yield InfoState.gotStatus(inavStatus: inavStatus, armFlags: preArmChecks);
+    // Put errors at the top
+    preArmChecks.sort((a, b) => a.enabled == false ? 0 : 1);
+
+    yield ArmFlagState.gotStatus(
+        inavStatus: inavStatus, armFlags: preArmChecks);
   }
 }
 
@@ -100,7 +106,7 @@ class ArmFlag {
   });
 
   bool isEnabled(int armingFlags) {
-    return ((armingFlags >> this.flag) % 2 != 0);
+    return !((armingFlags >> this.flag) % 2 != 0);
   }
 
   ArmFlag copyWith({
@@ -172,7 +178,6 @@ class ArmFlags {
   }
 
   static List<ArmFlag> allFlags = [
-    // ArmFlag(flag: , name: 'OkToArm'),
     ArmFlag(
         enabled: false,
         name: ArmFlags.name(ArmIds.OkToArm),
@@ -223,11 +228,11 @@ class ArmFlags {
         name: ArmFlags.name(ArmIds.BlockedAccelerometerNotCalibrated),
         id: ArmIds.BlockedAccelerometerNotCalibrated,
         flag: ArmFlags.BlockedAccelerometerNotCalibrated),
-    ArmFlag(
-        enabled: false,
-        name: ArmFlags.name(ArmIds.None),
-        id: ArmIds.None,
-        flag: ArmFlags.None),
+    // ArmFlag(
+    //     enabled: false,
+    //     name: ArmFlags.name(ArmIds.None),
+    //     id: ArmIds.None,
+    //     flag: ArmFlags.None),
     ArmFlag(
         enabled: false,
         name: ArmFlags.name(ArmIds.BlockedHardwareFailure),
@@ -241,7 +246,7 @@ class ArmFlags {
   ];
 }
 
-// class BetterInfo {
+// class BetterArmFlag {
 //   // Battery detected cell count
 //   final int detectedCellCount;
 //   // Battery voltage:
@@ -265,7 +270,7 @@ class ArmFlags {
 //   // RSSI
 //   final int rssi;
 
-//   BetterInfo(
+//   BetterArmFlag(
 //       {required this.detectedCellCount,
 //       required this.voltage,
 //       required this.left,
@@ -311,7 +316,7 @@ class ArmFlags {
 // }
 
 // //
-// class GpsInfo {
+// class GpsArmFlag {
 // // GPS
 // // Fix type:
 // // Sats:

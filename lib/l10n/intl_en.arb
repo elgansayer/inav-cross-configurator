@@ -1,0 +1,11 @@
+{
+  "@@localte": "en",
+  "appTitle": "Some localized strings:",
+  "preArmChecks": "Pre-Arm Checks",
+  "armChecks": "{title, select, BlockedUAVNotLevel {UAV is levelled} BlockedSensorsCalibrating {Run-time calibration} BlockedSystemOverloaded {CPU load}, BlockedNavigationSafety {Navigation safe} BlockedCompassNotCalibrated {Compass calibrated} BlockedAccelerometerNotCalibrated {Accelerometer calibrated} BlockedHardwareFailure {Hardware health} BlockedInvalidSetting {Settings validated} other {} }",
+  "@armChecks": {
+    "placeholders": {
+      "title": {}
+    }
+  }
+}

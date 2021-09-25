@@ -55,7 +55,7 @@ class MessageHeader {
     return new ResponseMessageHeader();
   }
 
-  // Same lead-in as V1
+  // Same lead-in as V1 \$
   final String lead = '\$';
 
   // '<' / '>' / '!'
@@ -174,9 +174,14 @@ class MSPMessageResponse extends MSPMessage {
     Uint8List byteData = this._payloadData.buffer.asUint8List();
 
     this.payloadLength = byteData.elementAt(this._payloadLengthOffset);
+    this.payloadLength |=
+        byteData.elementAt(this._payloadLengtUpperOffset) << 8;
+
     int recievedChecksum = byteData.last;
 
     this.function = byteData.elementAt(this._functionOffset);
+    this.function |= byteData.elementAt(this._codeUpperByteOffset) << 8;
+
     this.msgLength = packetLength;
     this.checksum = _checksum(byteData);
 
@@ -221,15 +226,15 @@ class MSPMessageRequest extends MSPMessage {
     // Assign the bugger with the request header
     this.header = new RequestMessageHeader(this._buffer);
 
-    // flag: reserved, set to 0
+    // Flag: reserved, set to 0
     this._buffer[this._flagOffset] = this.flag;
-    // code lower byte
+    // Code lower byte
     this._buffer[this._functionOffset] = function & 0xFF;
-    // code upper byte
+    // Code upper byte
     this._buffer[this._codeUpperByteOffset] = (function & 0xFF00) >> 8;
-    // payloadLength lower byte
+    // PayloadLength lower byte
     this._buffer[this._payloadLengthOffset] = payloadLength & 0xFF;
-    // payloadLength upper byte
+    // PayloadLength upper byte
     this._buffer[this._payloadLengtUpperOffset] = (payloadLength & 0xFF00) >> 8;
 
     this._addData();

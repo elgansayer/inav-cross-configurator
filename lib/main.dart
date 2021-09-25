@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'app/bloc/app_bloc.dart';
 import 'components/bloc/errorbanner_bloc.dart';
@@ -47,6 +48,14 @@ class MyApp extends StatelessWidget {
       onWillPop: () => _doNastyStuffsBeforeExit(context),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        // localizationsDelegates: [
+        //   S.delegate,
+        //   GlobalMaterialLocalizations.delegate,
+        //   GlobalWidgetsLocalizations.delegate,
+        // ],
+        // supportedLocales: S.delegate.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         title: 'INAV Configurator',
         theme: ThemeData(
           brightness: Brightness.light,

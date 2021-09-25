@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../components/Scaffod.dart';
 import 'bloc/overview_bloc.dart';
-import 'dashboard_screen.dart';
+import 'components/pre_arm_checks.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({
@@ -27,10 +27,40 @@ class InfoScreenState extends State<InfoScreen> {
     ) {
       return AppScaffold(
         title: "Overview",
-        body: Center(
-          child: DashboardScreen(),
+        body: SafeArea(
+          child: _buildBody(currentState),
         ),
       );
     });
+  }
+
+  _buildBody(InfoState currentState) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Column(
+                    children: [
+                      PreArmChecks(),
+                      // SizedBox(height: defaultPadding),
+                      // RecentFiles(),
+                      // if (Responsive.isMobile(context))
+                      //   SizedBox(height: defaultPadding),
+                      // if (Responsive.isMobile(context)) StarageDetails(),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

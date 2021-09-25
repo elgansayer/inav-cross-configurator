@@ -150,16 +150,18 @@ abstract class MSPCodes {
   static int mspGpsstatistics = 166; // gps statistics
 
   // additional private static int msp for baseflight configurator (yes thats us \o/)
-  static int mspRxMap =
-      64; // get channel map (also returns number of channels total)
-  static int mspSetRxMap =
-      65; // set rc map; numchannels to set comes from static int mspRxMap
-  static int mspBfConfig =
-      66; // baseflight-specific settings that aren't covered elsewhere
-  static int mspSetBfConfig = 67; // baseflight-specific settings save
-  static int mspSetReboot = 68; // reboot settings
-  static int mspBfBuildInfo =
-      69; // build date as well as some space for future expansion
+  // get channel map (also returns number of channels total)
+  static int mspRxMap = 64;
+  // set rc map; numchannels to set comes from static int mspRxMap
+  static int mspSetRxMap = 65;
+  // baseflight-specific settings that aren't covered elsewhere
+  static int mspBfConfig = 66;
+  // baseflight-specific settings save
+  static int mspSetBfConfig = 67;
+  // reboot settings
+  static int mspSetReboot = 68;
+  // build date as well as some space for future expansion
+  static int mspBfBuildInfo = 69;
 
   // inav specific codes
   static int mspv2Setting = 0x1003;
@@ -174,7 +176,8 @@ abstract class MSPCodes {
   static int msp2CfSerialConfig = 0x1009;
   static int msp2SetCfSerialConfig = 0x100a;
 
-  static int mspv2InavStatus = 0x2000;
+  // cycleTime, i2cError, activeSensors, profile, cpuload, armingFlags
+  static int mspv2InavStatus = 8192; //0x2000;
   static int mspv2InavOpticalFlow = 0x2001;
   static int mspv2InavAnalog = 0x2002;
   static int mspv2InavMisc = 0x2003;

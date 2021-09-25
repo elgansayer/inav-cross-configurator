@@ -1,23 +1,23 @@
-part of 'overview_bloc.dart';
+part of 'arm_flag_bloc.dart';
 
 @immutable
-class InfoState {
+class ArmFlagState {
   final MSPINavStatus? inavStatus;
   final Iterable<ArmFlag> armFlags;
 
-  InfoState({
+  ArmFlagState({
     required this.inavStatus,
     required this.armFlags,
   });
 
-  factory InfoState.init() {
-    return InfoState(inavStatus: null, armFlags: []);
+  factory ArmFlagState.init() {
+    return ArmFlagState(inavStatus: null, armFlags: []);
   }
 
-  factory InfoState.gotStatus(
+  factory ArmFlagState.gotStatus(
       {required MSPINavStatus inavStatus,
       required Iterable<ArmFlag> armFlags}) {
-    return InfoState(
+    return ArmFlagState(
       inavStatus: inavStatus,
       armFlags: armFlags,
     );

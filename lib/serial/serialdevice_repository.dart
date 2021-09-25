@@ -73,7 +73,8 @@ class SerialDeviceRepository {
   }
 
   Future<MSPMessageResponse> response(Stream<MSPMessageResponse> stream) async {
-    Stream<MSPMessageResponse> newStream = stream.timeout(Duration(seconds: 5));
+    Stream<MSPMessageResponse> newStream =
+        stream.timeout(Duration(seconds: 10));
 
     var value;
     await for (var data in newStream) {
@@ -93,24 +94,21 @@ class SerialDeviceRepository {
     return MSPDataClassTransformers.transform(code, messageResponse);
   }
 
-  int writeFunc(int code) {
+  int writeFunc(int code, {int timeout = 10}) {
     MSPMessageRequest request = MSPMessageRequest(code);
-    return request.write(this._serialPort);
+    return request.write(this._serialPort, timeout: timeout);
   }
 
-  int writeString(String str) {
+  int writeString(String str, {int timeout = 10}) {
     final Uint8List bytes = ascii.encode(str);
-    return this._serialPort.write(bytes);
+    return this._serialPort.write(bytes, timeout: timeout);
   }
 
-  int writeBytes(Uint8List bytes) {
-    return this._serialPort.write(bytes);
+  int writeBytes(Uint8List bytes, {int timeout = 10}) {
+    return this._serialPort.write(bytes, timeout: timeout);
   }
 
   Future<T?> writeFuncWithResponseAs<T>(int code) async {
-    if (!this._serialPort.isOpen) {
-      throw new Exception("SerialPort is not open");
-    }
     int written = this.writeFunc(code);
     if (written <= 0) {
       return null;

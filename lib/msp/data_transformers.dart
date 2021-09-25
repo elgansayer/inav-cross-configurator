@@ -1,3 +1,6 @@
+import 'package:inavconfigurator/msp/codes/inav_status.dart';
+import 'package:inavconfigurator/msp/codes/status_ex.dart';
+
 import 'codes/api_version.dart';
 import 'codes/attitude.dart';
 import 'codes/fcvariant.dart';
@@ -11,6 +14,8 @@ abstract class MSPDataClassTransformers {
     MSPCodes.mspFcVariant: (MSPMessageResponse data) => MSPFcVariant(data),
     MSPCodes.mspRawImu: (MSPMessageResponse data) => MSPRawImu(data),
     MSPCodes.mspAttitude: (MSPMessageResponse data) => MSPAttitude(data),
+    MSPCodes.mspStatusEx: (MSPMessageResponse data) => MSPStatusEx(data),
+    MSPCodes.mspv2InavStatus: (MSPMessageResponse data) => MSPINavStatus(data),
   };
 
   static register(int code, Function builder) {
