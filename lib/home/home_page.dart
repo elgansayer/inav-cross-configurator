@@ -5,15 +5,17 @@ import 'bloc/home_bloc.dart';
 import 'home_screen.dart';
 
 class TabPage {
-  final IconData iconData;
+  final IconData? iconData;
+  final String? svgPath;
   final String tabName;
   final HomePages tabPage;
 
   TabPage(
-    this.iconData,
     this.tabName,
-    this.tabPage,
-  );
+    this.tabPage, {
+    this.iconData,
+    this.svgPath,
+  });
 }
 
 class HomePage extends StatefulWidget {

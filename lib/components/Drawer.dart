@@ -12,10 +12,14 @@ class SideDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<TabPage> tabPages = [
-      new TabPage(Icons.check, "Overview", HomePages.overview),
-      new TabPage(Icons.check, "Failsafe", HomePages.failsafe),
-      new TabPage(Icons.directions_car, "IMU", HomePages.imu),
-      new TabPage(Icons.computer, "Cli", HomePages.cli),
+      new TabPage("Overview", HomePages.overview, iconData: Icons.home),
+      new TabPage("Failsafe", HomePages.failsafe,
+          svgPath: "assets/images/icons/cf_icon_failsafe_grey.svg"),
+      new TabPage("Modes", HomePages.modes,
+          svgPath: "assets/images/icons/cf_icon_modes_grey.svg"),
+      new TabPage("IMU", HomePages.imu, svgPath: "assets/images/icons/imu.svg"),
+      new TabPage("Cli", HomePages.cli,
+          svgPath: "assets/images/icons/cf_icon_cli_grey.svg"),
     ];
 
     return Drawer(
@@ -63,18 +67,24 @@ class SideDrawer extends StatelessWidget {
             // child: SvgPicture.asset('assets/images/light-wide-2.svg',
             // fit: BoxFit.fitHeight),
           ),
-          ...tabPages
-              .map((tp) => ListTile(
-                    leading: Icon(tp.iconData),
-                    title: Text(tp.tabName),
-                    onTap: () {
-                      BlocProvider.of<HomeBloc>(context)
-                          .add(ChangeHomePageEvent(tabPage: tp));
+          ...tabPages.map((tp) {
+            Color colour = Colors.white;
 
-                      Navigator.pop(context);
-                    },
-                  ))
-              .toList(),
+            Widget icon = tp.iconData != null
+                ? Icon((tp.iconData))
+                : SvgPicture.asset(tp.svgPath!, height: 24, color: colour);
+
+            return ListTile(
+              leading: icon,
+              title: Text(tp.tabName),
+              onTap: () {
+                BlocProvider.of<HomeBloc>(context)
+                    .add(ChangeHomePageEvent(tabPage: tp));
+
+                Navigator.pop(context);
+              },
+            );
+          }).toList(),
           Divider(),
           Expanded(
             flex: 1,

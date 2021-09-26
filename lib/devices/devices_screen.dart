@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../serial/serialport_model.dart';
 import 'bloc/devices_bloc.dart';
@@ -51,8 +52,8 @@ class DevicesScreenState extends State<DevicesScreen> {
 
   _portCardBody(SerialPortInfo serialPort) {
     var icon = serialPort.isINav
-        ? Image.asset('assets/images/inav_icon_128.png',
-            fit: BoxFit.cover)
+        ? SvgPicture.asset('assets/images/icons/inav-icon.svg',
+            fit: BoxFit.fitHeight)
         : Icon(Icons.computer, size: 50.0);
 
     final CardTheme cardTheme = CardTheme.of(context);

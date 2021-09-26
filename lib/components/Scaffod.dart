@@ -1,5 +1,7 @@
+import 'package:battery_indicator/battery_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'Drawer.dart';
 
@@ -22,11 +24,52 @@ class AppScaffold extends StatelessWidget {
     return Scaffold(
       appBar: this.appBar ??
           AppBar(
-            title: Text(title),
+            title: _title(),
             actions: actions,
           ),
       body: body,
       drawer: SideDrawer(),
     );
+  }
+
+  _title() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(this.title),
+        Container(
+          width: 70,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [_batteryIcon(), _armedIcon()],
+          ),
+        ),
+      ],
+    );
+  }
+
+  _batteryIcon() {
+    return Column(
+      children: [
+        BatteryIndicator(
+          style: BatteryIndicatorStyle.skeumorphism,
+          colorful: true,
+          showPercentNum: true,
+          // mainColor: Colors.red,
+          // size: 100,
+          // ratio: 1,
+          showPercentSlide: true,
+        ),
+        Text(
+          "10v",
+          style: TextStyle(fontSize: 12),
+        )
+      ],
+    );
+  }
+
+  _armedIcon() {
+    return SvgPicture.asset('assets/images/icons/cf_icon_armed_grey.svg',
+        color: Colors.grey, height: 24, fit: BoxFit.fitHeight);
   }
 }

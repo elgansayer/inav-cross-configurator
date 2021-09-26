@@ -51,6 +51,8 @@ dependencies:
   fl_chart: ^0.40.0
   data_table_2: ^2.1.1
   intl_utils: ^2.4.0
+  battery_indicator: ^0.1.0
+  flutter_screenutil: ^5.0.0+2
 
 dev_dependencies:
   flutter_test:
@@ -93,12 +95,16 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
   assets:
-    - assets/cube/cube.obj
-    - assets/cube/cube.mtl
-    - assets/cube/fallback.png
+    - assets/images/icons/cf_icon_armed_grey.svg
+    - assets/images/icons/cf_icon_cli_grey.svg
+    - assets/images/icons/cf_icon_failsafe_grey.svg
+    - assets/images/icons/imu.svg
+    - assets/images/icons/cf_icon_modes_grey.svg
+    - assets/images/icons/inav-icon.svg
+
     - assets/images/cf_logo_white.svg
+    - assets/images/light-wide-1.svg
     - assets/images/light-wide-2.svg
-    - assets/images/inav_icon_128.png
 
     - assets/models/iNav-Flying-wing.obj
     - assets/models/iNav-Flying-wing.mtl

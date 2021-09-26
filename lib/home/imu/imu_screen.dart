@@ -23,6 +23,7 @@ class IMUScreenState extends State<IMUScreen> {
   Widget build(BuildContext context) {
     return AppScaffold(
       title: "IMU",
+      actions: [IconButton(onPressed: null, icon: Icon(Icons.more_vert))],
       body: Center(
         child: Stack(
           children: [_buildModelView(), _buildinfoGraph()],

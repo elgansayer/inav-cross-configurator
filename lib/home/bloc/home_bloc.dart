@@ -9,7 +9,7 @@ import '../home_page.dart';
 part 'home_event.dart';
 part 'home_state.dart';
 
-enum HomePages { overview, imu, failsafe, cli }
+enum HomePages { overview, imu, modes, failsafe, cli }
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeState.init());

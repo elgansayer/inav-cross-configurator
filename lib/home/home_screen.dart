@@ -6,6 +6,7 @@ import 'cli/cli_page.dart';
 import 'failsafe/failsafe_page.dart';
 import 'home_page.dart';
 import 'imu/imu_page.dart';
+import 'modes/modes_page.dart';
 import 'overview/overview_page.dart';
 import 'welcome/welcome_page.dart';
 
@@ -49,6 +50,9 @@ class HomeScreenState extends State<HomeScreen> {
     switch (tabPage?.tabPage) {
       case HomePages.failsafe:
         page = FailsafePage();
+        break;
+      case HomePages.modes:
+        page = ModesPage();
         break;
       case HomePages.cli:
         // Return a welcome page over cli
