@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:inavconfigurator/models/mode_info.dart';
 import 'package:meta/meta.dart';
 
 part 'modes_event.dart';
