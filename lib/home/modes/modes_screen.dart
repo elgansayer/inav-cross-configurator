@@ -58,60 +58,77 @@ class ModesScreenState extends State<ModesScreen> {
             )
           ],
         ),
-        title: Container(
-          // color: Colors.red,
-          height: 200,
-          child: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              Positioned(
-                top: 10,
-                // left: 0,
-                // height: 250,
-                // width: 0,
-                // height: double.infinity,
-                // width: double.infinity,
-                // left: 0,
-                // right: double.infinity,
-                // top: 0,
-                // bottom: double.infinity,
-                // width: double.infinity,
-                child: _slider(),
-              ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: _slider(),
-              ),
-            ],
-          ),
-        ),
-        // subtitle: _rxSlider(),
-        // subtitle: Stack(
-        //   children: [
-        //     Align(
-        //       alignment: Alignment.topCenter,
-        //       child: _rxSlider(),
-        //     ),
-        //     // Container(
-        //     //   height: 35,
-        //     //   child: Row(
-        //     //     crossAxisAlignment: CrossAxisAlignment.start,
-        //     //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     //     children: <Widget>[
-        //     //       _vert(value: "100"),
-        //     //       _vert(),
-        //     //       _vert(),
-        //     //       _vert(),
-        //     //       _vert(value: "200"),
-        //     //       _vert(),
-        //     //       _vert(),
-        //     //       _vert(),
-        //     //       _vert(value: "300")
-        //     //     ],
-        //     //   ),
-        //     // ),
-        //   ],
+        // title: Container(
+        //   // color: Colors.red,
+        //   height: 200,
+        //   child: Stack(
+        //     alignment: Alignment.topCenter,
+        //     children: [
+        //       Positioned(
+        //         top: 10,
+        //         // left: 0,
+        //         // height: 250,
+        //         // width: 0,
+        //         // height: double.infinity,
+        //         // width: double.infinity,
+        //         // left: 0,
+        //         // right: double.infinity,
+        //         // top: 0,
+        //         // bottom: double.infinity,
+        //         // width: double.infinity,
+        //         child: _slider(),
+        //       ),
+        //       Align(
+        //         alignment: Alignment.topCenter,
+        //         child: _slider(),
+        //       ),
+        //     ],
+        //   ),
         // ),
+        title: _slider(),
+        subtitle: Stack(
+          children: [
+            Container(
+              height: 35,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  _vert(value: "100"),
+                  _vert(),
+                  _vert(),
+                  _vert(),
+                  _vert(value: "200"),
+                  _vert(),
+                  _vert(),
+                  _vert(),
+                  _vert(value: "300")
+                ],
+              ),
+            ),
+            Positioned(
+              left: 100,
+              top: 0,
+              child: Container(
+                width: 5,
+                height: 25,
+                decoration: BoxDecoration(
+                    // borderRadius: BorderRadius.circular(0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.blue,
+                        blurRadius: 1.0,
+                        spreadRadius: 0.0,
+                        offset: Offset(
+                          0.0,
+                          -10.0,
+                        ),
+                      ),
+                    ]),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
