@@ -51,4 +51,7 @@ and at least be able to configure what i need in the field.
 ### CLI
 ![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/cli.png)
 
+### Modes
+![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/modes.png)
+
 
