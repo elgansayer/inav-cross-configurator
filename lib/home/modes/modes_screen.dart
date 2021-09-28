@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfigurator/models/mode_info.dart';
 
 import '../../components/Scaffod.dart';
 import 'bloc/modes_bloc.dart';
+import 'modes_picker_screen.dart';
 
 class ModesScreen extends StatefulWidget {
   const ModesScreen({
@@ -21,6 +23,7 @@ class ModesScreenState extends State<ModesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var modesBloc = BlocProvider.of<ModesBloc>(context);
     return BlocBuilder<ModesBloc, ModesState>(builder: (
       BuildContext context,
       ModesState currentState,
@@ -30,7 +33,21 @@ class ModesScreenState extends State<ModesScreen> {
           actions: [
             IconButton(
               icon: Icon(Icons.add),
-              onPressed: () {},
+              onPressed: () async {
+                List<ModeInfo> selectedModes = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ModePickerScreen(
+                              modesBloc: modesBloc,
+                            )));
+                if (selectedModes.length <= 0) {
+                  return;
+                }
+                ScaffoldMessenger.of(context)
+                  ..removeCurrentSnackBar()
+                  ..showSnackBar(SnackBar(
+                      content: Text('${selectedModes.length} modes added')));
+              },
             )
           ],
           body: _body());
