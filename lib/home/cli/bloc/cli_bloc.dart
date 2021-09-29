@@ -45,7 +45,6 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     CliEvent event,
   ) async* {
     if (event is EnterCliEvent) {
-      print("_enterCliMode");
       this._listen();
       this._enterCliMode();
     }

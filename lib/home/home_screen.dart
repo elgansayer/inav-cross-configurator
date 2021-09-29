@@ -74,12 +74,9 @@ class HomeScreenState extends State<HomeScreen> {
   // We open cli as a new window so we can
   // handle reconnect
   _openCli() async {
-    await Navigator.push(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CliPage()),
     );
-
-    // Coming back from cli we need to reconnect
-    print("Closed cli");
   }
 }

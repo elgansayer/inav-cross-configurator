@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:inavconfigurator/home/modes/modes.dart';
@@ -49,6 +50,11 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
       this.add(GotModesEvent(modesRanges: rawModes.modes));
     });
 
+    _serialDeviceRepository.responseRaw.listen((Uint8List data) {
+      if (data == data) {
+        return;
+      }
+    });
     _writeModes();
   }
 
