@@ -1,4 +1,5 @@
 import 'package:inavconfigurator/msp/codes/inav_status.dart';
+import 'package:inavconfigurator/msp/codes/mode_ranges.dart';
 import 'package:inavconfigurator/msp/codes/status_ex.dart';
 
 import 'codes/api_version.dart';
@@ -16,6 +17,7 @@ abstract class MSPDataClassTransformers {
     MSPCodes.mspAttitude: (MSPMessageResponse data) => MSPAttitude(data),
     MSPCodes.mspStatusEx: (MSPMessageResponse data) => MSPStatusEx(data),
     MSPCodes.mspv2InavStatus: (MSPMessageResponse data) => MSPINavStatus(data),
+    MSPCodes.mspModeRanges: (MSPMessageResponse data) => MSPModeRanges(data),
   };
 
   static register(int code, Function builder) {

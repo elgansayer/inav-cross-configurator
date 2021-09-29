@@ -23,7 +23,6 @@ class ModesScreenState extends State<ModesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var modesBloc = BlocProvider.of<ModesBloc>(context);
     return BlocBuilder<ModesBloc, ModesState>(builder: (
       BuildContext context,
       ModesState currentState,
@@ -34,15 +33,20 @@ class ModesScreenState extends State<ModesScreen> {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () async {
+                // var currentModes = currentState.modes;
+
+                var modesBloc = BlocProvider.of<ModesBloc>(context);
                 List<ModeInfo> selectedModes = await Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => ModePickerScreen(
+                              // modes: currentModes,
                               modesBloc: modesBloc,
                             )));
                 if (selectedModes.length <= 0) {
                   return;
                 }
+
                 ScaffoldMessenger.of(context)
                   ..removeCurrentSnackBar()
                   ..showSnackBar(SnackBar(
@@ -50,28 +54,38 @@ class ModesScreenState extends State<ModesScreen> {
               },
             )
           ],
-          body: _body());
+          body: _body(currentState));
     });
   }
 
-  _body() {
+  _body(ModesState currentState) {
+    if (currentState is ModesAvailableState) {
+      return ListView.builder(
+          itemCount: currentState.modes.length,
+          itemBuilder: (BuildContext context, int index) {
+            ModeInfo mode = currentState.modes[index];
+            return _modeCard(mode);
+          });
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
-      children: [_modeCard()],
+      children: [],
     );
   }
 
-  _modeCard() {
+  _modeCard(ModeInfo mode) {
     return Card(
       child: ListTile(
         trailing: IconButton(
             onPressed: null, icon: Icon(Icons.delete_forever_rounded)),
         leading: Column(
           children: [
-            Text("ARM"),
+            Text(mode.name),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 3, 0, 0),
-              child: ElevatedButton(onPressed: null, child: Text("54")),
+              child: ElevatedButton(
+                  onPressed: null, child: Text(mode.channel.toString())),
             )
           ],
         ),
@@ -102,7 +116,7 @@ class ModesScreenState extends State<ModesScreen> {
         //     ],
         //   ),
         // ),
-        title: _slider(),
+        title: _slider(mode),
         subtitle: Stack(
           children: [
             Container(
@@ -197,7 +211,7 @@ class ModesScreenState extends State<ModesScreen> {
     );
   }
 
-  _slider() {
+  _slider(ModeInfo mode) {
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
         // activeTrackColor: Colors.red[700],
@@ -213,9 +227,9 @@ class ModesScreenState extends State<ModesScreen> {
           activeColor: Colors.blue[700],
           inactiveColor: Colors.red[300],
           // labels: RangeLabels('', ''),
-          min: 1,
-          max: 100,
-          values: RangeValues(1, 100),
+          min: 900,
+          max: 2100,
+          values: mode.range,
           onChanged: (values) {}),
     );
   }

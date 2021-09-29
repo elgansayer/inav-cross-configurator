@@ -5,10 +5,10 @@ abstract class ModesState {}
 
 class ModesInitial extends ModesState {}
 
-class ModesAvailable extends ModesState {
+class ModesAvailableState extends ModesState {
   final List<ModeInfo> modes;
 
-  ModesAvailable({
+  ModesAvailableState({
     required this.modes,
   });
 }

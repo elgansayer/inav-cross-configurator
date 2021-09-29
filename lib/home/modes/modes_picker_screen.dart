@@ -1,10 +1,7 @@
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inavconfigurator/models/mode_info.dart';
-
-import '../../components/Scaffod.dart';
 import 'bloc/modes_bloc.dart';
 import 'modes.dart';
 
