@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter_cube/flutter_cube.dart';
 import 'base_data_handler.dart';
 import '../codes.dart';
-import '../mspmessage.dart';
+import '../msp_message.dart';
 
 class MSPAttitude implements MSPDataHandler {
   final MSPMessageResponse messageResponse;

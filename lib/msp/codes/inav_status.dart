@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'base_data_handler.dart';
 import '../codes.dart';
-import '../mspmessage.dart';
+import '../msp_message.dart';
 
 class MSPINavStatus implements MSPDataHandler {
   final MSPMessageResponse messageResponse;

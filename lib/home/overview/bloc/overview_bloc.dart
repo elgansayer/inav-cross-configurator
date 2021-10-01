@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 
 import 'package:inavconfigurator/msp/codes.dart';
 import 'package:inavconfigurator/msp/codes/inav_status.dart';
-import 'package:inavconfigurator/msp/mspmessage.dart';
+import 'package:inavconfigurator/msp/msp_message.dart';
 import 'package:inavconfigurator/serial/serialdevice_repository.dart';
 
 part 'overview_event.dart';

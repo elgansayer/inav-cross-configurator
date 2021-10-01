@@ -11,7 +11,7 @@ import 'package:inavconfigurator/msp/codes/mode_ranges.dart';
 import 'package:meta/meta.dart';
 
 import '../../../msp/codes.dart';
-import '../../../msp/mspmessage.dart';
+import '../../../msp/msp_message.dart';
 import '../../../serial/serialdevice_repository.dart';
 
 part 'modes_event.dart';
@@ -72,7 +72,7 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
     return super.close();
   }
 
-  _mapModeRangesToInfo(List<ModeRange> modesRanges) async* {
+  Stream<ModesState> _mapModeRangesToInfo(List<ModeRange> modesRanges) async* {
     var allModes = FlightModes.allModes;
 
     List<ModeInfo> modeInfos = [];

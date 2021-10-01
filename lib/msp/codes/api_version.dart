@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import '../codes.dart';
-import '../mspmessage.dart';
+import '../msp_message.dart';
 import 'base_data_handler.dart';
 
 class MSPApiVersion implements MSPDataHandler {

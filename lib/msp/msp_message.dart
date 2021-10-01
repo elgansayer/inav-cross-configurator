@@ -116,19 +116,19 @@ class MSPMessage {
   int get _flagOffset => 3;
 
   // Offset in payload buffer for code or function id
-  int get _functionOffset => 4;
+  int get _functionLowOffset => 4;
 
   // Code upper byte offset
-  int get _codeUpperByteOffset => 5;
+  int get __functionHighOffset => 5;
 
   // Offset in payload buffer for length of payload
-  int get _payloadLengthOffset => 6;
+  int get _payloadLengthLowOffset => 6;
+
+  // Offset for
+  int get _payloadLengthHighOffset => 7;
 
   // Offset in payload buffer where data starts
   int get _dataStartOffset => 8;
-
-  // Offset
-  int get _payloadLengtUpperOffset => 7;
 
   late String error;
 
@@ -157,33 +157,81 @@ class MSPMessage {
 }
 
 class MSPMessageResponse extends MSPMessage {
-  MSPMessageResponse(Uint8List payloadResponse) {
-    this._payloadData = new ByteData.view(payloadResponse.buffer);
+  final Uint8List _packetResponse;
+
+  MSPMessageResponse({required Uint8List packetResponse})
+      : this._packetResponse = packetResponse {
+    this._packetData = new ByteData.view(packetResponse.buffer);
+    print(packetResponse);
+    print(this._packetData);
   }
 
-  late ByteData _payloadData;
+  late ByteData _packetData;
 
   bool readData() {
-    int packetLength = this._payloadData.lengthInBytes;
+    int packetLength = this._packetData.lengthInBytes;
 
-    if (packetLength <= this._payloadLengthOffset) {
+    if (packetLength <= this._payloadLengthLowOffset) {
       this.error = ("Packet error: Dropping packet of length $packetLength");
       return false;
     }
 
-    Uint8List byteData = this._payloadData.buffer.asUint8List();
+    Uint8List packetResponseData = this._packetResponse;
 
-    this.payloadLength = byteData.elementAt(this._payloadLengthOffset);
+    // this.payloadLength -> message_length_expected
+    this.payloadLength =
+        packetResponseData.elementAt(this._payloadLengthLowOffset);
     this.payloadLength |=
-        byteData.elementAt(this._payloadLengtUpperOffset) << 8;
+        packetResponseData.elementAt(this._payloadLengthHighOffset) << 8;
 
-    int recievedChecksum = byteData.last;
+    var message_length_expected = this.payloadLength;
 
-    this.function = byteData.elementAt(this._functionOffset);
-    this.function |= byteData.elementAt(this._codeUpperByteOffset) << 8;
+    int recievedChecksum = packetResponseData.last;
+
+    this.function = packetResponseData.elementAt(this._functionLowOffset);
+    this.function |=
+        packetResponseData.elementAt(this.__functionHighOffset) << 8;
 
     this.msgLength = packetLength;
-    this.checksum = _checksum(byteData);
+    // this.checksum = _checksum(byteData);
+
+// 0
+//219
+//163
+//170
+//29
+// 175
+    this.checksum = 0;
+    this.checksum = this._crc8DVBS2(this.checksum, 0); // flag
+    this.checksum = this._crc8DVBS2(this.checksum, this.function & 0xFF);
+    this.checksum =
+        this._crc8DVBS2(this.checksum, (this.function & 0xFF00) >> 8);
+
+    this.checksum =
+        this._crc8DVBS2(this.checksum, message_length_expected & 0xFF);
+    this.checksum =
+        this._crc8DVBS2(this.checksum, (message_length_expected & 0xFF00) >> 8);
+
+    // for (var ii = this._dataStartOffset;
+    //     ii < (this._dataStartOffset + this.payloadLength);
+    //     ii++) {
+    //   this.checksum = this._crc8DVBS2(this.checksum, byteData[ii]);
+    // }
+
+    // var rangeEnd = (this._dataStartOffset + this.payloadLength);
+
+    var rangeData = packetResponseData
+        .getRange(
+            this._dataStartOffset, this._dataStartOffset + this.payloadLength)
+        .toList();
+
+    this.payload = new ByteData.view(Uint8List.fromList(rangeData).buffer);
+
+    // var payloadData = byteData.getRange(this._dataStartOffset, rangeEnd);
+
+    for (var index = 0; index < payload.lengthInBytes; index++) {
+      this.checksum = this._crc8DVBS2(this.checksum, payload.getUint8(index));
+    }
 
     if (this.checksum != recievedChecksum) {
       this.error =
@@ -191,12 +239,12 @@ class MSPMessageResponse extends MSPMessage {
       return false;
     }
 
-    List<int> rData = byteData
-        .getRange(
-            this._dataStartOffset, this._dataStartOffset + this.payloadLength)
-        .toList();
+    // List<int> rData = byteData
+    //     .getRange(
+    //         this._dataStartOffset, this._dataStartOffset + this.payloadLength)
+    //     .toList();
 
-    this.payload = new ByteData.view(Uint8List.fromList(rData).buffer);
+    // this.payload = new ByteData.view(Uint8List.fromList(rData).buffer);
     return true;
   }
 }
@@ -229,13 +277,13 @@ class MSPMessageRequest extends MSPMessage {
     // Flag: reserved, set to 0
     this._buffer[this._flagOffset] = this.flag;
     // Code lower byte
-    this._buffer[this._functionOffset] = function & 0xFF;
+    this._buffer[this._functionLowOffset] = function & 0xFF;
     // Code upper byte
-    this._buffer[this._codeUpperByteOffset] = (function & 0xFF00) >> 8;
+    this._buffer[this.__functionHighOffset] = (function & 0xFF00) >> 8;
     // PayloadLength lower byte
-    this._buffer[this._payloadLengthOffset] = payloadLength & 0xFF;
+    this._buffer[this._payloadLengthLowOffset] = payloadLength & 0xFF;
     // PayloadLength upper byte
-    this._buffer[this._payloadLengtUpperOffset] = (payloadLength & 0xFF00) >> 8;
+    this._buffer[this._payloadLengthHighOffset] = (payloadLength & 0xFF00) >> 8;
 
     this._addData();
 
@@ -253,6 +301,10 @@ class MSPMessageRequest extends MSPMessage {
   }
 
   int write(SerialPort serialPort, {int timeout = 10}) {
-    return serialPort.write(this._buffer, timeout: timeout);
+    serialPort.drain();
+    serialPort.flush();
+    int data = serialPort.write(this._buffer, timeout: timeout);
+    serialPort.drain();
+    return data;
   }
 }

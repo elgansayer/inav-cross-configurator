@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:inavconfigurator/models/mode_range.dart';
 import '../codes.dart';
-import '../mspmessage.dart';
+import '../msp_message.dart';
 import 'base_data_handler.dart';
 
 class MSPModeRanges implements MSPDataHandler {

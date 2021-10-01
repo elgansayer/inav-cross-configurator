@@ -7,7 +7,7 @@ import 'codes/attitude.dart';
 import 'codes/fcvariant.dart';
 import 'codes/raw_imu.dart';
 import 'codes.dart';
-import 'mspmessage.dart';
+import 'msp_message.dart';
 
 abstract class MSPDataClassTransformers {
   static Map<int, Function> classBuilder = {

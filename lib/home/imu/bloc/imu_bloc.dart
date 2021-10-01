@@ -9,7 +9,7 @@ import 'package:meta/meta.dart';
 
 import '../../../msp/codes.dart';
 import '../../../msp/codes/attitude.dart';
-import '../../../msp/mspmessage.dart';
+import '../../../msp/msp_message.dart';
 import '../../../serial/serialdevice_repository.dart';
 
 part 'imu_event.dart';

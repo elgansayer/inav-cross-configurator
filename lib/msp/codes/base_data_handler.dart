@@ -1,4 +1,4 @@
- import '../mspmessage.dart';
+import '../msp_message.dart';
 
 class MSPDataHandler {
   final MSPMessageResponse messageResponse;

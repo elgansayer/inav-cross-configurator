@@ -8,7 +8,7 @@ import '../msp/codes.dart';
 import '../msp/codes/api_version.dart';
 import '../msp/codes/fcvariant.dart';
 import '../msp/data_transformers.dart';
-import '../msp/mspmessage.dart';
+import '../msp/msp_message.dart';
 import 'serialport_model.dart';
 import 'serialport_provider.dart';
 
@@ -171,6 +171,29 @@ class SerialDeviceRepository {
       throw new Exception(msg);
     }
 
+    // You should always set baud rate, data bits, parity and stop bits.
+    this._serialPort.config.baudRate = 115200;
+    this._serialPort.config.parity = 3;
+    this._serialPort.config.bits = 16;
+    this._serialPort.config.stopBits = 1;
+    this._serialPort.config.xonXoff = 0;
+    this._serialPort.config.rts = 0;
+    this._serialPort.config.dsr = 0;
+
+// CURRENT=MSP_ALTITUDE
+// ser.baudrate=115200
+// ser.bytesize=serial.EIGHTBITS
+// ser.parity=serial.PARITY_NONE
+// serial.stopbits=serial.STOPBITS_ONE
+// ser.timeout=0
+// ser.xonxoff=False
+// ser.rtscts=False
+// ser.dsrdtr=False
+    // this._serialPort.config.
+    // this._serialPort.config.stopBits = 1;
+    // this._serialPort.config.parity = 1;
+    // this._serialPort.config.parity = 1;
+
     // Inform app we are connecting
     final newConnectingEvent = new SerialDeviceEvent(
         this._serialPort, SerialDeviceEventType.connecting);
@@ -183,7 +206,7 @@ class SerialDeviceRepository {
     }
 
     // Setup reader
-    this._reader = SerialPortReader(this._serialPort);
+    this._reader = SerialPortReader(this._serialPort, timeout: 100000);
     this._readerListener = this._reader.stream.listen(this._gotData);
 
     await this._checkApiVersion();
@@ -218,11 +241,11 @@ class SerialDeviceRepository {
   //   });
   // }
 
-  void _gotData(Uint8List event) {
-    responseRawSink.add(event);
+  void _gotData(Uint8List data) {
+    responseRawSink.add(data);
 
     // try {
-    MSPMessageResponse respone = new MSPMessageResponse(event);
+    MSPMessageResponse respone = new MSPMessageResponse(packetResponse: data);
     bool worked = respone.readData();
     if (!worked) {
       return;
@@ -319,6 +342,8 @@ class SerialDeviceRepository {
   void closeDevice() {
     if (this._serialPort.isOpen) {
       this._reader.close();
+      this._serialPort.drain();
+      this._serialPort.flush();
       this._serialPort.close();
     }
 
