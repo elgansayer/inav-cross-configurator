@@ -229,13 +229,16 @@ class MSPMessageResponse extends MSPMessage {
 
     // var payloadData = byteData.getRange(this._dataStartOffset, rangeEnd);
 
-    for (var index = 0; index < payload.lengthInBytes; index++) {
-      this.checksum = this._crc8DVBS2(this.checksum, payload.getUint8(index));
+    for (var index = 0; index < this.payload.lengthInBytes; index++) {
+      // payload.getInt8(byteOffset)
+      this.checksum =
+          this._crc8DVBS2(this.checksum, this.payload.getInt8(index));
     }
 
     if (this.checksum != recievedChecksum) {
       this.error =
           ("Read error checksums did not match ${this.checksum}:$recievedChecksum");
+      print(this.error);
       return false;
     }
 

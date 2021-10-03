@@ -171,15 +171,6 @@ class SerialDeviceRepository {
       throw new Exception(msg);
     }
 
-    // You should always set baud rate, data bits, parity and stop bits.
-    this._serialPort.config.baudRate = 115200;
-    this._serialPort.config.parity = 3;
-    this._serialPort.config.bits = 16;
-    this._serialPort.config.stopBits = 1;
-    this._serialPort.config.xonXoff = 0;
-    this._serialPort.config.rts = 0;
-    this._serialPort.config.dsr = 0;
-
 // CURRENT=MSP_ALTITUDE
 // ser.baudrate=115200
 // ser.bytesize=serial.EIGHTBITS
@@ -204,6 +195,19 @@ class SerialDeviceRepository {
       this.disconnect(skipReader: true);
       throw new Exception(msg);
     }
+
+    // You should always set baud rate, data bits, parity and stop bits.
+    this._serialPort.config.baudRate = 115200;
+    this._serialPort.config.parity = SerialPortParity.none;
+    this._serialPort.config.bits = 16;
+    this._serialPort.config.stopBits = 1;
+    this._serialPort.config.setFlowControl(SerialPortFlowControl.none);
+
+// SerialPortEvent <_--???
+    this._serialPort.config.xonXoff = SerialPortXonXoff.disabled;
+    this._serialPort.config.rts = SerialPortRts.off;
+    this._serialPort.config.dsr = SerialPortDsr.ignore;
+    this._serialPort.config.dtr = SerialPortDtr.off;
 
     // Setup reader
     this._reader = SerialPortReader(this._serialPort, timeout: 100000);
