@@ -54,7 +54,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         this.add(ChangePageEvent(AppPage.home));
         break;
       case SerialDeviceEventType.connecting:
-        this.add(ChangePageEvent(AppPage.connecting));
+        this.add(ChangePageEvent(AppPage.devices));
         break;
       case SerialDeviceEventType.disconnected:
         this._disconnect();
@@ -80,6 +80,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void _reconnect() {
     // Disconnect first
     _serialDeviceRepository.reconnect();
-    this.add(ChangePageEvent(AppPage.connecting));
+    this.add(ChangePageEvent(AppPage.devices));
   }
 }

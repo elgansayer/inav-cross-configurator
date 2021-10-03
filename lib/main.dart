@@ -73,8 +73,8 @@ class MyApp extends StatelessWidget {
                 return _devicesPageView();
               case AppPage.home:
                 return _homeView();
-              case AppPage.connecting:
-                return _connectingView();
+              // case AppPage.connecting:
+              // return _connectingView();
               default:
                 return _homeView();
             }
