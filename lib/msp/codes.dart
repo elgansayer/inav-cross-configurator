@@ -96,10 +96,10 @@ abstract class MSPCodes {
   static int mspActiveboxes = 113;
   static int mspMisc = 114;
   static int mspMotorPins = 115;
-  static int mspBoxnames = 116;
+  static int mspBoxNames = 116;
   static int mspPidnames = 117;
   static int mspWp = 118;
-  static int mspBoxids = 119;
+  static int mspBoxIds = 119;
   static int mspServoConfigurations = 120;
   static int msp3d = 124;
   static int mspRcDeadband = 125;

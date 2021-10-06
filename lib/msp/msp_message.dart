@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:libserialport/libserialport.dart';
 
@@ -220,10 +221,11 @@ class MSPMessageResponse extends MSPMessage {
 
     // var rangeEnd = (this._dataStartOffset + this.payloadLength);
 
-    var rangeData = packetResponseData
-        .getRange(
-            this._dataStartOffset, this._dataStartOffset + this.payloadLength)
-        .toList();
+    var readLen = min(this._dataStartOffset + this.payloadLength,
+        (packetResponseData.lengthInBytes));
+
+    List<int> rangeData =
+        packetResponseData.getRange(this._dataStartOffset, readLen).toList();
 
     this.payload = new ByteData.view(Uint8List.fromList(rangeData).buffer);
 

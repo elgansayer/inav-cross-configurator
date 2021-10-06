@@ -59,7 +59,7 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
 
   _setupListeners() {
     this._streamListener = _serialDeviceRepository
-        .responseStreams(MSPCodes.mspAttitude)
+        .responseStream(MSPCodes.mspAttitude)
         .listen((messageResponse) {
       MSPAttitude? rawImu = _serialDeviceRepository.transform(
           MSPCodes.mspAttitude, messageResponse);

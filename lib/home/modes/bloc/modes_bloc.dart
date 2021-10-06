@@ -7,7 +7,6 @@ import 'package:inavconfigurator/home/modes/modes.dart';
 // ignore: implementation_imports
 import 'package:inavconfigurator/models/mode_info.dart';
 import 'package:inavconfigurator/models/mode_range.dart';
-import 'package:inavconfigurator/msp/codes/mode_ranges.dart';
 import 'package:meta/meta.dart';
 
 import '../../../msp/codes.dart';
@@ -37,17 +36,21 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
   }
 
   void _setupListeners() {
-    this._streamListener = _serialDeviceRepository
-        .responseStreams(MSPCodes.mspModeRanges)
-        .listen((messageResponse) {
-      MSPModeRanges? rawModes = _serialDeviceRepository.transform(
-          MSPCodes.mspModeRanges, messageResponse);
+    //this._streamListener =
+    _serialDeviceRepository.responseStreamsAs([
+      MSPCodes.mspBoxNames,
+      MSPCodes.mspModeRanges,
+      MSPCodes.mspBoxIds
+    ]).listen((messageResponse) {
+      // MSPModeRanges? rawModes = _serialDeviceRepository.transform(
+      //     MSPCodes.mspModeRanges, messageResponse);
+      print(messageResponse);
 
-      if (rawModes == null) {
-        return;
-      }
+      // if (messageResponse == null) {
+      //   return;
+      // }
 
-      this.add(GotModesEvent(modesRanges: rawModes.modes));
+      // this.add(GotModesEvent(modesRanges: rawModes.modes));
     });
 
     _serialDeviceRepository.responseRaw.listen((Uint8List data) {
@@ -55,13 +58,18 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
         return;
       }
     });
+
     _writeModes();
   }
 
   void _writeModes() async {
-    try {
-      _serialDeviceRepository.writeFunc(MSPCodes.mspModeRanges);
-    } catch (e) {
+    _serialDeviceRepository.writeFunc(MSPCodes.mspBoxNames);
+    _serialDeviceRepository.writeFunc(MSPCodes.mspModeRanges);
+    _serialDeviceRepository.writeFunc(MSPCodes.mspBoxIds);
+    // MSP_CF_SERIAL_CONFIG
+    // MSPCodes.MSP_RC
+    // sort_modes_for_display
+    try {} catch (e) {
       this.close();
     }
   }

@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:async/async.dart';
+import 'package:inavconfigurator/msp/codes/base_data_handler.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:libserialport/libserialport.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../msp/codes.dart';
 import '../msp/codes/api_version.dart';
@@ -15,18 +18,13 @@ import 'serialport_provider.dart';
 enum SerialDeviceEventType { connected, connecting, disconnected }
 
 class SerialDeviceEvent {
+  SerialDeviceEvent(this.serialPort, this.type);
+
   final SerialPort serialPort;
   final SerialDeviceEventType type;
-
-  SerialDeviceEvent(this.serialPort, this.type);
 }
 
 class SerialDeviceRepository {
-  late StreamSubscription<Uint8List> _readerListener;
-
-  // Last connected
-  late SerialPortInfo _serialPortInfo;
-
   // late Timer _heartBeatTimer;
 
   SerialDeviceRepository();
@@ -35,11 +33,15 @@ class SerialDeviceRepository {
 
   final _errorStreamController = StreamController<String>.broadcast();
   late SerialPortReader _reader;
+  late StreamSubscription<Uint8List> _readerListener;
   final _responseMessagesStreamController =
       StreamController<MSPMessageResponse>.broadcast();
-  final _responseRawStreamController = StreamController<Uint8List>.broadcast();
 
+  final _responseRawStreamController = StreamController<Uint8List>.broadcast();
   late SerialPort _serialPort;
+  // Last connected
+  late SerialPortInfo _serialPortInfo;
+
   final _serialPortStreamController =
       StreamController<SerialDeviceEvent>.broadcast();
 
@@ -62,7 +64,7 @@ class SerialDeviceRepository {
   Stream<MSPMessageResponse> get responseMessages =>
       _responseMessagesStreamController.stream;
 
-  Stream<MSPMessageResponse> responseStreams(int code) {
+  Stream<MSPMessageResponse> responseStream(int code) {
     if (!this.streamMaps.containsKey(code)) {
       // ignore: close_sinks
       var newStream = StreamController<MSPMessageResponse>.broadcast();
@@ -70,6 +72,21 @@ class SerialDeviceRepository {
     }
 
     return this.streamMaps[code]!.stream;
+  }
+
+  Stream<MSPDataHandler> responseStreamsAs(Iterable<int> codes) {
+    Iterable<Stream<MSPDataHandler>> streams =
+        codes.map((e) => responseStreamAs(e));
+
+    return StreamGroup.merge(streams);
+  }
+
+  Stream<MSPMessageResponse> responseStreams(Iterable<int> codes) {
+    Iterable<Stream<MSPMessageResponse>> streams =
+        codes.map((e) => responseStream(e));
+    return StreamGroup.merge(streams);
+    // Stream<MSPMessageResponse> s3 = StreamGroup.merge(streams);
+    // StreamZip<MSPMessageResponse> to = StreamZip(streams);
   }
 
   Future<MSPMessageResponse> response(Stream<MSPMessageResponse> stream) async {
@@ -84,8 +101,38 @@ class SerialDeviceRepository {
     return value;
   }
 
+  // TODO CANCEL STREAM??
+  Stream<MSPDataHandler> responseStreamAs<MSPDataHandler>(int code) {
+    // Stream<List<String>> ddd = CombineLatestStream.list<String>([
+    //   Stream.fromIterable(['a']),
+    //   Stream.fromIterable(['b']),
+    //   Stream.fromIterable(['C', 'D'])
+    // ]).asBroadcastStream();
+
+    // StreamController<T> newStream = StreamController<T>();
+    Stream<MSPMessageResponse> stream = this.responseStream(code);
+
+    StreamTransformer<MSPMessageResponse, MSPDataHandler> doubleTransformer =
+        new StreamTransformer<MSPMessageResponse, MSPDataHandler>.fromHandlers(
+            handleData: (data, EventSink sink) {
+      var trans = this.transform(code, data);
+      sink.add(trans);
+    });
+
+    Stream<MSPDataHandler> ddd = stream.transform(doubleTransformer);
+    return ddd;
+
+    // stream.listen((event) async {
+    //   MSPMessageResponse messageResponse = await this.response(stream);
+    //   var response = this.transform(code, messageResponse);
+    //   newStream.add(response);
+    // });
+
+    // return newStream.stream;
+  }
+
   Future<T> responseAs<T>(int code) async {
-    Stream<MSPMessageResponse> stream = this.responseStreams(code);
+    Stream<MSPMessageResponse> stream = this.responseStream(code);
     MSPMessageResponse messageResponse = await this.response(stream);
     return this.transform(code, messageResponse);
   }
@@ -197,20 +244,37 @@ class SerialDeviceRepository {
     }
 
     // You should always set baud rate, data bits, parity and stop bits.
-    this._serialPort.config.baudRate = 115200;
-    this._serialPort.config.parity = SerialPortParity.none;
-    this._serialPort.config.bits = 16;
+
+    // var config = this._serialPort.config;
+    // config.baudRate = 115200;
+    // config.parity = SerialPortParity.none;
+    // config.bits = 16;
+    // config.stopBits = 1;
+    // this._serialPort.config = config;
+
+    var config = this._serialPort.config;
+    config.baudRate = 115200;
+    // config.parity = SerialPortParity.none;
+    // config.bits = 16;
+    // config.stopBits = 1;
+    this._serialPort.config = config;
+
     this._serialPort.config.stopBits = 1;
+    this._serialPort.config.bits = 8;
+    this._serialPort.config.parity = SerialPortParity.none;
     this._serialPort.config.setFlowControl(SerialPortFlowControl.none);
 
-// SerialPortEvent <_--???
+    // SerialPortEvent <_--???
     this._serialPort.config.xonXoff = SerialPortXonXoff.disabled;
     this._serialPort.config.rts = SerialPortRts.off;
     this._serialPort.config.dsr = SerialPortDsr.ignore;
     this._serialPort.config.dtr = SerialPortDtr.off;
 
+    print(this._serialPort.config.baudRate);
+
     // Setup reader
-    this._reader = SerialPortReader(this._serialPort, timeout: 100000);
+    final timeout = const Duration(seconds: 10).inMilliseconds;
+    this._reader = SerialPortReader(this._serialPort, timeout: timeout);
     this._readerListener = this._reader.stream.listen(this._gotData);
 
     await this._checkApiVersion();
@@ -292,11 +356,11 @@ class SerialDeviceRepository {
   }
 
   void flush() {
-    return this._serialPort.flush();
+    // return this._serialPort.flush();
   }
 
   void drain() {
-    return this._serialPort.drain();
+    // return this._serialPort.drain();
   }
 
   void reconnect() async {

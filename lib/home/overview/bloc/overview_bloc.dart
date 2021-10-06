@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -32,7 +31,7 @@ class InfoBloc extends Bloc<InfoEvent, InfoState> {
 
   _setupListeners() {
     this._streamListener = _serialDeviceRepository
-        .responseStreams(MSPCodes.mspv2InavStatus)
+        .responseStream(MSPCodes.mspv2InavStatus)
         .listen((messageResponse) {
       // Get the status from the response
       MSPINavStatus? inavStatus = _serialDeviceRepository.transform(

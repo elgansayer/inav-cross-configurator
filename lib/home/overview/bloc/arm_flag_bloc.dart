@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -34,7 +33,7 @@ class ArmFlagBloc extends Bloc<ArmFlagEvent, ArmFlagState> {
 
   _setupListeners() {
     this._streamListener = _serialDeviceRepository
-        .responseStreams(MSPCodes.mspv2InavStatus)
+        .responseStream(MSPCodes.mspv2InavStatus)
         .listen((messageResponse) {
       // Get the status from the response
       MSPINavStatus? inavStatus = _serialDeviceRepository.transform(

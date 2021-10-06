@@ -4,6 +4,8 @@ import 'package:inavconfigurator/msp/codes/status_ex.dart';
 
 import 'codes/api_version.dart';
 import 'codes/attitude.dart';
+import 'codes/box_ids.dart';
+import 'codes/box_names.dart';
 import 'codes/fcvariant.dart';
 import 'codes/raw_imu.dart';
 import 'codes.dart';
@@ -18,6 +20,8 @@ abstract class MSPDataClassTransformers {
     MSPCodes.mspStatusEx: (MSPMessageResponse data) => MSPStatusEx(data),
     MSPCodes.mspv2InavStatus: (MSPMessageResponse data) => MSPINavStatus(data),
     MSPCodes.mspModeRanges: (MSPMessageResponse data) => MSPModeRanges(data),
+    MSPCodes.mspBoxNames: (MSPMessageResponse data) => MSPBoxNames(data),
+    MSPCodes.mspBoxIds: (MSPMessageResponse data) => MSPBoxIds(data),
   };
 
   static register(int code, Function builder) {
