@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:libserialport/libserialport.dart';
-import 'package:rxdart/rxdart.dart';
 
 import '../msp/codes.dart';
 import '../msp/codes/api_version.dart';
@@ -14,6 +13,8 @@ import '../msp/data_transformers.dart';
 import '../msp/msp_message.dart';
 import 'serialport_model.dart';
 import 'serialport_provider.dart';
+
+import 'package:dart_periphery/dart_periphery.dart';
 
 enum SerialDeviceEventType { connected, connecting, disconnected }
 
@@ -245,6 +246,18 @@ class SerialDeviceRepository {
 
     // You should always set baud rate, data bits, parity and stop bits.
 
+    var config = this._serialPort.config;
+    config.baudRate = 115200;
+    config.rts = SerialPortRts.on;
+    config.cts = SerialPortCts.flowControl;
+    config.xonXoff = SerialPortXonXoff.disabled;
+    config.setFlowControl(SerialPortFlowControl.rtsCts);
+
+    // config.parity = SerialPortParity.none;
+    // config.bits = 16;
+    // config.stopBits = 1;
+    this._serialPort.config = config;
+
     // var config = this._serialPort.config;
     // config.baudRate = 115200;
     // config.parity = SerialPortParity.none;
@@ -252,23 +265,16 @@ class SerialDeviceRepository {
     // config.stopBits = 1;
     // this._serialPort.config = config;
 
-    var config = this._serialPort.config;
-    config.baudRate = 115200;
-    // config.parity = SerialPortParity.none;
-    // config.bits = 16;
-    // config.stopBits = 1;
-    this._serialPort.config = config;
-
-    this._serialPort.config.stopBits = 1;
-    this._serialPort.config.bits = 8;
-    this._serialPort.config.parity = SerialPortParity.none;
-    this._serialPort.config.setFlowControl(SerialPortFlowControl.none);
+    // this._serialPort.config.stopBits = 1;
+    // this._serialPort.config.bits = 8;
+    // this._serialPort.config.parity = SerialPortParity.none;
+    // this._serialPort.config.setFlowControl(SerialPortFlowControl.none);
 
     // SerialPortEvent <_--???
-    this._serialPort.config.xonXoff = SerialPortXonXoff.disabled;
-    this._serialPort.config.rts = SerialPortRts.off;
-    this._serialPort.config.dsr = SerialPortDsr.ignore;
-    this._serialPort.config.dtr = SerialPortDtr.off;
+    // this._serialPort.config.xonXoff = SerialPortXonXoff.disabled;
+    // this._serialPort.config.rts = SerialPortRts.off;
+    // this._serialPort.config.dsr = SerialPortDsr.ignore;
+    // this._serialPort.config.dtr = SerialPortDtr.off;
 
     print(this._serialPort.config.baudRate);
 
@@ -276,6 +282,11 @@ class SerialDeviceRepository {
     final timeout = const Duration(seconds: 10).inMilliseconds;
     this._reader = SerialPortReader(this._serialPort, timeout: timeout);
     this._readerListener = this._reader.stream.listen(this._gotData);
+
+    _reader.stream.handleError((onError) {
+      print(
+          "ON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERRORON ERROR $onError");
+    });
 
     await this._checkApiVersion();
     await this._checkFCFvarient();
@@ -311,6 +322,8 @@ class SerialDeviceRepository {
 
   void _gotData(Uint8List data) {
     responseRawSink.add(data);
+
+    print("_reader.stream ${SerialPort.lastError}");
 
     // try {
     MSPMessageResponse respone = new MSPMessageResponse(packetResponse: data);

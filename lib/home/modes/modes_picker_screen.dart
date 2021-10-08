@@ -65,14 +65,14 @@ class ModePickerScreenState extends State<ModePickerScreen> {
               overflow: TextOverflow.ellipsis,
             ),
             onTap: () {
-              setState(() {
-                _cardKeys.elementAt(index).currentState?.toggleCard();
-                if (modeSelected) {
-                  this.selectedModes.remove(mode);
-                } else {
-                  this.selectedModes.add(mode);
-                }
-              });
+              // setState(() {
+              //   _cardKeys.elementAt(index).currentState?.toggleCard();
+              //   if (modeSelected) {
+              //     this.selectedModes.remove(mode);
+              //   } else {
+              //     this.selectedModes.add(mode);
+              //   }
+              // });
             },
           ),
         );

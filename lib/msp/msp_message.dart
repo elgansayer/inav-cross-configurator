@@ -96,6 +96,7 @@ class MSPMessage {
   // uint8, (n= payload size), crc8_dvb_s2 checksum
   late int checksum;
 
+  late String error;
   // uint8, flag, usage to be defined (set to zero)
   final int flag = 0;
 
@@ -131,12 +132,9 @@ class MSPMessage {
   // Offset in payload buffer where data starts
   int get _dataStartOffset => 8;
 
-  late String error;
-
   _checksum(Uint8List buffer) {
     int tempChecksum = 0;
     for (int ii = 3; ii < this.msgLength - 1; ii++) {
-      // tempChecksum = this._crc8DVBS2(tempChecksum, buffer[ii]);
       tempChecksum = this._crc8DVBS2(tempChecksum, buffer[ii]);
     }
     return tempChecksum;
@@ -158,8 +156,6 @@ class MSPMessage {
 }
 
 class MSPMessageResponse extends MSPMessage {
-  final Uint8List _packetResponse;
-
   MSPMessageResponse({required Uint8List packetResponse})
       : this._packetResponse = packetResponse {
     this._packetData = new ByteData.view(packetResponse.buffer);
@@ -168,7 +164,9 @@ class MSPMessageResponse extends MSPMessage {
   }
 
   late ByteData _packetData;
+  final Uint8List _packetResponse;
 
+  //
   bool readData() {
     int packetLength = this._packetData.lengthInBytes;
 
@@ -197,11 +195,12 @@ class MSPMessageResponse extends MSPMessage {
     // this.checksum = _checksum(byteData);
 
 // 0
-//219
-//163
-//170
-//29
+// 219
+// 163
+// 170
+// 29
 // 175
+
     this.checksum = 0;
     this.checksum = this._crc8DVBS2(this.checksum, 0); // flag
     this.checksum = this._crc8DVBS2(this.checksum, this.function & 0xFF);
@@ -234,7 +233,7 @@ class MSPMessageResponse extends MSPMessage {
     for (var index = 0; index < this.payload.lengthInBytes; index++) {
       // payload.getInt8(byteOffset)
       this.checksum =
-          this._crc8DVBS2(this.checksum, this.payload.getInt8(index));
+          this._crc8DVBS2(this.checksum, this.payload.getUint8(index));
     }
 
     if (this.checksum != recievedChecksum) {

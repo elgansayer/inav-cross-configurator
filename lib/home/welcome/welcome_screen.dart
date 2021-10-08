@@ -30,6 +30,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   _body() {
+    return Container();
     return Padding(
       padding: const EdgeInsets.fromLTRB(50, 8, 50, 8),
       child: Row(
