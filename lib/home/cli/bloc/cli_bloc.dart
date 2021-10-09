@@ -17,18 +17,6 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     this._countDown();
   }
 
-  _countDown() {
-    // Try to ensure we are ready for cli
-    this.serialDeviceRepository.flush();
-    this.serialDeviceRepository.drain();
-
-    // Not really needed, but it looks cool
-    // and helps get the board ready
-    Future.delayed(new Duration(milliseconds: 150), () {
-      this.add(EnterCliEvent());
-    });
-  }
-
   final AppBloc appBloc;
   final SerialDeviceRepository serialDeviceRepository;
 
@@ -76,6 +64,18 @@ class CliBloc extends Bloc<CliEvent, CliState> {
         yield this.state;
       }
     }
+  }
+
+  _countDown() {
+    // Try to ensure we are ready for cli
+    this.serialDeviceRepository.flush();
+    this.serialDeviceRepository.drain();
+
+    // Not really needed, but it looks cool
+    // and helps get the board ready
+    Future.delayed(new Duration(milliseconds: 150), () {
+      this.add(EnterCliEvent());
+    });
   }
 
   _listen() {

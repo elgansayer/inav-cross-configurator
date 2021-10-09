@@ -86,8 +86,8 @@ class ResponseMessageHeader extends MessageHeader {
 class MSPMessage {
   MSPMessage();
 
-  factory MSPMessage.request(int function, Uint8List? payload) {
-    return new MSPMessageRequest(function, payloadData: payload);
+  factory MSPMessage.request(int function, Uint8List requestData) {
+    return new MSPMessageRequest(function, payloadData: requestData);
   }
 
   // Length of structure
@@ -104,15 +104,20 @@ class MSPMessage {
   late int function;
 
   late MessageHeader header;
-  // final Uint8List? data;
-  late int msgLength;
+  // Total message, data + header length
+  late int msgTotalLength;
 
   // n (up to 65535 bytes) payload
   late ByteData payload;
 
+  // Uint8List? payloadData
+  late Uint8List payloadData;
+
+  // Length of data payload
   late int payloadLength = 0;
+
   // uint16 (little endian) payload size in bytes
-  late int payloadSize;
+  // late int payloadSize;
 
   // Offset in payload buffer for flag
   int get _flagOffset => 3;
@@ -134,7 +139,7 @@ class MSPMessage {
 
   _checksum(Uint8List buffer) {
     int tempChecksum = 0;
-    for (int ii = 3; ii < this.msgLength - 1; ii++) {
+    for (int ii = 3; ii < this.msgTotalLength - 1; ii++) {
       tempChecksum = this._crc8DVBS2(tempChecksum, buffer[ii]);
     }
     return tempChecksum;
@@ -156,15 +161,14 @@ class MSPMessage {
 }
 
 class MSPMessageResponse extends MSPMessage {
-  MSPMessageResponse({required Uint8List packetResponse})
-      : this._packetResponse = packetResponse {
-    this._packetData = new ByteData.view(packetResponse.buffer);
-    print(packetResponse);
+  MSPMessageResponse({required Uint8List payloadData}) {
+    this._packetData = new ByteData.view(payloadData.buffer);
+    this.payloadData = payloadData;
+    print(payloadData);
     print(this._packetData);
   }
 
   late ByteData _packetData;
-  final Uint8List _packetResponse;
 
   //
   bool readData() {
@@ -175,7 +179,7 @@ class MSPMessageResponse extends MSPMessage {
       return false;
     }
 
-    Uint8List packetResponseData = this._packetResponse;
+    Uint8List packetResponseData = this.payloadData;
 
     // this.payloadLength -> message_length_expected
     this.payloadLength =
@@ -183,7 +187,7 @@ class MSPMessageResponse extends MSPMessage {
     this.payloadLength |=
         packetResponseData.elementAt(this._payloadLengthHighOffset) << 8;
 
-    var message_length_expected = this.payloadLength;
+    // var message_length_expected = this.payloadLength;
 
     int recievedChecksum = packetResponseData.last;
 
@@ -191,7 +195,7 @@ class MSPMessageResponse extends MSPMessage {
     this.function |=
         packetResponseData.elementAt(this.__functionHighOffset) << 8;
 
-    this.msgLength = packetLength;
+    this.msgTotalLength = packetLength;
     // this.checksum = _checksum(byteData);
 
 // 0
@@ -207,10 +211,9 @@ class MSPMessageResponse extends MSPMessage {
     this.checksum =
         this._crc8DVBS2(this.checksum, (this.function & 0xFF00) >> 8);
 
+    this.checksum = this._crc8DVBS2(this.checksum, this.payloadLength & 0xFF);
     this.checksum =
-        this._crc8DVBS2(this.checksum, message_length_expected & 0xFF);
-    this.checksum =
-        this._crc8DVBS2(this.checksum, (message_length_expected & 0xFF00) >> 8);
+        this._crc8DVBS2(this.checksum, (this.payloadLength & 0xFF00) >> 8);
 
     // for (var ii = this._dataStartOffset;
     //     ii < (this._dataStartOffset + this.payloadLength);
@@ -256,6 +259,7 @@ class MSPMessageResponse extends MSPMessage {
 class MSPMessageRequest extends MSPMessage {
   MSPMessageRequest(int code, {Uint8List? payloadData}) {
     if (payloadData != null) {
+      this.payloadData = payloadData;
       this.payload = new ByteData.view(payloadData.buffer);
     } else {
       this.payload = new ByteData(MSPMessage.structLength);
@@ -264,7 +268,7 @@ class MSPMessageRequest extends MSPMessage {
     this.function = code;
     int length = this.payload.buffer.lengthInBytes;
     this.payloadLength = length > 0 ? length : 0;
-    this.msgLength = this.payloadLength + MSPMessage.structLength;
+    this.msgTotalLength = this.payloadLength + MSPMessage.structLength;
     this._buildRequest();
   }
 
@@ -273,7 +277,7 @@ class MSPMessageRequest extends MSPMessage {
 
   Uint8List _buildRequest() {
     // Send/Recieve buffer
-    this._buffer = new Uint8List(this.msgLength);
+    this._buffer = new Uint8List(this.msgTotalLength);
 
     // Assign the bugger with the request header
     this.header = new RequestMessageHeader(this._buffer);
@@ -291,7 +295,7 @@ class MSPMessageRequest extends MSPMessage {
 
     this._addData();
 
-    this._buffer[this.msgLength - 1] =
+    this._buffer[this.msgTotalLength - 1] =
         this._checksum(this._buffer.buffer.asUint8List());
 
     return this._buffer;
@@ -305,8 +309,9 @@ class MSPMessageRequest extends MSPMessage {
   }
 
   int write(SerialPort serialPort, {int timeout = 10}) {
+    // serialPort.drain();
+    // serialPort.flush();
     serialPort.drain();
-    serialPort.flush();
     int data = serialPort.write(this._buffer, timeout: timeout);
     serialPort.drain();
     return data;

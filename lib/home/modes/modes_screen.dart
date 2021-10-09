@@ -21,52 +21,15 @@ class ModesScreen extends StatefulWidget {
 class ModesScreenState extends State<ModesScreen> {
   ModesScreenState();
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ModesBloc, ModesState>(builder: (
-      BuildContext context,
-      ModesState currentState,
-    ) {
-      return AppScaffold(
-          title: "Modes",
-          actions: [
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () async {
-                // var currentModes = currentState.modes;
-
-                var modesBloc = BlocProvider.of<ModesBloc>(context);
-                List<ModeInfo> selectedModes = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ModePickerScreen(
-                              // modes: currentModes,
-                              modesBloc: modesBloc,
-                            )));
-                if (selectedModes.length <= 0) {
-                  return;
-                }
-
-                ScaffoldMessenger.of(context)
-                  ..removeCurrentSnackBar()
-                  ..showSnackBar(SnackBar(
-                      content: Text('${selectedModes.length} modes added')));
-              },
-            )
-          ],
-          body: _body(currentState));
-    });
-  }
-
   _body(ModesState currentState) {
-    if (currentState is ModesAvailableState) {
-      return ListView.builder(
-          itemCount: currentState.modes.length,
-          itemBuilder: (BuildContext context, int index) {
-            ModeInfo mode = currentState.modes[index];
-            return _modeCard(mode);
-          });
-    }
+    // if (currentState is ModesAvailableState) {
+    //   return ListView.builder(
+    //       itemCount: currentState.modes.length,
+    //       itemBuilder: (BuildContext context, int index) {
+    //         ModeInfo mode = currentState.modes[index];
+    //         return _modeCard(mode);
+    //       });
+    // }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -227,11 +190,50 @@ class ModesScreenState extends State<ModesScreen> {
           activeColor: Colors.blue[700],
           inactiveColor: Colors.red[300],
           // labels: RangeLabels('', ''),
+          // 900, 1000, 1200, 1400, 1500, 1600, 1800, 2000, 2100
+          divisions: 100,
           min: 900,
           max: 2100,
           values: mode.range,
           onChanged: (values) {}),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ModesBloc, ModesState>(builder: (
+      BuildContext context,
+      ModesState currentState,
+    ) {
+      return AppScaffold(
+          title: "Modes",
+          actions: [
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () async {
+                // var currentModes = currentState.modes;
+
+                var modesBloc = BlocProvider.of<ModesBloc>(context);
+                List<ModeInfo> selectedModes = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ModePickerScreen(
+                              // modes: currentModes,
+                              modesBloc: modesBloc,
+                            )));
+                if (selectedModes.length <= 0) {
+                  return;
+                }
+
+                ScaffoldMessenger.of(context)
+                  ..removeCurrentSnackBar()
+                  ..showSnackBar(SnackBar(
+                      content: Text('${selectedModes.length} modes added')));
+              },
+            )
+          ],
+          body: _body(currentState));
+    });
   }
 }
 

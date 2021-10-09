@@ -7,6 +7,10 @@ import 'package:inavconfigurator/home/modes/modes.dart';
 // ignore: implementation_imports
 import 'package:inavconfigurator/models/mode_info.dart';
 import 'package:inavconfigurator/models/mode_range.dart';
+import 'package:inavconfigurator/msp/codes/base_data_handler.dart';
+import 'package:inavconfigurator/msp/codes/box_ids.dart';
+import 'package:inavconfigurator/msp/codes/box_names.dart';
+import 'package:inavconfigurator/msp/codes/mode_ranges.dart';
 import 'package:meta/meta.dart';
 
 import '../../../msp/codes.dart';
@@ -17,13 +21,19 @@ part 'modes_event.dart';
 part 'modes_state.dart';
 
 class ModesBloc extends Bloc<ModesEvent, ModesState> {
-  final SerialDeviceRepository _serialDeviceRepository;
-  late StreamSubscription<MSPMessageResponse> _streamListener;
-
   ModesBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
-        super(ModesInitial()) {
+        super(ModesState.initial()) {
     this._setupListeners();
+  }
+
+  final SerialDeviceRepository _serialDeviceRepository;
+  late StreamSubscription<MSPDataHandler> _streamListener;
+
+  @override
+  Future<void> close() {
+    this._streamListener.cancel();
+    return super.close();
   }
 
   @override
@@ -31,38 +41,47 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
     ModesEvent event,
   ) async* {
     if (event is GotModesEvent) {
-      yield* _mapModeRangesToInfo(event.modesRanges);
+      yield this.state.copyWith(modeRanges: event.modesRanges);
+      _checkBuildModes();
+    }
+
+    if (event is GotBoxIdsEvent) {
+      yield this.state.copyWith(ids: event.ids);
+      _checkBuildModes();
+    }
+
+    if (event is GotBoxNamesEvent) {
+      yield this.state.copyWith(names: event.names);
+      _checkBuildModes();
+    }
+    if (event is GotAllDataEvent) {
+      this._mapDataToRangeInfo();
     }
   }
 
   void _setupListeners() {
-    //this._streamListener =
-    _serialDeviceRepository.responseStreamsAs([
+    this._streamListener = _serialDeviceRepository.responseStreamsAs([
       MSPCodes.mspBoxNames,
       MSPCodes.mspModeRanges,
       MSPCodes.mspBoxIds
     ]).listen((messageResponse) {
-      // MSPModeRanges? rawModes = _serialDeviceRepository.transform(
-      //     MSPCodes.mspModeRanges, messageResponse);
-      print(messageResponse);
+      if (messageResponse is MSPModeRanges) {
+        this.add(GotModesEvent(modesRanges: messageResponse.modes));
+      }
 
-      // if (messageResponse == null) {
-      //   return;
-      // }
+      if (messageResponse is MSPBoxNames) {
+        this.add(GotBoxNamesEvent(names: messageResponse.names));
+      }
 
-      // this.add(GotModesEvent(modesRanges: rawModes.modes));
-    });
-
-    _serialDeviceRepository.responseRaw.listen((Uint8List data) {
-      if (data == data) {
-        return;
+      if (messageResponse is MSPBoxIds) {
+        this.add(GotBoxIdsEvent(ids: messageResponse.ids));
       }
     });
 
     _writeModes();
   }
 
-  void _writeModes() async {
+  void _writeModes() {
     _serialDeviceRepository.writeFunc(MSPCodes.mspBoxNames);
     _serialDeviceRepository.writeFunc(MSPCodes.mspModeRanges);
     _serialDeviceRepository.writeFunc(MSPCodes.mspBoxIds);
@@ -74,45 +93,35 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
     }
   }
 
-  @override
-  Future<void> close() {
-    this._streamListener.cancel();
-    return super.close();
+  _checkBuildModes() {
+    bool haveIds = this.state.ids.length > 0;
+    bool haveNames = this.state.names.length > 0;
+    bool haveModeRanges = this.state.modeRanges.length > 0;
+
+    if (haveIds && haveNames && haveModeRanges) {
+      this.add(GotAllDataEvent());
+    }
   }
 
-  Stream<ModesState> _mapModeRangesToInfo(List<ModeRange> modesRanges) async* {
-    var allModes = FlightModes.allModes;
+  Stream<ModesState> _mapDataToRangeInfo() async* {
+    // var allModes = FlightModes.allModes;
 
-    List<ModeInfo> modeInfos = [];
+    // List<ModeInfo> modeInfos = [];
 
-    for (var modeRange in modesRanges) {
-      var id = modeRange.id;
+    // for (var modeRange in modesRanges) {
+    //   var id = modeRange.id;
 
-      ModeInfo? foundMode =
-          allModes.firstWhere((modeInfo) => modeInfo.id == id, orElse: null);
+    //   var foundModes = allModes.where((modeInfo) => modeInfo.id == id);
 
-      // if (foundMode == null) {
-      //   continue;
-      // }
-
-      ModeInfo newMode = foundMode.copyWith(
-          channel: modeRange.auxChannelIndex, range: modeRange.range);
-
-      modeInfos.add(newMode);
-    }
-
-    yield ModesAvailableState(modes: modeInfos);
-
-    // modesRanges.map((modesRange) {
-    //   var id = modesRange.id;
-
-    //   ModeInfo mode =
-    //       allModes.firstWhere((modeInfo) => modeInfo.id == id, orElse: null);
-
-    //   if (mode != null) {
-    //     return mode.copyWith(
-    //         channel: modesRange.auxChannelIndex, range: modesRange.range);
+    //   if (foundModes.length < 1) {
+    //     continue;
     //   }
-    // }).toList();
+    //   var foundMode = foundModes.elementAt(0);
+
+    //   ModeInfo newMode = foundMode.copyWith(
+    //       channel: modeRange.auxChannelIndex, range: modeRange.range);
+
+    //   modeInfos.add(newMode);
+    // }
   }
 }

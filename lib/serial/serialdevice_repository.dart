@@ -14,8 +14,6 @@ import '../msp/msp_message.dart';
 import 'serialport_model.dart';
 import 'serialport_provider.dart';
 
-import 'package:dart_periphery/dart_periphery.dart';
-
 enum SerialDeviceEventType { connected, connecting, disconnected }
 
 class SerialDeviceEvent {
@@ -326,7 +324,7 @@ class SerialDeviceRepository {
     print("_reader.stream ${SerialPort.lastError}");
 
     // try {
-    MSPMessageResponse respone = new MSPMessageResponse(packetResponse: data);
+    MSPMessageResponse respone = new MSPMessageResponse(payloadData: data);
     bool worked = respone.readData();
     if (!worked) {
       return;
@@ -369,11 +367,11 @@ class SerialDeviceRepository {
   }
 
   void flush() {
-    // return this._serialPort.flush();
+    return this._serialPort.flush();
   }
 
   void drain() {
-    // return this._serialPort.drain();
+    return this._serialPort.drain();
   }
 
   void reconnect() async {
