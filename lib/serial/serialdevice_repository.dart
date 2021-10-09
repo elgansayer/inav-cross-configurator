@@ -248,8 +248,8 @@ class SerialDeviceRepository {
 
     var config = this._serialPort.config;
     config.baudRate = 115200;
-    config.rts = SerialPortRts.on;
-    config.cts = SerialPortCts.flowControl;
+    config.rts = SerialPortRts.off;
+    config.cts = SerialPortCts.ignore;
     config.xonXoff = SerialPortXonXoff.disabled;
     config.setFlowControl(SerialPortFlowControl.rtsCts);
 
