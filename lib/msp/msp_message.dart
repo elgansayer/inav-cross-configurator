@@ -111,7 +111,7 @@ class MSPMessage {
   late ByteData payload;
 
   // Uint8List? payloadData
-  late Uint8List payloadData;
+  late List<int> payloadData;
 
   // Length of data payload
   late int payloadLength = 0;
@@ -161,8 +161,9 @@ class MSPMessage {
 }
 
 class MSPMessageResponse extends MSPMessage {
-  MSPMessageResponse({required Uint8List payloadData}) {
-    this._packetData = new ByteData.view(payloadData.buffer);
+  MSPMessageResponse({required List<int> payloadData}) {
+    this._packetData =
+        new ByteData.view(Uint8List.fromList(payloadData).buffer);
     this.payloadData = payloadData;
     print(payloadData);
     print(this._packetData);
@@ -179,7 +180,7 @@ class MSPMessageResponse extends MSPMessage {
       return false;
     }
 
-    Uint8List packetResponseData = this.payloadData;
+    Uint8List packetResponseData = Uint8List.fromList(this.payloadData);
 
     // this.payloadLength -> message_length_expected
     this.payloadLength =
@@ -273,47 +274,48 @@ class MSPMessageRequest extends MSPMessage {
   }
 
   // Used to build the message
-  late Uint8List _buffer;
+  late Uint8List packetData;
 
   Uint8List _buildRequest() {
     // Send/Recieve buffer
-    this._buffer = new Uint8List(this.msgTotalLength);
+    this.packetData = new Uint8List(this.msgTotalLength);
 
     // Assign the bugger with the request header
-    this.header = new RequestMessageHeader(this._buffer);
+    this.header = new RequestMessageHeader(this.packetData);
 
     // Flag: reserved, set to 0
-    this._buffer[this._flagOffset] = this.flag;
+    this.packetData[this._flagOffset] = this.flag;
     // Code lower byte
-    this._buffer[this._functionLowOffset] = function & 0xFF;
+    this.packetData[this._functionLowOffset] = function & 0xFF;
     // Code upper byte
-    this._buffer[this.__functionHighOffset] = (function & 0xFF00) >> 8;
+    this.packetData[this.__functionHighOffset] = (function & 0xFF00) >> 8;
     // PayloadLength lower byte
-    this._buffer[this._payloadLengthLowOffset] = payloadLength & 0xFF;
+    this.packetData[this._payloadLengthLowOffset] = payloadLength & 0xFF;
     // PayloadLength upper byte
-    this._buffer[this._payloadLengthHighOffset] = (payloadLength & 0xFF00) >> 8;
+    this.packetData[this._payloadLengthHighOffset] =
+        (payloadLength & 0xFF00) >> 8;
 
     this._addData();
 
-    this._buffer[this.msgTotalLength - 1] =
-        this._checksum(this._buffer.buffer.asUint8List());
+    this.packetData[this.msgTotalLength - 1] =
+        this._checksum(this.packetData.buffer.asUint8List());
 
-    return this._buffer;
+    return this.packetData;
   }
 
   _addData() {
     int start = this._dataStartOffset;
     for (int ii = 0; ii < payloadLength; ii++) {
-      this._buffer[start + ii] = this._buffer.elementAt(ii);
+      this.packetData[start + ii] = this.packetData.elementAt(ii);
     }
   }
 
   int write(SerialPort serialPort, {int timeout = 10}) {
     // serialPort.drain();
     // serialPort.flush();
-    serialPort.drain();
-    int data = serialPort.write(this._buffer, timeout: timeout);
-    serialPort.drain();
+    // serialPort.drain();
+    int data = serialPort.write(this.packetData, timeout: timeout);
+    // serialPort.drain();
     return data;
   }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inavconfigurator/models/mode_info.dart';
@@ -22,19 +21,12 @@ class ModesScreenState extends State<ModesScreen> {
   ModesScreenState();
 
   _body(ModesState currentState) {
-    // if (currentState is ModesAvailableState) {
-    //   return ListView.builder(
-    //       itemCount: currentState.modes.length,
-    //       itemBuilder: (BuildContext context, int index) {
-    //         ModeInfo mode = currentState.modes[index];
-    //         return _modeCard(mode);
-    //       });
-    // }
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [],
-    );
+    return ListView.builder(
+        itemCount: currentState.modes.length,
+        itemBuilder: (BuildContext context, int index) {
+          ModeInfo mode = currentState.modes[index];
+          return _modeCard(mode);
+        });
   }
 
   _modeCard(ModeInfo mode) {
@@ -88,7 +80,7 @@ class ModesScreenState extends State<ModesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  _vert(value: "100"),
+                  _vert(value: "900"),
                   _vert(),
                   _vert(),
                   _vert(),
@@ -96,7 +88,7 @@ class ModesScreenState extends State<ModesScreen> {
                   _vert(),
                   _vert(),
                   _vert(),
-                  _vert(value: "300")
+                  _vert(value: "2100")
                 ],
               ),
             ),

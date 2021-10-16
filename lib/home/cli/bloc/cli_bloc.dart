@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -20,7 +19,7 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   final AppBloc appBloc;
   final SerialDeviceRepository serialDeviceRepository;
 
-  late StreamSubscription<Uint8List> _rawListener;
+  late StreamSubscription<List<int>> _rawListener;
 
   @override
   Future<void> close() async {
@@ -80,7 +79,7 @@ class CliBloc extends Bloc<CliEvent, CliState> {
 
   _listen() {
     this._rawListener =
-        serialDeviceRepository.responseRaw.listen((Uint8List event) {
+        serialDeviceRepository.responseRaw.listen((List<int> event) {
       this.add(RecievedRawCliEvent(data: event));
     });
   }

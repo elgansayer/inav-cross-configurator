@@ -5,7 +5,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'app/bloc/app_bloc.dart';
 import 'components/bloc/errorbanner_bloc.dart';
 import 'components/bloc/errormessage_repository.dart';
-import 'connecting/connecting_scren.dart';
 import 'devices/devices_page.dart';
 import 'home/home_page.dart';
 import 'serial/serialdevice_repository.dart';
@@ -90,9 +89,9 @@ class MyApp extends StatelessWidget {
     return true;
   }
 
-  _connectingView() {
-    return ConnectingScreen();
-  }
+  // _connectingView() {
+  //   return ConnectingScreen();
+  // }
 
   _homeView() {
     return HomePage();

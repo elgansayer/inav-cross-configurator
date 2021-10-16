@@ -31,42 +31,43 @@ class SideDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            padding: EdgeInsets.all(8),
-            // decoration: BoxDecoration(
-            //   color: Colors.blue,
-            // ),
-            child: Stack(
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Row(
-                //   mainAxisSize: MainAxisSize.min,
-                //   children: [
-                //     Container(
-                //       child: Align(
-                //         alignment: Alignment.topLeft,
-                //         child: Container(
-                //             child: SvgPicture.asset(
-                //                 'assets/images/light-wide-2.svg',
-                //                 fit: BoxFit.fill)),
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: SvgPicture.asset('assets/images/light-wide-2.svg',
-                      fit: BoxFit.fill),
-                ),
-                Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                        onPressed: () {}, icon: Icon(Icons.settings)))
-              ],
-            ),
-            // child: SvgPicture.asset('assets/images/light-wide-2.svg',
-            // fit: BoxFit.fitHeight),
-          ),
+              padding: EdgeInsets.all(8),
+              // decoration: BoxDecoration(
+              //   color: Colors.blue,
+              // ),
+              child: Container()
+              // child: Stack(
+              //   // crossAxisAlignment: CrossAxisAlignment.start,
+              //   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     // Row(
+              //     //   mainAxisSize: MainAxisSize.min,
+              //     //   children: [
+              //     //     Container(
+              //     //       child: Align(
+              //     //         alignment: Alignment.topLeft,
+              //     //         child: Container(
+              //     //             child: SvgPicture.asset(
+              //     //                 'assets/images/light-wide-2.svg',
+              //     //                 fit: BoxFit.fill)),
+              //     //       ),
+              //     //     ),
+              //     //   ],
+              //     // ),
+              //     Align(
+              //       alignment: Alignment.topCenter,
+              //       child: SvgPicture.asset('assets/images/light-wide-2.svg',
+              //           fit: BoxFit.fill),
+              //     ),
+              //     Align(
+              //         alignment: Alignment.topRight,
+              //         child: IconButton(
+              //             onPressed: () {}, icon: Icon(Icons.settings)))
+              //   ],
+              // ),
+              // child: SvgPicture.asset('assets/images/light-wide-2.svg',
+              // fit: BoxFit.fitHeight),
+              ),
           ...tabPages.map((tp) {
             Color colour = Colors.white;
 
@@ -86,15 +87,12 @@ class SideDrawer extends StatelessWidget {
             );
           }).toList(),
           Divider(),
-          Expanded(
-            flex: 1,
-            child: TextButton(
-                child: const Text('Disconnect'),
-                onPressed: () {
-                  var appBloc = BlocProvider.of<AppBloc>(context);
-                  appBloc.add(DisconnectEvent());
-                }),
-          )
+          TextButton(
+              child: const Text('Disconnect'),
+              onPressed: () {
+                var appBloc = BlocProvider.of<AppBloc>(context);
+                appBloc.add(DisconnectEvent());
+              })
         ],
       ),
     );

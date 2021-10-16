@@ -4,26 +4,37 @@ part of 'modes_bloc.dart';
 abstract class ModesEvent {}
 
 class GotModesEvent extends ModesEvent {
-  final List<ModeRange> modesRanges;
   GotModesEvent({
     required this.modesRanges,
   });
+
+  final List<ModeRange> modesRanges;
 }
 
 class GotBoxIdsEvent extends ModesEvent {
-  final List<int> ids;
   GotBoxIdsEvent({
     required this.ids,
   });
+
+  final List<int> ids;
 }
 
 class GotBoxNamesEvent extends ModesEvent {
-  final List<String> names;
   GotBoxNamesEvent({
     required this.names,
   });
+
+  final List<String> names;
 }
 
 class GotAllDataEvent extends ModesEvent {
   GotAllDataEvent();
+}
+
+class GeneratedModeInfoEvent extends ModesEvent {
+  GeneratedModeInfoEvent({
+    required this.modes,
+  });
+
+  final List<ModeInfo> modes;
 }

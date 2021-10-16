@@ -73,6 +73,7 @@ class FailsafeScreenState extends State<FailsafeScreen> {
                     ));
               }).toList(),
               value: "Land",
+              onChanged: (String? value) {},
             )),
         new ListTile(
           leading: const Icon(Icons.speed),

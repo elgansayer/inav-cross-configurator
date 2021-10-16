@@ -71,11 +71,12 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
       _updateObjectOrientation(rawImu);
     });
 
-    this._timer = Timer.periodic(Duration(microseconds: 500), this._updateImu);
+    this._timer = Timer.periodic(Duration(milliseconds: 50), this._updateImu);
   }
 
   Future<void> _updateImu(Timer timer) async {
     try {
+      print("writing imu ${timer.tick}");
       _serialDeviceRepository.writeFunc(MSPCodes.mspAttitude);
     } catch (e) {
       this.close();

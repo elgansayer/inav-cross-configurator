@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-import 'package:inavconfigurator/msp/codes.dart';
 import 'package:inavconfigurator/msp/codes/inav_status.dart';
 import 'package:inavconfigurator/msp/msp_message.dart';
 import 'package:inavconfigurator/serial/serialdevice_repository.dart';
@@ -22,7 +21,7 @@ class InfoBloc extends Bloc<InfoEvent, InfoState> {
   @override
   Future<void> close() {
     //cancel streams
-    this._streamListener.cancel();
+    // this._streamListener.cancel();
     return super.close();
   }
 
@@ -35,38 +34,38 @@ class InfoBloc extends Bloc<InfoEvent, InfoState> {
     }
   }
 
-  _setupListeners() {
-    this._streamListener = _serialDeviceRepository
-        .responseStream(MSPCodes.mspv2InavStatus)
-        .listen((messageResponse) {
-      // Get the status from the response
-      MSPINavStatus? inavStatus = _serialDeviceRepository.transform(
-          MSPCodes.mspv2InavStatus, messageResponse);
+  // _setupListeners() {
+  //   this._streamListener = _serialDeviceRepository
+  //       .responseStream(MSPCodes.mspv2InavStatus)
+  //       .listen((messageResponse) {
+  //     // Get the status from the response
+  //     MSPINavStatus? inavStatus = _serialDeviceRepository.transform(
+  //         MSPCodes.mspv2InavStatus, messageResponse);
 
-      if (inavStatus == null) {
-        return;
-      }
+  //     if (inavStatus == null) {
+  //       return;
+  //     }
 
-      this.add(GotStatusEvent(inavStatus: inavStatus));
-    });
+  //     this.add(GotStatusEvent(inavStatus: inavStatus));
+  //   });
 
-    // _serialDeviceRepository.responseRaw.listen((Uint8List data) {
-    //   if (data == data) {
-    //     return;
-    //   }
-    // });
+  //   // _serialDeviceRepository.responseRaw.listen((Uint8List data) {
+  //   //   if (data == data) {
+  //   //     return;
+  //   //   }
+  //   // });
 
-    _sendRequest();
-  }
+  //   _sendRequest();
+  // }
 
-  Future<void> _sendRequest() async {
-    try {
-      _serialDeviceRepository.writeFunc(MSPCodes.mspv2InavStatus);
-    } catch (e) {
-      print(e);
-      this.close();
-    }
-  }
+  // Future<void> _sendRequest() async {
+  //   try {
+  //     _serialDeviceRepository.writeFunc(MSPCodes.mspv2InavStatus);
+  //   } catch (e) {
+  //     print(e);
+  //     this.close();
+  //   }
+  // }
 
   Stream<InfoState> _mapGotStatusEvent(MSPINavStatus inavStatus) async* {
     var allFlags = ArmFlags.allFlags;

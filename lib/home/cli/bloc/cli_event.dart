@@ -12,7 +12,7 @@ class SendCliCmdEvent extends CliEvent {
 }
 
 class RecievedRawCliEvent extends CliEvent {
-  final Uint8List data;
+  final List<int> data;
   RecievedRawCliEvent({
     required this.data,
   });

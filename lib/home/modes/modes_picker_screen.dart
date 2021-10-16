@@ -1,5 +1,4 @@
 import 'package:flip_card/flip_card.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:inavconfigurator/models/mode_info.dart';
 import 'bloc/modes_bloc.dart';
@@ -65,14 +64,14 @@ class ModePickerScreenState extends State<ModePickerScreen> {
               overflow: TextOverflow.ellipsis,
             ),
             onTap: () {
-              // setState(() {
-              //   _cardKeys.elementAt(index).currentState?.toggleCard();
-              //   if (modeSelected) {
-              //     this.selectedModes.remove(mode);
-              //   } else {
-              //     this.selectedModes.add(mode);
-              //   }
-              // });
+              setState(() {
+                _cardKeys.elementAt(index).currentState?.toggleCard();
+                if (modeSelected) {
+                  this.selectedModes.remove(mode);
+                } else {
+                  this.selectedModes.add(mode);
+                }
+              });
             },
           ),
         );

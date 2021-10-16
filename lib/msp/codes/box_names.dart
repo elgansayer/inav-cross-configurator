@@ -16,7 +16,7 @@ class MSPBoxNames implements MSPDataHandler {
 
     for (var i = 0; i < wordsAsBytes.length; i++) {
       int end = wordsAsBytes.elementAt(i).key;
-      int start = (i == 0 ? 0 : wordsAsBytes.elementAt(i - 1).key) + 1;
+      int start = (i == 0 ? 0 : wordsAsBytes.elementAt(i - 1).key + 1);
 
       Uint8List wholeWordBytes = payload.sublist(start, end);
       String word = ascii.decode(wholeWordBytes);
