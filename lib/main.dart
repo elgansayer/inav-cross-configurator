@@ -68,8 +68,6 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeMode.dark,
         home: BlocBuilder<AppBloc, AppState>(
           builder: (BuildContext context, AppState state) {
-            return CalibrationPage();
-
             switch (state.appPage) {
               case AppPage.devices:
                 return _devicesPageView();

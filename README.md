@@ -54,4 +54,6 @@ and at least be able to configure what i need in the field.
 ### Modes
 ![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/modes.png)
 
+### Calibration
+![alt](https://github.com/elgansayer/inav-cross-configurator/blob/main/media/calibration.png)
 
