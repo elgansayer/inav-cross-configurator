@@ -4,6 +4,7 @@ import 'package:inavconfigurator/models/mode_info.dart';
 
 import '../../components/Scaffod.dart';
 import 'bloc/modes_bloc.dart';
+import 'modes_channel_picker_screen.dart';
 import 'modes_picker_screen.dart';
 
 class ModesScreen extends StatefulWidget {
@@ -33,44 +34,29 @@ class ModesScreenState extends State<ModesScreen> {
     return Card(
       child: ListTile(
         trailing: IconButton(
-            onPressed: null, icon: Icon(Icons.delete_forever_rounded)),
+            onPressed: () {
+              BlocProvider.of<ModesBloc>(context)
+                  .add(RemoveModeEvent(mode: mode));
+            },
+            icon: Icon(Icons.delete_forever_rounded)),
         leading: Column(
           children: [
             Text(mode.name),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 3, 0, 0),
               child: ElevatedButton(
-                  onPressed: null, child: Text(mode.channel.toString())),
+                child: Text(mode.channel.toString()),
+                onPressed: () async {
+                  // ModesBloc modesBloc = BlocProvider.of<ModesBloc>(context);
+                  int channel = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ModeChannelPickerScreen()));
+                },
+              ),
             )
           ],
         ),
-        // title: Container(
-        //   // color: Colors.red,
-        //   height: 200,
-        //   child: Stack(
-        //     alignment: Alignment.topCenter,
-        //     children: [
-        //       Positioned(
-        //         top: 10,
-        //         // left: 0,
-        //         // height: 250,
-        //         // width: 0,
-        //         // height: double.infinity,
-        //         // width: double.infinity,
-        //         // left: 0,
-        //         // right: double.infinity,
-        //         // top: 0,
-        //         // bottom: double.infinity,
-        //         // width: double.infinity,
-        //         child: _slider(),
-        //       ),
-        //       Align(
-        //         alignment: Alignment.topCenter,
-        //         child: _slider(),
-        //       ),
-        //     ],
-        //   ),
-        // ),
         title: _slider(mode),
         subtitle: Stack(
           children: [
@@ -84,7 +70,7 @@ class ModesScreenState extends State<ModesScreen> {
                   _vert(),
                   _vert(),
                   _vert(),
-                  _vert(value: "200"),
+                  _vert(value: "1500"),
                   _vert(),
                   _vert(),
                   _vert(),
@@ -135,37 +121,6 @@ class ModesScreenState extends State<ModesScreen> {
     );
   }
 
-  // _rxSlider() {
-  //   return SliderTheme(
-  //     data: SliderTheme.of(context).copyWith(
-  //       activeTrackColor: Colors.transparent,
-  //       inactiveTrackColor: Colors.transparent,
-  //       // trackShape: RectangularSliderTrackShape(),
-  //       trackHeight: 10.0,
-  //       // thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-  //       // thumbColor: Colors.redAccent,
-  //       // overlayColor: Colors.red.withAlpha(32),
-  //       // overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-  //       // tickMarkShape: RoundSliderTickMarkShape(),
-  //       // activeTickMarkColor: Colors.red[700],
-  //       // inactiveTickMarkColor: Colors.red[100],
-  //       // valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-  //       // valueIndicatorColor: Colors.redAccent,
-  //       // valueIndicatorTextStyle: TextStyle(
-  //       // color: Colors.white,
-  //       // ),
-  //     ),
-  //     child: Slider(
-  //       value: 50,
-  //       min: 0,
-  //       max: 100,
-  //       divisions: 10,
-  //       // label: '$_value',
-  //       onChanged: (value) {},
-  //     ),
-  //   );
-  // }
-
   _slider(ModeInfo mode) {
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
@@ -205,7 +160,7 @@ class ModesScreenState extends State<ModesScreen> {
               onPressed: () async {
                 // var currentModes = currentState.modes;
 
-                var modesBloc = BlocProvider.of<ModesBloc>(context);
+                ModesBloc modesBloc = BlocProvider.of<ModesBloc>(context);
                 List<ModeInfo> selectedModes = await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -221,6 +176,8 @@ class ModesScreenState extends State<ModesScreen> {
                   ..removeCurrentSnackBar()
                   ..showSnackBar(SnackBar(
                       content: Text('${selectedModes.length} modes added')));
+
+                modesBloc.add(AddNewModesEvent(modes: selectedModes));
               },
             )
           ],

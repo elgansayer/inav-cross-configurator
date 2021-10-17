@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:inavconfigurator/models/vehicle_type.dart';
 
+@immutable
 class ModeInfo {
   final int id;
   final String name;
@@ -33,5 +35,28 @@ class ModeInfo {
       vehicleType: vehicleType ?? this.vehicleType,
       range: range ?? this.range,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is ModeInfo &&
+        other.id == id &&
+        other.name == name &&
+        other.description == description &&
+        other.channel == channel &&
+        other.vehicleType == vehicleType &&
+        other.range == range;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        name.hashCode ^
+        description.hashCode ^
+        channel.hashCode ^
+        vehicleType.hashCode ^
+        range.hashCode;
   }
 }

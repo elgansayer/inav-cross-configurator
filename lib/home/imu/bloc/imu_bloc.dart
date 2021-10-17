@@ -71,7 +71,8 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
       _updateObjectOrientation(rawImu);
     });
 
-    this._timer = Timer.periodic(Duration(milliseconds: 50), this._updateImu);
+    Duration duration = Duration(milliseconds: 75);
+    this._timer = Timer.periodic(duration, this._updateImu);
   }
 
   Future<void> _updateImu(Timer timer) async {

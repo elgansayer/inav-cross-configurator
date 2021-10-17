@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 // Silly object naming
 // ignore: implementation_imports
 import 'package:inavconfigurator/models/mode_info.dart';
@@ -17,6 +18,15 @@ import '../../../serial/serialdevice_repository.dart';
 
 part 'modes_event.dart';
 part 'modes_state.dart';
+
+class ModeRangeValues {
+  static double max = 2100;
+  static double min = 900;
+
+  static double get distance => (ModeRangeValues.max - ModeRangeValues.min);
+
+  static double get mid => ModeRangeValues.distance / 2;
+}
 
 class ModesBloc extends Bloc<ModesEvent, ModesState> {
   ModesBloc({required SerialDeviceRepository serialDeviceRepository})
@@ -59,6 +69,14 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
 
     if (event is GotAllDataEvent) {
       this._mapDataToRangeInfo();
+    }
+
+    if (event is AddNewModesEvent) {
+      yield* this._mapNewModesToState(event.modes);
+    }
+
+    if (event is RemoveModeEvent) {
+      yield* this._mapRemoveModesToState(event.mode);
     }
   }
 
@@ -133,25 +151,29 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
     }
 
     this.add(GeneratedModeInfoEvent(modes: allModes));
+  }
 
-    // var allModes = FlightModes.allModes;
+  Stream<ModesState> _mapNewModesToState(List<ModeInfo> modes) async* {
+    List<ModeInfo> oldModes = this.state.modes;
+    List<ModeInfo> newModes = List<ModeInfo>.from(oldModes);
 
-    // List<ModeInfo> modeInfos = [];
+    double distance = ModeRangeValues.mid / 10;
+    double start = ModeRangeValues.min + ModeRangeValues.mid - distance;
+    double end = ModeRangeValues.min + ModeRangeValues.mid + distance;
 
-    // for (var modeRange in modesRanges) {
-    //   var id = modeRange.id;
+    List<ModeInfo> newModeInfos = modes.map((mode) {
+      return mode.copyWith(range: RangeValues(start, end));
+    }).toList();
 
-    //   var foundModes = allModes.where((modeInfo) => modeInfo.id == id);
+    newModes.addAll(newModeInfos);
 
-    //   if (foundModes.length < 1) {
-    //     continue;
-    //   }
-    //   var foundMode = foundModes.elementAt(0);
+    yield this.state.copyWith(modes: newModes);
+  }
 
-    //   ModeInfo newMode = foundMode.copyWith(
-    //       channel: modeRange.auxChannelIndex, range: modeRange.range);
-
-    //   modeInfos.add(newMode);
-    // }
+  Stream<ModesState> _mapRemoveModesToState(ModeInfo mode) async* {
+    List<ModeInfo> oldModes = this.state.modes;
+    List<ModeInfo> newModes = List<ModeInfo>.from(oldModes);
+    newModes.remove(mode);
+    yield this.state.copyWith(modes: newModes);
   }
 }

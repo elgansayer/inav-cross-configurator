@@ -38,3 +38,19 @@ class GeneratedModeInfoEvent extends ModesEvent {
 
   final List<ModeInfo> modes;
 }
+
+class AddNewModesEvent extends ModesEvent {
+  AddNewModesEvent({
+    required this.modes,
+  });
+
+  final List<ModeInfo> modes;
+}
+
+class RemoveModeEvent extends ModesEvent {
+  RemoveModeEvent({
+    required this.mode,
+  });
+
+  final ModeInfo mode;
+}
