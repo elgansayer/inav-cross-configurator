@@ -8,3 +8,7 @@ class GotMSPCalibrationData extends CalibrationEvent {
 
   GotMSPCalibrationData(this.calibrationData);
 }
+
+class StartAccCalibration extends CalibrationEvent {
+  StartAccCalibration();
+}

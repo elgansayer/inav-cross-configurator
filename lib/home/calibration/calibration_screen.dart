@@ -30,9 +30,8 @@ class CalibrationScreenState extends State<CalibrationScreen> {
   CalibrationScreenState();
 
   _gridItem(AccCalibrationItem item) {
-    Widget icon = (!item.completed)
-        ? Container()
-        : Align(alignment: Alignment.bottomRight, child: Icon(Icons.done));
+    Widget icon =
+        (!item.completed) ? Container() : Icon(Icons.done, color: Colors.blue);
 
     return Card(
       child: Stack(
@@ -40,13 +39,15 @@ class CalibrationScreenState extends State<CalibrationScreen> {
           Align(
             alignment: Alignment.center,
             child: Container(
-              child: SvgPicture.asset(
-                item.svgPath,
-                color: item.color,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SvgPicture.asset(
+                  item.svgPath,
+                  color: item.color,
+                ),
               ),
             ),
           ),
-          icon,
           Align(
             alignment: Alignment.topCenter,
             child: Column(
@@ -55,12 +56,18 @@ class CalibrationScreenState extends State<CalibrationScreen> {
                 Container(
                   padding: EdgeInsets.all(8),
                   color: Colors.grey.withOpacity(.2),
-                  child: Text(
-                    item.name,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        item.name,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      icon,
+                    ],
                   ),
                 )
               ],
@@ -114,7 +121,11 @@ class CalibrationScreenState extends State<CalibrationScreen> {
           title: Text("Accelerometer Calibration",
               overflow: TextOverflow.ellipsis),
           trailing: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                _showMaterialDialog();
+                BlocProvider.of<CalibrationBloc>(context)
+                    .add(StartAccCalibration());
+              },
               child: Text(
                 "Calibrate",
                 overflow: TextOverflow.ellipsis,
@@ -142,22 +153,55 @@ class CalibrationScreenState extends State<CalibrationScreen> {
     return _grid(currentState);
   }
 
+  void _showMaterialDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Processing Calibration'),
+            content: Center(child: CircularProgressIndicator()),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Close')),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('HelloWorld!'),
+              )
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CalibrationBloc, CalibrationState>(builder: (
-      BuildContext context,
-      CalibrationState currentState,
-    ) {
-      return AppScaffold(
-          title: "Calibration",
-          actions: [
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () async {},
-            )
-          ],
-          body: _body(currentState));
-    });
+    return BlocConsumer<CalibrationBloc, CalibrationState>(
+      listener: (context, state) {
+        // if (state.accCalibration) {
+        //   _showMaterialDialog();
+        // }
+      },
+      builder: (context, state) {
+        return BlocBuilder<CalibrationBloc, CalibrationState>(builder: (
+          BuildContext context,
+          CalibrationState currentState,
+        ) {
+          return AppScaffold(
+              title: "Calibration",
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () async {},
+                )
+              ],
+              body: _body(currentState));
+        });
+      },
+    );
   }
 }
 

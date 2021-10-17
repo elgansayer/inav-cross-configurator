@@ -6,6 +6,7 @@ import 'codes/api_version.dart';
 import 'codes/attitude.dart';
 import 'codes/box_ids.dart';
 import 'codes/box_names.dart';
+import 'codes/calibration_data.dart';
 import 'codes/fcvariant.dart';
 import 'codes/raw_imu.dart';
 import 'codes.dart';
@@ -22,6 +23,8 @@ abstract class MSPDataClassTransformers {
     MSPCodes.mspModeRanges: (MSPMessageResponse data) => MSPModeRanges(data),
     MSPCodes.mspBoxNames: (MSPMessageResponse data) => MSPBoxNames(data),
     MSPCodes.mspBoxIds: (MSPMessageResponse data) => MSPBoxIds(data),
+    MSPCodes.mspCalibrationData: (MSPMessageResponse data) =>
+        MSPCalibrationData(data),
   };
 
   static register(int code, Function builder) {
@@ -30,6 +33,8 @@ abstract class MSPDataClassTransformers {
 
   static T? transform<T>(int code, MSPMessageResponse data) {
     if (!classBuilder.containsKey(code)) {
+      print(
+          "MSPDataClassTransformers has no key for code $code in classBuilder; Add class builder func");
       return null;
     }
 

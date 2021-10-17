@@ -174,19 +174,13 @@ class SerialDeviceRepository {
         new StreamTransformer<MSPMessageResponse, MSPDataHandler>.fromHandlers(
             handleData: (data, EventSink sink) {
       var trans = this.transform(code, data);
-      sink.add(trans);
+      if (trans != null) {
+        sink.add(trans);
+      }
     });
 
-    Stream<MSPDataHandler> ddd = stream.transform(doubleTransformer);
-    return ddd;
-
-    // stream.listen((event) async {
-    //   MSPMessageResponse messageResponse = await this.response(stream);
-    //   var response = this.transform(code, messageResponse);
-    //   newStream.add(response);
-    // });
-
-    // return newStream.stream;
+    Stream<MSPDataHandler> dataHandler = stream.transform(doubleTransformer);
+    return dataHandler;
   }
 
   Stream<MSPDataHandler> responseStreamsAs(Iterable<int> codes) {

@@ -33,6 +33,10 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
     if (event is GotMSPCalibrationData) {
       yield* _getCalibrationData(event.calibrationData);
     }
+    if (event is StartAccCalibration) {
+      _startCalibrating();
+      yield CalibrationState.init().copyWith(accCalibration: true);
+    }
   }
 
   void _setupListeners() {
@@ -44,14 +48,24 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
       }
     });
 
-    _writeModes();
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      _writeModes();
+    });
+  }
+
+  void _startCalibrating() {
+    try {
+      _serialDeviceRepository.writeFunc(MSPCodes.mspAccCalibration);
+    } catch (e) {
+      // this.close();
+    }
   }
 
   void _writeModes() {
     try {
       _serialDeviceRepository.writeFunc(MSPCodes.mspCalibrationData);
     } catch (e) {
-      this.close();
+      // this.close();
     }
   }
 
