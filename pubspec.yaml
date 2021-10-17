@@ -94,11 +94,19 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
   assets:
     - assets/images/icons/cf_icon_armed_grey.svg
+    - assets/images/icons/cf_icon_cal_grey.svg
     - assets/images/icons/cf_icon_cli_grey.svg
     - assets/images/icons/cf_icon_failsafe_grey.svg
     - assets/images/icons/imu.svg
     - assets/images/icons/cf_icon_modes_grey.svg
     - assets/images/icons/inav-icon.svg
+
+    - assets/images/calibration/pos1.svg
+    - assets/images/calibration/pos2.svg
+    - assets/images/calibration/pos3.svg
+    - assets/images/calibration/pos4.svg
+    - assets/images/calibration/pos5.svg
+    - assets/images/calibration/pos6.svg
 
     - assets/images/cf_logo_white.svg
     - assets/images/light-wide-1.svg

@@ -1,7 +1,4 @@
-import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
-import 'package:inavconfigurator/models/mode_info.dart';
-import 'modes.dart';
 
 class ModeChannelPickerScreen extends StatefulWidget {
   const ModeChannelPickerScreen({Key? key}) : super(key: key);

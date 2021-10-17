@@ -13,6 +13,8 @@ class SideDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<TabPage> tabPages = [
       new TabPage("Overview", HomePages.overview, iconData: Icons.home),
+      new TabPage("Calibration", HomePages.calibration,
+          svgPath: "assets/images/icons/cf_icon_cal_grey.svg"),
       new TabPage("Failsafe", HomePages.failsafe,
           svgPath: "assets/images/icons/cf_icon_failsafe_grey.svg"),
       new TabPage("Modes", HomePages.modes,

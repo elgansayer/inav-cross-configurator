@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/home_bloc.dart';
+import 'calibration/calibration_page.dart';
 import 'cli/cli_page.dart';
 import 'failsafe/failsafe_page.dart';
 import 'home_page.dart';
@@ -50,6 +51,9 @@ class HomeScreenState extends State<HomeScreen> {
     switch (tabPage?.tabPage) {
       case HomePages.failsafe:
         page = FailsafePage();
+        break;
+      case HomePages.calibration:
+        page = CalibrationPage();
         break;
       case HomePages.modes:
         page = ModesPage();
