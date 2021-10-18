@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -29,51 +31,55 @@ class AccCalibrationItem {
 class CalibrationScreenState extends State<CalibrationScreen> {
   CalibrationScreenState();
 
-  _gridItem(AccCalibrationItem item) {
+  Widget _gridItem(AccCalibrationItem item) {
     Widget icon =
         (!item.completed) ? Container() : Icon(Icons.done, color: Colors.blue);
 
-    return Card(
-      child: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SvgPicture.asset(
-                  item.svgPath,
-                  color: item.color,
-                ),
+    final Size _size = MediaQuery.of(context).size;
+
+    print(_size.width);
+    double maxSize = max(75, (_size.width / 12) * 1.5);
+
+    double itemHeight = maxSize;
+    double boxHeight = itemHeight + 50;
+
+    return Container(
+      constraints: BoxConstraints(
+          minHeight: 75,
+          minWidth: 75,
+          maxHeight: boxHeight,
+          maxWidth: boxHeight),
+      child: Card(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(6),
+              color: Colors.grey.withOpacity(.2),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    item.name,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  icon,
+                ],
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(8),
-                  color: Colors.grey.withOpacity(.2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        item.name,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      icon,
-                    ],
-                  ),
-                )
-              ],
+            Container(
+              child: SvgPicture.asset(item.svgPath,
+                  color: item.color,
+                  width: itemHeight,
+                  height: itemHeight,
+                  fit: BoxFit.contain),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -88,30 +94,6 @@ class CalibrationScreenState extends State<CalibrationScreen> {
       return AccCalibrationItem("assets/images/calibration/pos$itemIndex.svg",
           "Step $itemIndex", accCalibrationState.completed);
     }).toList();
-
-    final Size _size = MediaQuery.of(context).size;
-    var crossAxisCount = 3;
-    double childAspectRatio = 1;
-
-    if (_size.width < 500) {
-      crossAxisCount = 2;
-      // childAspectRatio = 1;
-    }
-
-    if (_size.width < 400) {
-      crossAxisCount = 2;
-      childAspectRatio = 0.75;
-    }
-
-    if (_size.width < 200) {
-      crossAxisCount = 2;
-      childAspectRatio = 0.6;
-    }
-
-    if (_size.width < 150) {
-      crossAxisCount = 1;
-      childAspectRatio = 0.7;
-    }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -131,20 +113,9 @@ class CalibrationScreenState extends State<CalibrationScreen> {
                 overflow: TextOverflow.ellipsis,
               )),
         ),
-        Flexible(
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisSpacing: 0,
-              mainAxisSpacing: 0,
-              crossAxisCount: crossAxisCount,
-              childAspectRatio: childAspectRatio,
-            ),
-            itemCount: _items.length,
-            itemBuilder: (context, index) {
-              return _gridItem(_items[index]);
-            },
-          ),
-        ),
+        Wrap(
+          children: _items.map((e) => _gridItem(e)).toList(),
+        )
       ],
     );
   }
