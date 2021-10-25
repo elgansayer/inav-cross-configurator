@@ -54,3 +54,13 @@ class RemoveModeEvent extends ModesEvent {
 
   final ModeInfo mode;
 }
+
+class ChangeChannelEvent extends ModesEvent {
+  ChangeChannelEvent({
+    required this.mode,
+    required this.channel,
+  });
+
+  final int channel;
+  final ModeInfo mode;
+}

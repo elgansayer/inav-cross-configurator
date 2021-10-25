@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inavconfigurator/home/modes/mode_card.dart';
 import 'package:inavconfigurator/models/mode_info.dart';
 
 import '../../components/Scaffod.dart';
@@ -22,127 +23,45 @@ class ModesScreenState extends State<ModesScreen> {
   ModesScreenState();
 
   _body(ModesState currentState) {
-    return ListView.builder(
-        itemCount: currentState.modes.length,
-        itemBuilder: (BuildContext context, int index) {
-          ModeInfo mode = currentState.modes[index];
-          return _modeCard(mode);
-        });
+    return Padding(
+      padding: const EdgeInsets.only(top: 0.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Arm Mode is required"),
+          ),
+          Container(
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: currentState.modes.length,
+                itemBuilder: (BuildContext context, int index) {
+                  ModeInfo mode = currentState.modes[index];
+                  return _modeCard(mode);
+                }),
+          ),
+        ],
+      ),
+    );
   }
 
   _modeCard(ModeInfo mode) {
-    return Card(
-      child: ListTile(
-        trailing: IconButton(
-            onPressed: () {
-              BlocProvider.of<ModesBloc>(context)
-                  .add(RemoveModeEvent(mode: mode));
-            },
-            icon: Icon(Icons.delete_forever_rounded)),
-        leading: Column(
-          children: [
-            Text(mode.name),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 3, 0, 0),
-              child: ElevatedButton(
-                child: Text(mode.channel.toString()),
-                onPressed: () async {
-                  // ModesBloc modesBloc = BlocProvider.of<ModesBloc>(context);
-                  int channel = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ModeChannelPickerScreen()));
-                },
-              ),
-            )
-          ],
-        ),
-        title: _slider(mode),
-        subtitle: Stack(
-          children: [
-            Container(
-              height: 35,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  _vert(value: "900"),
-                  _vert(),
-                  _vert(),
-                  _vert(),
-                  _vert(value: "1500"),
-                  _vert(),
-                  _vert(),
-                  _vert(),
-                  _vert(value: "2100")
-                ],
-              ),
-            ),
-            Positioned(
-              left: 100,
-              top: 0,
-              child: Container(
-                width: 5,
-                height: 25,
-                decoration: BoxDecoration(
-                    // borderRadius: BorderRadius.circular(0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blue,
-                        blurRadius: 1.0,
-                        spreadRadius: 0.0,
-                        offset: Offset(
-                          0.0,
-                          -10.0,
-                        ),
-                      ),
-                    ]),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    return ModeCard(
+      modeInfo: mode,
+      onChannelSelect: () async {
+        int channel = await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => ModeChannelPickerScreen()));
 
-  _vert({String? value}) {
-    Widget textVal = value != null ? Text(value) : Container();
-    double height = value != null ? 8 : 5;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 1,
-          height: height,
-          color: Colors.grey,
-        ),
-        textVal
-      ],
-    );
-  }
-
-  _slider(ModeInfo mode) {
-    return SliderTheme(
-      data: SliderTheme.of(context).copyWith(
-        // activeTrackColor: Colors.red[700],
-        // inactiveTrackColor: Colors.red[100],
-        trackShape: RectangularSliderTrackShape(),
-        trackHeight: 10.0,
-        // thumbColor: Colors.redAccent,
-        // thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-        // overlayColor: Colors.red.withAlpha(32),
-        // overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-      ),
-      child: RangeSlider(
-          activeColor: Colors.blue[700],
-          inactiveColor: Colors.red[300],
-          // labels: RangeLabels('', ''),
-          // 900, 1000, 1200, 1400, 1500, 1600, 1800, 2000, 2100
-          divisions: 100,
-          min: 900,
-          max: 2100,
-          values: mode.range,
-          onChanged: (values) {}),
+        if (channel > 0) {
+          BlocProvider.of<ModesBloc>(context)
+              .add(ChangeChannelEvent(mode: mode, channel: channel));
+        }
+      },
+      onRemovePressed: () {
+        BlocProvider.of<ModesBloc>(context).add(RemoveModeEvent(mode: mode));
+      },
     );
   }
 

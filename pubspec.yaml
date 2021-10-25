@@ -51,6 +51,7 @@ dependencies:
   flip_card: ^0.6.0
   rxdart: ^0.27.2
   dart_periphery: ^0.8.25-RC
+  syncfusion_flutter_sliders: ^19.3.46
 
 dev_dependencies:
   flutter_test:

@@ -11,7 +11,7 @@ class ModeChannelPickerScreen extends StatefulWidget {
 
 class ModeChannelPickerScreenState extends State<ModeChannelPickerScreen> {
   ModeChannelPickerScreenState();
-  late int selectedChannel;
+  late int selectedChannel = -1;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -22,11 +22,11 @@ class ModeChannelPickerScreenState extends State<ModeChannelPickerScreen> {
         return false;
       },
       child: Scaffold(
-          appBar: AppBar(title: Text("Channel Selector"), actions: [
-            IconButton(
-              icon: Icon(Icons.help),
-              onPressed: () {},
-            )
+          appBar: AppBar(title: _getTitle(), actions: [
+            // IconButton(
+            //   icon: Icon(Icons.help),
+            //   onPressed: () {},
+            // )
           ]),
           body: _body()),
     );
@@ -36,28 +36,43 @@ class ModeChannelPickerScreenState extends State<ModeChannelPickerScreen> {
     return Form(
       key: _formKey,
       child: ListView(
-        children: <Widget>[
-          TextFormField(
-            // The validator receives the text that the user has entered.
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
-          ),
-          DropdownButton<String>(
-            items: <String>['A', 'B', 'C', 'D'].map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (_) {},
-          )
-        ],
+        children: List.generate(15, (index) => _slider(index)),
       ),
     );
+  }
+
+  Widget _slider(int index) {
+    Color highlightColor = Theme.of(context).highlightColor;
+    return Container(
+      color: selectedChannel == index ? highlightColor : null,
+      child: ListTile(
+        title: Text("Channel $index"),
+        subtitle: SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            thumbShape: SliderComponentShape.noThumb,
+          ),
+          child: Slider(
+            value: 500,
+            min: 0,
+            max: 1500,
+            divisions: 1500,
+            onChanged: null,
+          ),
+        ),
+        trailing: Icon(Icons.arrow_forward),
+        onTap: () {
+          setState(() {
+            selectedChannel = index;
+          });
+        },
+      ),
+    );
+  }
+
+  _getTitle() {
+    return this.selectedChannel > 0
+        ? Text("Selected channel ${this.selectedChannel}")
+        : Text("Channel Selector");
   }
 }
 

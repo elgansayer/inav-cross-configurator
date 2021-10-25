@@ -78,6 +78,10 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
     if (event is RemoveModeEvent) {
       yield* this._mapRemoveModesToState(event.mode);
     }
+
+    if (event is ChangeChannelEvent) {
+      yield* this._mapChangeChannelToState(event.mode, event.channel);
+    }
   }
 
   void _setupListeners() {
@@ -174,6 +178,19 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
     List<ModeInfo> oldModes = this.state.modes;
     List<ModeInfo> newModes = List<ModeInfo>.from(oldModes);
     newModes.remove(mode);
+    yield this.state.copyWith(modes: newModes);
+  }
+
+  Stream<ModesState> _mapChangeChannelToState(
+      ModeInfo mode, int channel) async* {
+    List<ModeInfo> oldModes = this.state.modes;
+    List<ModeInfo> newModes = oldModes.map((ModeInfo oldMode) {
+      if (oldMode != mode) {
+        return oldMode;
+      }
+      return oldMode.copyWith(channel: channel);
+    }).toList();
+
     yield this.state.copyWith(modes: newModes);
   }
 }
