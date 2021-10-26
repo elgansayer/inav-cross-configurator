@@ -104,7 +104,6 @@ class CalibrationScreenState extends State<CalibrationScreen> {
               overflow: TextOverflow.ellipsis),
           trailing: ElevatedButton(
               onPressed: () {
-                _showMaterialDialog();
                 BlocProvider.of<CalibrationBloc>(context)
                     .add(StartAccCalibration());
               },

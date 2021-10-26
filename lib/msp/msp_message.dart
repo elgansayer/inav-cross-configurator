@@ -310,12 +310,12 @@ class MSPMessageRequest extends MSPMessage {
     }
   }
 
-  int write(SerialPort serialPort, {int timeout = 10}) {
-    // serialPort.drain();
-    // serialPort.flush();
-    // serialPort.drain();
-    int data = serialPort.write(this.packetData, timeout: timeout);
-    // serialPort.drain();
-    return data;
-  }
+  // int write(SerialPort serialPort, {int timeout = 10}) {
+  //   // serialPort.drain();
+  //   // serialPort.flush();
+  //   // serialPort.drain();
+  //   int data = serialPort.write(this.packetData, timeout: timeout);
+  //   // serialPort.drain();
+  //   return data;
+  // }
 }

@@ -21,21 +21,21 @@ class MSPCalibrationData implements MSPDataHandler {
     double accZ = payload.getInt16(5, Endian.little).toDouble();
     this.accZero = Vector3(accX, accY, accZ);
 
-    var accGainX = payload.getInt16(7, Endian.little).toDouble();
-    var accGainY = payload.getInt16(9, Endian.little).toDouble();
-    var accGainZ = payload.getInt16(11, Endian.little).toDouble();
+    double accGainX = payload.getInt16(7, Endian.little).toDouble();
+    double accGainY = payload.getInt16(9, Endian.little).toDouble();
+    double accGainZ = payload.getInt16(11, Endian.little).toDouble();
     this.accGain = Vector3(accGainX, accGainY, accGainZ);
 
-    var magZeroX = payload.getInt16(13, Endian.little).toDouble();
-    var magZeroY = payload.getInt16(15, Endian.little).toDouble();
-    var magZeroZ = payload.getInt16(17, Endian.little).toDouble();
+    double magZeroX = payload.getInt16(13, Endian.little).toDouble();
+    double magZeroY = payload.getInt16(15, Endian.little).toDouble();
+    double magZeroZ = payload.getInt16(17, Endian.little).toDouble();
     this.magZero = Vector3(magZeroX, magZeroY, magZeroZ);
 
     this.opflowScale = (payload.getInt16(19, Endian.little) / 256.0).toDouble();
 
-    var magGainX = payload.getInt16(21, Endian.little).toDouble();
-    var magGainY = payload.getInt16(23, Endian.little).toDouble();
-    var magGainZ = payload.getInt16(25, Endian.little).toDouble();
+    double magGainX = payload.getInt16(21, Endian.little).toDouble();
+    double magGainY = payload.getInt16(23, Endian.little).toDouble();
+    double magGainZ = payload.getInt16(25, Endian.little).toDouble();
     this.magGain = Vector3(magGainX, magGainY, magGainZ);
   }
 

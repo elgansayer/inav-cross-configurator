@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:dart_periphery/dart_periphery.dart';
 import 'package:inavconfigurator/msp/msp_message.dart';
+import 'package:libserialport/libserialport.dart';
 
 extension IndexOfElements<T> on List<T> {
   int indexOfElements(List<T> elements, [int start = 0]) {
@@ -150,16 +151,16 @@ class SerialDeviceProvider {
   }
 
   _doReadPoll() {
-    _findPackets();
-    int waiting = this._serial.getInputWaiting();
-
-    if (this._blockRead || waiting <= 0) {
-      return;
-    }
-
-    this._blockRead = true;
-
     try {
+      _findPackets();
+      int waiting = this._serial.getInputWaiting();
+
+      if (this._blockRead || waiting <= 0) {
+        return;
+      }
+
+      this._blockRead = true;
+
       List<int> allData = [];
       while (waiting > 0) {
         SerialReadEvent data = this._serial.read(waiting, 0);
@@ -168,37 +169,12 @@ class SerialDeviceProvider {
       }
 
       identifier.addAll(allData);
-      //  List<int> header = [36, 88, 62, 0];
-
-      // // 36, 88, 62, 0,
-      // int hasHeader =
-      //     allData.sublist(4, allData.length - 4).indexOfElements(header);
-
-      // if (hasHeader > 0) {
-      //   int start = 0;
-      //   hasHeader += 4;
-      //   while (hasHeader >= 0) {
-      //     List<int> subData = allData.sublist(
-      //         start, hasHeader == 0 ? allData.length : hasHeader);
-
-      //     if (subData.length > 0) {
-      //       _readStream.add(subData);
-      //     }
-
-      //     if (hasHeader == 0) {
-      //       break;
-      //     }
-
-      //     start = hasHeader;
-      //     int end = ((allData.length));
-      //     hasHeader = allData.sublist(start, end).indexOfElements(header);
-      //   }
-      // } else {
-      //   if (allData.length > 0) {
-      //     _readStream.add(allData);
-      //   }
-      // }
     } catch (e) {
+      if (e is SerialPortError &&
+          e.errorCode == SerialErrorCode.SERIAL_ERROR_IO.index) {
+        this.close();
+      }
+
       print(e);
     }
 
@@ -213,10 +189,5 @@ class SerialDeviceProvider {
 
   disconnect() {
     this.close();
-  }
-
-  int writeRequest(MSPMessageRequest request) {
-    Uint8List data = request.packetData;
-    return this.write(data.buffer.asUint8List().toList());
   }
 }

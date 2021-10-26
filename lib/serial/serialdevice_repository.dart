@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:async/async.dart';
 import 'package:inavconfigurator/msp/codes.dart';
 import 'package:inavconfigurator/msp/codes/api_version.dart';
 import 'package:inavconfigurator/msp/codes/base_data_handler.dart';
 import 'package:inavconfigurator/msp/codes/fcvariant.dart';
+import 'package:inavconfigurator/msp/writers/base_data_writer.dart';
 import 'package:inavconfigurator/serial/periphery_provider.dart';
 
 import '../msp/data_transformers.dart';
@@ -190,10 +192,14 @@ class SerialDeviceRepository {
     return StreamGroup.merge(streams);
   }
 
-  int writeFunc(int code, {int timeout = 10}) {
+  int writeFunc(int code) {
     MSPMessageRequest request = MSPMessageRequest(code);
-    return this._provider.writeRequest(request);
-    // return request.write(this._provider, timeout: timeout);
+    return this.writeRequest(request);
+  }
+
+  int writeBuilder(MSPRequestBuilder builder) {
+    MSPMessageRequest request = builder.toRequest();
+    return this.writeRequest(request);
   }
 
   T? transform<T>(int code, MSPMessageResponse messageResponse) {
@@ -222,6 +228,15 @@ class SerialDeviceRepository {
 
   writeString(String data) {
     return _provider.writeString(data);
+  }
+
+  writeRequest(MSPMessageRequest request) {
+    Uint8List data = request.packetData;
+    return this.write(data.buffer.asUint8List().toList());
+  }
+
+  write(List<int> data) {
+    return _provider.write(data);
   }
 
   void _gotData(List<int> data) {
