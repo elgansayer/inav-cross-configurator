@@ -49,12 +49,6 @@ class InfoBloc extends Bloc<InfoEvent, InfoState> {
   //     this.add(GotStatusEvent(inavStatus: inavStatus));
   //   });
 
-  //   // _serialDeviceRepository.responseRaw.listen((Uint8List data) {
-  //   //   if (data == data) {
-  //   //     return;
-  //   //   }
-  //   // });
-
   //   _sendRequest();
   // }
 

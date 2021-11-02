@@ -13,6 +13,13 @@ part 'cli_state.dart';
 class CliBloc extends Bloc<CliEvent, CliState> {
   CliBloc({required this.serialDeviceRepository, required this.appBloc})
       : super(CliState.init()) {
+    // Disconnect the old and connect a new
+    // this.serialDeviceRepository.disconnect();
+    // this.serialCliDeviceRepository = new SerialCliDeviceRepository();
+
+    // serialCliDeviceRepository
+    //     .connect(this.serialDeviceRepository.serialPortInfo);
+
     this._countDown();
   }
 
@@ -87,7 +94,8 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   Stream<CliState> _recievedRawCliEvent(RecievedRawCliEvent event) async* {
     try {
       final newMsg = ascii.decode(event.data);
-      final newMsgs = [...state.messages, newMsg];
+      List<String> newMsgs = List<String>.from(state.messages);
+      newMsgs.add(newMsg);
 
       yield CliState.data(
         newMsgs,

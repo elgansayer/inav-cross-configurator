@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:typed_data';
 import 'package:async/async.dart';
+
 import 'package:inavconfigurator/msp/codes.dart';
 import 'package:inavconfigurator/msp/codes/api_version.dart';
 import 'package:inavconfigurator/msp/codes/base_data_handler.dart';
 import 'package:inavconfigurator/msp/codes/fcvariant.dart';
 import 'package:inavconfigurator/msp/writers/base_data_writer.dart';
+import 'package:inavconfigurator/serial/list_index.dart';
 import 'package:inavconfigurator/serial/periphery_provider.dart';
 
 import '../msp/data_transformers.dart';
@@ -21,16 +24,27 @@ class SerialDeviceEvent {
 }
 
 class SerialDeviceRepository {
+  final identifier = new Queue<int>();
+  late SerialPortInfo serialPortInfo;
   late Map<int, StreamController<MSPMessageResponse>> streamMaps = {};
 
+  late bool _blockRead;
   final _errorStreamController = StreamController<String>.broadcast();
-  final SerialDeviceProvider _provider = new SerialDeviceProvider();
+  late bool _packetLocak = false;
+  final SerialDeviceProviderPeriphery _provider =
+      new SerialDeviceProviderPeriphery();
+
+  final StreamController<List<int>> _readStream =
+      new StreamController<List<int>>();
+
   final _responseMessagesStreamController =
       StreamController<MSPMessageResponse>.broadcast();
 
   final _responseRawStreamController = StreamController<List<int>>.broadcast();
   final _serialPortStreamController =
       StreamController<SerialDeviceEvent>.broadcast();
+
+  late Timer _streamTimer;
 
   StreamSink<MSPMessageResponse> get responseMessagesSink =>
       _responseMessagesStreamController.sink;
@@ -52,6 +66,7 @@ class SerialDeviceRepository {
   Stream<String> get serialPortDeviceError => _errorStreamController.stream;
 
   Future<bool> connect(SerialPortInfo serialPortInfo) async {
+    this.serialPortInfo = serialPortInfo;
     // Inform app we are connecting
     final newConnectingEvent =
         new SerialDeviceEvent(SerialDeviceEventType.connecting);
@@ -151,8 +166,92 @@ class SerialDeviceRepository {
   }
 
   readListen() {
-    _provider.data.listen(this._gotData);
+    // Duration timerDuration = Duration(milliseconds: 1);
+    // this._streamTimer = Timer.periodic(timerDuration, this._readPoll);
+
+    _provider.dataStream.listen((List<int> data) {
+      responseRawSink.add(data);
+      this.identifier.addAll(data);
+      _findPackets();
+    });
+
+    // _provider.data.listen(this._gotData);
   }
+
+  // _readPoll(Timer timer) {
+  //   this._doReadPoll();
+  // }
+
+  _findPackets() async {
+    if (this._packetLocak) {
+      return;
+    }
+
+    this._packetLocak = true;
+    List<int> allData = identifier.toList();
+
+    if (allData.length <= 0) {
+      this._packetLocak = false;
+      return;
+    }
+
+    List<int> header = [36, 88, 62, 0];
+    print("identifier.length before ${identifier.length}");
+
+    // 36, 88, 62, 0,
+    int hasHeader = allData.indexOfElements(header);
+
+    if (hasHeader > -1) {
+      int l = allData[6];
+      l |= allData[7] << 8;
+
+      int p = 8 + l + 1;
+
+      List<int> subData = allData.sublist(hasHeader, hasHeader + p);
+      if (subData.length > 0) {
+        _readStream.add(subData);
+        this._gotData(subData);
+      }
+
+      for (var i = 0; i < hasHeader + subData.length; i++) {
+        identifier.removeFirst();
+      }
+    }
+
+    print("identifier.length after ${identifier.length}");
+    this._packetLocak = false;
+  }
+
+  // _doReadPoll() {
+  //   try {
+  //     _findPackets();
+  //     int waiting = this._provider.getInputWaiting();
+
+  //     if (this._blockRead || waiting <= 0) {
+  //       return;
+  //     }
+
+  //     this._blockRead = true;
+
+  //     List<int> allData = [];
+  //     while (waiting > 0) {
+  //       List<int> data = this._provider.read(waiting, 0);
+  //       allData.addAll(data);
+  //       waiting = this._provider.getInputWaiting();
+  //     }
+
+  //     identifier.addAll(allData);
+  //   } catch (e) {
+  //     // if (e is SerialPortError &&
+  //     //     e.errorCode == SerialErrorCode.SERIAL_ERROR_IO.index) {
+  //     //   this.close();
+  //     // }
+
+  //     print(e);
+  //   }
+
+  //   this._blockRead = false;
+  // }
 
   close() {
     _responseRawStreamController.close();
@@ -161,15 +260,8 @@ class SerialDeviceRepository {
     _serialPortStreamController.close();
   }
 
-  // TODO CANCEL STREAM??
+  // TO DO CANCEL STREAM??
   Stream<MSPDataHandler> responseStreamAs<MSPDataHandler>(int code) {
-    // Stream<List<String>> ddd = CombineLatestStream.list<String>([
-    //   Stream.fromIterable(['a']),
-    //   Stream.fromIterable(['b']),
-    //   Stream.fromIterable(['C', 'D'])
-    // ]).asBroadcastStream();
-
-    // StreamController<T> newStream = StreamController<T>();
     Stream<MSPMessageResponse> stream = this.responseStream(code);
 
     StreamTransformer<MSPMessageResponse, MSPDataHandler> doubleTransformer =
@@ -220,11 +312,17 @@ class SerialDeviceRepository {
     return _provider.disconnect();
   }
 
-  void reconnect() {}
+  void reconnect() {
+    // return _provider.reconnect();
+  }
 
-  void flush() {}
+  void flush() {
+    return _provider.flush();
+  }
 
-  void drain() {}
+  void drain() {
+    return _provider.drain();
+  }
 
   writeString(String data) {
     return _provider.writeString(data);
@@ -240,7 +338,7 @@ class SerialDeviceRepository {
   }
 
   void _gotData(List<int> data) {
-    responseRawSink.add(data);
+    // responseRawSink.add(data);
 
     MSPMessageResponse respone = new MSPMessageResponse(payloadData: data);
     bool worked = respone.readData();

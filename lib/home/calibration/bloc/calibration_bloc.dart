@@ -76,7 +76,7 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
 
     // Create an empty callibration
     SetCalibrationData setCalibrationData = SetCalibrationData(
-        acc: List.generate(5, (index) => 0),
+        acc: List.generate(3, (index) => 0),
         accGain: Vector3.zero(),
         accZero: Vector3.zero(),
         magGain: Vector3.zero(),
@@ -88,7 +88,7 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
 
     yield CalibrationState.init().copyWith(accCalibration: true);
 
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       _doCalibrating();
     });
   }
@@ -102,16 +102,18 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
       if (!this.state.accCalibration) {
         break;
       }
+      // this._setupGetDatTimer();
+      _serialDeviceRepository.writeFunc(MSPCodes.mspResetConf);
 
       // this._setupGetDatTimer();
       _serialDeviceRepository.writeFunc(MSPCodes.mspAccCalibration);
 
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: 2));
 
       _writeGetData();
       _doCalibrating();
 
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: 2));
     }
 
     this.add(FinishedCalibrationMode());
