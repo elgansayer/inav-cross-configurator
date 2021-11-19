@@ -35,7 +35,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.8.2"
+    version: "2.8.1"
   b:
     dependency: "direct main"
     description:
@@ -49,14 +49,14 @@ packages:
       name: battery_indicator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0"
+    version: "0.1.1"
   battery_plus:
     dependency: transitive
     description:
       name: battery_plus
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "2.0.1"
   battery_plus_linux:
     dependency: transitive
     description:
@@ -98,7 +98,7 @@ packages:
       name: bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.2.1"
+    version: "8.0.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -112,7 +112,7 @@ packages:
       name: characters
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "1.1.0"
   charcode:
     dependency: transitive
     description:
@@ -189,7 +189,7 @@ packages:
       name: data_table_2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.1"
+    version: "2.2.0"
   dbus:
     dependency: transitive
     description:
@@ -238,7 +238,7 @@ packages:
       name: file_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.6"
+    version: "4.2.4"
   file_picker_desktop:
     dependency: "direct main"
     description:
@@ -278,7 +278,7 @@ packages:
       name: flutter_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.3.1"
+    version: "8.0.0"
   flutter_cube:
     dependency: "direct main"
     description:
@@ -332,7 +332,7 @@ packages:
       name: flutter_svg
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.22.0"
+    version: "0.23.0+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -405,7 +405,7 @@ packages:
       name: intl_utils
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.1"
+    version: "2.5.1"
   invertible:
     dependency: transitive
     description:
@@ -423,9 +423,9 @@ packages:
   libserialport:
     dependency: "direct main"
     description:
-      path: "../libserialport.dart"
-      relative: true
-    source: path
+      name: libserialport
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.2.0+3"
   linked_scroll_controller:
     dependency: transitive
@@ -440,7 +440,7 @@ packages:
       name: matcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.11"
+    version: "0.12.10"
   meta:
     dependency: transitive
     description:
@@ -578,14 +578,14 @@ packages:
       name: syncfusion_flutter_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.3.46"
+    version: "19.3.54"
   syncfusion_flutter_sliders:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_sliders
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.3.46"
+    version: "19.3.54"
   system_info:
     dependency: transitive
     description:
@@ -606,7 +606,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.3"
+    version: "0.4.2"
   typed_data:
     dependency: transitive
     description:
@@ -620,7 +620,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.12"
+    version: "6.0.13"
   url_launcher_linux:
     dependency: transitive
     description:
