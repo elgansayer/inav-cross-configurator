@@ -19,8 +19,8 @@ class SerialPortRepository {
       _serialPortsStreamController.stream;
 
   _updatePorts() {
-    var ports = _serialPortsProvider.ports;
-    _serialPortsSink.add(ports);
+    List<SerialPortInfo> ports = _serialPortsProvider.ports;
+    this._serialPortsSink.add(ports);
   }
 
   startPolling() {

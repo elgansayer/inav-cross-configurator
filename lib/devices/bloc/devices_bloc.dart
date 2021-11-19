@@ -12,10 +12,6 @@ part 'devices_event.dart';
 part 'devices_state.dart';
 
 class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
-  late StreamSubscription<SerialDeviceEvent> _serialDeviceListenr;
-  late StreamSubscription<List<SerialPortInfo>> _serialPortListener;
-  late StreamSubscription<String> _errorListener;
-
   DevicesPageBloc(
       {required ErrorMessageRepository errorMessageRepository,
       required SerialPortRepository serialPortRepository,
@@ -25,47 +21,44 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
         _serialDeviceRepository = serialDeviceRepository,
         super(DevicesPageInitial()) {
     // Ensure we are disconnected
+    on<FoundDevicesEvent>((event, emit) {
+      emit(new FoundDevicesState(event.serialPorts));
+    });
+
+    on<ConnectedDeviceEvent>((event, emit) {
+      this._serialPortRepository.cancelPolling();
+    });
+    on<GetDevicesEvent>((event, emit) {
+      this._serialPortRepository.startPolling();
+    });
+    on<ConnectToDeviceEvent>((event, emit) => this._tryToConnect(event, emit));
 
     _setupListeners();
   }
 
+  late StreamSubscription<String> _errorListener;
   final ErrorMessageRepository _errorMessageRepository;
+  late StreamSubscription<SerialDeviceEvent> _serialDeviceListenr;
   final SerialDeviceRepository _serialDeviceRepository;
+  late StreamSubscription<List<SerialPortInfo>> _serialPortListener;
   final SerialPortRepository _serialPortRepository;
 
   @override
-  Stream<DevicesPageState> mapEventToState(
-    DevicesPageEvent event,
-  ) async* {
-    // Cancel
-    if (event is FoundDevicesEvent) {
-      yield new FoundDevicesState(event.serialPorts);
-    }
-
-    if (event is ConnectedDeviceEvent) {
-      this._serialPortRepository.cancelPolling();
-    }
-
-    if (event is GetDevicesEvent) {
-      this._serialPortRepository.startPolling();
-    }
-
-    // if (event is ErrorConnectionEvent) {
-    //   List<SerialPortInfo> ports = state.serialPorts;
-    //   String error = event.error;
-    //   yield new ErrorConnectionState(error, ports);
-    // }
-
-    if (event is ConnectToDeviceEvent) {
-      yield* _tryToConnect(event);
-    }
+  Future<void> close() {
+    //cancel streams
+    this._errorListener.cancel();
+    this._serialPortListener.cancel();
+    this._serialDeviceListenr.cancel();
+    _serialPortRepository.close();
+    return super.close();
   }
 
-  Stream<DevicesPageState> _tryToConnect(ConnectToDeviceEvent event) async* {
+  void _tryToConnect(
+      ConnectToDeviceEvent event, Emitter<DevicesPageState> emit) {
     this._serialPortRepository.cancelPolling();
 
     SerialPortInfo serialPortInfo = event.serialPortInfo;
-    yield new ConnectingState(state.serialPorts, serialPortInfo);
+    emit(new ConnectingState(state.serialPorts, serialPortInfo));
 
     // Clear any banners
     _errorMessageRepository.errorSink.add("");
@@ -106,15 +99,5 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
       this.add(GetDevicesEvent());
       this._serialDeviceRepository.disconnect();
     });
-  }
-
-  @override
-  Future<void> close() {
-    //cancel streams
-    this._errorListener.cancel();
-    this._serialPortListener.cancel();
-    this._serialDeviceListenr.cancel();
-    _serialPortRepository.close();
-    return super.close();
   }
 }

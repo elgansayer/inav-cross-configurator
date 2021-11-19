@@ -121,10 +121,22 @@ class DevicesScreenState extends State<DevicesScreen> {
       }
 
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text("No devices found"),
+        child: Stack(
+          children: [
+            Container(
+              alignment: Alignment.center,
+              child: SvgPicture.asset('assets/images/light-wide-1.svg',
+              color: Colors.grey, height: 124, fit: BoxFit.fitHeight),
+            ),
+            Container(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("No devices found"),
+                ],
+              ),
+            ),
           ],
         ),
       );
