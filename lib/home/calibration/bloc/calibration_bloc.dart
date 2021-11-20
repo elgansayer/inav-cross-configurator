@@ -16,12 +16,12 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
   CalibrationBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
         super(CalibrationState.init()) {
-    on<ClearCalibrationData>(
-        (event, emit) => _clearCalibrationData(event, emit));
+    // on<ClearCalibrationData>(
+    // (event, emit) => _clearCalibrationData(event, emit));
     on<GotMSPCalibrationData>(
         (event, emit) => _getCalibrationData(event, emit));
     on<StartAccCalibration>((event, emit) => _startCalibrating(event, emit));
-    on<FinishedCalibrationMode>((event, emit) => _setupGetDatTimer());
+    // on<FinishedCalibrationMode>((event, emit) => _setupGetDatTimer());
 
     this._setupListeners();
     this._setupGetDatTimer();
@@ -48,6 +48,10 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
     });
   }
 
+  void _writeGetData() {
+    _serialDeviceRepository.writeFunc(MSPCodes.mspCalibrationData);
+  }
+
   void _setupGetDatTimer() {
     this._getDataTimer = Timer.periodic(Duration(milliseconds: 500), (timer) {
       _writeGetData();
@@ -55,63 +59,73 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
   }
 
   _startCalibrating(event, emit) {
-    if (this._getDataTimer.isActive) {
-      this._getDataTimer.cancel();
-    }
+    _serialDeviceRepository.writeFunc(MSPCodes.mspAccCalibration);
+    _writeGetData();
+    // if (this._getDataTimer.isActive) {
+    //   this._getDataTimer.cancel();
+    // }
 
-    // Create an empty callibration
-    SetCalibrationData setCalibrationData = SetCalibrationData(
-        acc: List.generate(3, (index) => 0),
-        accGain: Vector3.zero(),
-        accZero: Vector3.zero(),
-        magGain: Vector3.zero(),
-        magZero: Vector3.zero(),
-        opflowScale: 0);
+    // // Create an empty callibration
+    // SetCalibrationData setCalibrationData = SetCalibrationData(
+    //     acc: List.generate(3, (index) => 0),
+    //     accGain: Vector3.zero(),
+    //     accZero: Vector3.zero(),
+    //     magGain: Vector3.zero(),
+    //     magZero: Vector3.zero(),
+    //     opflowScale: 0);
 
-    this.add(ClearCalibrationData());
-    _serialDeviceRepository.writeBuilder(setCalibrationData);
+    // // this.add(ClearCalibrationData());
+    // _serialDeviceRepository.writeBuilder(setCalibrationData);
 
-    CalibrationState calibrationState =
-        CalibrationState.init().copyWith(accCalibration: true);
-    emit(calibrationState);
+    // List<AccCalibrationState> accCalibrationStates = this
+    //     .state
+    //     .accCalibrationStates
+    //     .map((e) => AccCalibrationState(false))
+    //     .toList();
 
-    Future.delayed(Duration(seconds: 2), () {
-      _doCalibrating();
-    });
+    // CalibrationState calibrationState = CalibrationState.init().copyWith(
+    //     accCalibrationStates: accCalibrationStates, accCalibration: true);
+    // emit(calibrationState);
+
+    // _serialDeviceRepository.writeFunc(MSPCodes.mspResetConf);
+
+    // Future.delayed(Duration(seconds: 2), () {
+    //   _doCalibrating(accCalibrationStates);
+    // });
+    // _doCalibrating();
   }
 
   Future<void> _doCalibrating() async {
-    if (this._getDataTimer.isActive) {
-      this._getDataTimer.cancel();
-    }
+    // if (this._getDataTimer.isActive) {
+    //   this._getDataTimer.cancel();
+    // }
 
-    while (!this.state.accCalibration) {
-      if (!this.state.accCalibration) {
-        break;
-      }
-      // this._setupGetDatTimer();
-      _serialDeviceRepository.writeFunc(MSPCodes.mspResetConf);
+    // bool complete = accCalibrationStates.every((element) => false);
 
-      // this._setupGetDatTimer();
-      _serialDeviceRepository.writeFunc(MSPCodes.mspAccCalibration);
+    // while (!complete) {
+    //   _serialDeviceRepository.writeFunc(MSPCodes.mspAccCalibration);
+    //   _writeGetData();
 
-      await Future.delayed(Duration(seconds: 2));
+    //   await Future.delayed(Duration(seconds: 3));
+    //   complete = this.state.accCalibrationStates.every((element) => false);
+    // }
 
-      _writeGetData();
-      _doCalibrating();
+    _serialDeviceRepository.writeFunc(MSPCodes.mspAccCalibration);
+    _writeGetData();
+    // var complete = this.state.accCalibrationStates.every((element) => false);
+    // if (complete) {
+    //   SetCalibrationData setCalibrationData = SetCalibrationData(
+    //       acc: List.generate(3, (index) => 0),
+    //       accGain: Vector3.zero(),
+    //       accZero: Vector3.zero(),
+    //       magGain: Vector3.zero(),
+    //       magZero: Vector3.zero(),
+    //       opflowScale: 0);
 
-      await Future.delayed(Duration(seconds: 2));
-    }
-
-    this.add(FinishedCalibrationMode());
-  }
-
-  void _writeGetData() {
-    try {
-      _serialDeviceRepository.writeFunc(MSPCodes.mspCalibrationData);
-    } catch (e) {
-      // this.close();
-    }
+    //   // this.add(ClearCalibrationData());
+    //   _serialDeviceRepository.writeBuilder(setCalibrationData);
+    // }
+    // this.add(FinishedCalibrationMode());
   }
 
   void _clearCalibrationData(event, emit) {

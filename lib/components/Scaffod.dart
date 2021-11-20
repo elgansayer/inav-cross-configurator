@@ -40,7 +40,8 @@ class AppScaffold extends StatelessWidget {
           width: 70,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [_batteryIcon(), _armedIcon()],
+            children: [_armedIcon()],
+            //_batteryIcon(),
           ),
         ),
       ],
