@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:dart_periphery/dart_periphery.dart';
-import 'package:inavconfigurator/serial/list_index.dart';
 import 'package:libserialport/libserialport.dart';
 
 class SerialDeviceProviderPeriphery {

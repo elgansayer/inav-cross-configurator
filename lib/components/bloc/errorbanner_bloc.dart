@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -14,6 +12,10 @@ class ErrorBannerBloc extends Bloc<ErrorbannerEvent, ErrorBannerState> {
   ErrorBannerBloc({required ErrorMessageRepository errorMessageRepository})
       : _errorMessageRepository = errorMessageRepository,
         super(ErrorBannerState.init()) {
+    on<AddMessageErrorBannerEvent>(
+        (event, emit) => emit(ErrorBannerState.error(event.errorMessage)));
+    on<CloseErrorBannerEvent>((event, emit) => emit(ErrorBannerState.init()));
+
     this.listenToErrors();
   }
 
@@ -21,18 +23,5 @@ class ErrorBannerBloc extends Bloc<ErrorbannerEvent, ErrorBannerState> {
     _errorMessageRepository.errors.listen((error) {
       this.add(AddMessageErrorBannerEvent(errorMessage: error));
     });
-  }
-
-  @override
-  Stream<ErrorBannerState> mapEventToState(
-    ErrorbannerEvent event,
-  ) async* {
-    if (event is AddMessageErrorBannerEvent) {
-      yield ErrorBannerState.error(event.errorMessage);
-    }
-
-    if (event is CloseErrorBannerEvent) {
-      yield ErrorBannerState.init();
-    }
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:libserialport/libserialport.dart';
 
 // https://github.com/iNavFlight/inav/wiki/MSP-V2
 

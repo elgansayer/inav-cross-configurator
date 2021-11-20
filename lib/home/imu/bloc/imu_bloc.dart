@@ -16,45 +16,41 @@ part 'imu_event.dart';
 part 'imu_state.dart';
 
 class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
-  final SerialDeviceRepository _serialDeviceRepository;
-
-  late Timer _timer;
-
-  late MSPAttitude lastImu;
-  late double yawFix = 0;
-  late StreamSubscription<MSPMessageResponse> _streamListener;
-
-  bool doneFirst = false;
-
   ImuViewBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
-        super(ImuViewInitial());
+        super(ImuViewInitial()) {
+    on<ImuAdd3DObjectEvent>((event, emit) => emit(
+        ImuViewState(event.mdlObject, this.state.scene, Kinematics.zero())));
+
+    on<ImuAddSceneEvent>((event, emit) => _imuAddSceneEvent(event, emit));
+    on<ResetYawEvent>((event, emit) => _resetOrientation());
+    on<UpdateKinematicsEvent>((event, emit) =>
+        ImuViewState(this.state.object, this.state.scene, event.kinematics));
+  }
+
+  bool doneFirst = false;
+  late MSPAttitude lastImu;
+  late double yawFix = 0;
+
+  final SerialDeviceRepository _serialDeviceRepository;
+  late StreamSubscription<MSPMessageResponse> _streamListener;
+  late Timer _timer;
 
   @override
-  Stream<ImuViewState> mapEventToState(
-    ImuViewEvent event,
-  ) async* {
-    if (event is ImuAdd3DObjectEvent) {
-      yield new ImuViewState(
-          event.mdlObject, this.state.scene, Kinematics.zero());
-    }
+  Future<void> close() {
+    //cancel streams
+    this._timer.cancel();
+    this._streamListener.cancel();
+    this._serialDeviceRepository.flush();
+    return super.close();
+  }
 
-    if (event is ImuAddSceneEvent) {
-      yield new ImuViewState(this.state.object, event.scene, Kinematics.zero());
+  _imuAddSceneEvent(event, emit) {
+    emit(ImuViewState(this.state.object, event.scene, Kinematics.zero()));
 
-      // Object fires twice, then scene
-      this._setupScene();
-      this._setupListeners();
-    }
-
-    if (event is ResetYawEvent) {
-      _resetOrientation();
-    }
-
-    if (event is UpdateKinematicsEvent) {
-      yield new ImuViewState(
-          this.state.object, this.state.scene, event.kinematics);
-    }
+    // Object fires twice, then scene
+    this._setupScene();
+    this._setupListeners();
   }
 
   _setupListeners() {
@@ -77,20 +73,11 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
 
   Future<void> _updateImu(Timer timer) async {
     try {
-      print("writing imu ${timer.tick}");
+      print("Writing imu ${timer.tick}");
       _serialDeviceRepository.writeFunc(MSPCodes.mspAttitude);
     } catch (e) {
       this.close();
     }
-  }
-
-  @override
-  Future<void> close() {
-    //cancel streams
-    this._timer.cancel();
-    this._streamListener.cancel();
-    this._serialDeviceRepository.flush();
-    return super.close();
   }
 
   void _resetOrientation() {
@@ -135,22 +122,9 @@ class ImuViewBloc extends Bloc<ImuViewEvent, ImuViewState> {
     double heading = ((kinematicsHeading - this.yawFix) * -1.0);
     double pitch = (kinematicsPitch * -1.0);
 
-    // interactive_block > a.reset
-    // self.yaw_fix = SENSOR_DATA.kinematics[2] * - 1.0
-    // mdlObject.rotation.setZero();
-    // mdlObject.rotation.setValues(pitch, heading, roll);
-    // mdlObject.rotation.setValues(35, 15, 0);
     mdlObject.rotation.setValues(pitch, heading, roll);
     mdlObject.updateTransform();
 
-    // look in this.render3D = function () {
-    // compute the changes
-    // model.rotation.x = (SENSOR_DATA.kinematics[1] * -1.0) * 0.017453292519943295;
-    // modelWrapper.rotation.y = ((SENSOR_DATA.kinematics[2] * -1.0) - self.yaw_fix) * 0.017453292519943295;
-    // model.rotation.z = (SENSOR_DATA.kinematics[0] * -1.0) * 0.017453292519943295;
-
-    // scene.world.rotation.setValues(0, 180, 0);
-    // scene.world.updateTransform();
     scene.update();
 
     // Add event to update the display

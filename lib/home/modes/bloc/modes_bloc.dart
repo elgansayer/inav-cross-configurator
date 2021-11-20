@@ -32,6 +32,16 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
   ModesBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
         super(ModesState.initial()) {
+    on<GotModesEvent>((event, emit) => _gotModesEvent(event, emit));
+    on<GotBoxIdsEvent>((event, emit) => _gotBoxIdsEvent(event, emit));
+    on<GotBoxNamesEvent>((event, emit) => _gotBoxNamesEvent(event, emit));
+    on<GeneratedModeInfoEvent>(
+        (event, emit) => _generatedModeInfoEvent(event, emit));
+    on<GotAllDataEvent>((event, emit) => this._mapDataToRangeInfo());
+    on<AddNewModesEvent>((event, emit) => _addNewModesEvent(event, emit));
+    on<RemoveModeEvent>((event, emit) => _removeModeEvent(event, emit));
+    on<ChangeChannelEvent>((event, emit) => _changeChannelEvent(event, emit));
+
     this._setupListeners();
   }
 
@@ -42,46 +52,6 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
   Future<void> close() {
     this._streamListener.cancel();
     return super.close();
-  }
-
-  @override
-  Stream<ModesState> mapEventToState(
-    ModesEvent event,
-  ) async* {
-    if (event is GotModesEvent) {
-      yield this.state.copyWith(modeRanges: event.modesRanges);
-      _checkBuildModes();
-    }
-
-    if (event is GotBoxIdsEvent) {
-      yield this.state.copyWith(ids: event.ids);
-      _checkBuildModes();
-    }
-
-    if (event is GotBoxNamesEvent) {
-      yield this.state.copyWith(names: event.names);
-      _checkBuildModes();
-    }
-
-    if (event is GeneratedModeInfoEvent) {
-      yield this.state.copyWith(modes: event.modes);
-    }
-
-    if (event is GotAllDataEvent) {
-      this._mapDataToRangeInfo();
-    }
-
-    if (event is AddNewModesEvent) {
-      yield* this._mapNewModesToState(event.modes);
-    }
-
-    if (event is RemoveModeEvent) {
-      yield* this._mapRemoveModesToState(event.mode);
-    }
-
-    if (event is ChangeChannelEvent) {
-      yield* this._mapChangeChannelToState(event.mode, event.channel);
-    }
   }
 
   void _setupListeners() {
@@ -157,7 +127,7 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
     this.add(GeneratedModeInfoEvent(modes: allModes));
   }
 
-  Stream<ModesState> _mapNewModesToState(List<ModeInfo> modes) async* {
+  List<ModeInfo> _mapNewModesToState(List<ModeInfo> modes) {
     List<ModeInfo> oldModes = this.state.modes;
     List<ModeInfo> newModes = List<ModeInfo>.from(oldModes);
 
@@ -171,18 +141,17 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
 
     newModes.addAll(newModeInfos);
 
-    yield this.state.copyWith(modes: newModes);
+    return newModes;
   }
 
-  Stream<ModesState> _mapRemoveModesToState(ModeInfo mode) async* {
+  List<ModeInfo> _mapRemoveModesToState(ModeInfo mode) {
     List<ModeInfo> oldModes = this.state.modes;
     List<ModeInfo> newModes = List<ModeInfo>.from(oldModes);
     newModes.remove(mode);
-    yield this.state.copyWith(modes: newModes);
+    return newModes;
   }
 
-  Stream<ModesState> _mapChangeChannelToState(
-      ModeInfo mode, int channel) async* {
+  List<ModeInfo> _mapChangeChannelToState(ModeInfo mode, int channel) {
     List<ModeInfo> oldModes = this.state.modes;
     List<ModeInfo> newModes = oldModes.map((ModeInfo oldMode) {
       if (oldMode != mode) {
@@ -191,6 +160,42 @@ class ModesBloc extends Bloc<ModesEvent, ModesState> {
       return oldMode.copyWith(channel: channel);
     }).toList();
 
-    yield this.state.copyWith(modes: newModes);
+    return newModes;
+  }
+
+  _gotModesEvent(GotModesEvent event, Emitter<ModesState> emit) {
+    emit(this.state.copyWith(modeRanges: event.modesRanges));
+    _checkBuildModes();
+  }
+
+  _gotBoxIdsEvent(GotBoxIdsEvent event, Emitter<ModesState> emit) {
+    emit(this.state.copyWith(ids: event.ids));
+    _checkBuildModes();
+  }
+
+  _gotBoxNamesEvent(GotBoxNamesEvent event, Emitter<ModesState> emit) {
+    emit(this.state.copyWith(names: event.names));
+    _checkBuildModes();
+  }
+
+  _generatedModeInfoEvent(
+      GeneratedModeInfoEvent event, Emitter<ModesState> emit) {
+    emit(this.state.copyWith(modes: event.modes));
+  }
+
+  _addNewModesEvent(AddNewModesEvent event, Emitter<ModesState> emit) {
+    List<ModeInfo> newModes = this._mapNewModesToState(event.modes);
+    emit(this.state.copyWith(modes: newModes));
+  }
+
+  _removeModeEvent(RemoveModeEvent event, Emitter<ModesState> emit) {
+    List<ModeInfo> newModes = this._mapRemoveModesToState(event.mode);
+    emit(this.state.copyWith(modes: newModes));
+  }
+
+  _changeChannelEvent(ChangeChannelEvent event, Emitter<ModesState> emit) {
+    List<ModeInfo> newModes =
+        this._mapChangeChannelToState(event.mode, event.channel);
+    this.state.copyWith(modes: newModes);
   }
 }

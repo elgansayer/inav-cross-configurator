@@ -13,19 +13,18 @@ part 'cli_state.dart';
 class CliBloc extends Bloc<CliEvent, CliState> {
   CliBloc({required this.serialDeviceRepository, required this.appBloc})
       : super(CliState.init()) {
-    // Disconnect the old and connect a new
-    // this.serialDeviceRepository.disconnect();
-    // this.serialCliDeviceRepository = new SerialCliDeviceRepository();
-
-    // serialCliDeviceRepository
-    //     .connect(this.serialDeviceRepository.serialPortInfo);
+    on<SendCliCmdEvent>((event, emit) => this._handleCliCmd(event, emit));
+    on<EnterCliEvent>((event, emit) => this._enterCliMode());
+    on<ExitCliEvent>((event, emit) => this._exitCliMode());
+    on<ExitedCliEvent>((event, emit) => this._exitedCliEvent(event, emit));
+    on<RecievedRawCliEvent>(
+        (event, emit) => this._recievedRawCliEvent(event, emit));
 
     this._countDown();
   }
 
   final AppBloc appBloc;
   final SerialDeviceRepository serialDeviceRepository;
-
   late StreamSubscription<List<int>> _rawListener;
 
   @override
@@ -34,42 +33,15 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     super.close();
   }
 
-  @override
-  Stream<CliState> mapEventToState(
-    CliEvent event,
-  ) async* {
-    if (event is EnterCliEvent) {
-      this._listen();
-      this._enterCliMode();
-    }
+  _exitedCliEvent(event, emit) {
+    emit(CliState.exited(
+      this.state.messages,
+    ));
 
-    if (event is SendCliCmdEvent) {
-      yield* this._handleCliCmd(event);
-    }
-
-    if (event is ExitCliEvent) {
-      this._exitCliMode();
-      yield this.state;
-    }
-
-    if (event is ExitedCliEvent) {
-      yield CliState.exited(
-        this.state.messages,
-      );
-
-      // Now reconnect after a short display delay
-      Timer(Duration(milliseconds: 250), () {
-        this.appBloc.add(ReconnectEvent());
-      });
-    }
-
-    if (event is RecievedRawCliEvent) {
-      try {
-        yield* this._recievedRawCliEvent(event);
-      } catch (e) {
-        yield this.state;
-      }
-    }
+    // Now reconnect after a short display delay
+    Timer(Duration(milliseconds: 250), () {
+      this.appBloc.add(ReconnectEvent());
+    });
   }
 
   _countDown() {
@@ -91,24 +63,20 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     });
   }
 
-  Stream<CliState> _recievedRawCliEvent(RecievedRawCliEvent event) async* {
-    try {
-      final newMsg = ascii.decode(event.data);
-      List<String> newMsgs = List<String>.from(state.messages);
-      newMsgs.add(newMsg);
+  _recievedRawCliEvent(RecievedRawCliEvent event, emit) {
+    final newMsg = ascii.decode(event.data);
+    List<String> newMsgs = List<String>.from(state.messages);
+    newMsgs.add(newMsg);
 
-      yield CliState.data(
-        newMsgs,
-      );
+    emit(CliState.data(
+      newMsgs,
+    ));
 
-      // Lazy check, if we are exiting. Then change state
-      // to reflect that
-      List<String> checks = ['Rebooting', 'Leaving CLI mode'];
-      if (checks.any((element) => newMsg.contains(element))) {
-        this.add(ExitedCliEvent());
-      }
-    } catch (e) {
-      yield this.state;
+    // Lazy check, if we are exiting. Then change state
+    // to reflect that
+    List<String> checks = ['Rebooting', 'Leaving CLI mode'];
+    if (checks.any((element) => newMsg.contains(element))) {
+      this.add(ExitedCliEvent());
     }
   }
 
@@ -118,11 +86,12 @@ class CliBloc extends Bloc<CliEvent, CliState> {
   }
 
   _enterCliMode() {
+    this._listen();
     final cmdEx = "#";
     _sendCliCmd(cmdEx);
   }
 
-  Stream<CliState> _handleCliCmd(SendCliCmdEvent event) async* {
+  _handleCliCmd(SendCliCmdEvent event, emit) {
     final String cmd = event.cliCmd.toLowerCase();
 
     // Does this cmd start with a #? if so, ignore it
@@ -133,15 +102,15 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     // Custom commands?
     switch (cmd) {
       case 'clear':
-        yield* _handleClearCmd();
+        _handleClearCmd(emit);
         break;
       default:
         this._sendCliCmd(cmd);
     }
   }
 
-  Stream<CliState> _handleClearCmd() async* {
-    yield CliState.data(List<String>.empty());
+  Stream<CliState> _handleClearCmd(emit) async* {
+    emit(CliState.data(List<String>.empty()));
   }
 
   _sendCliCmd(String cmd) {

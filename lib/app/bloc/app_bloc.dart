@@ -9,36 +9,24 @@ part 'app_event.dart';
 part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
-  late StreamSubscription<SerialDeviceEvent> _deviceListenrer;
-
   AppBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
         super(AppInitial()) {
+    on<ChangePageEvent>((event, emit) => emit(AppState(event.appPage)));
+    on<ReconnectEvent>((event, emit) => this._reconnect());
+    on<DisconnectEvent>((event, emit) => this._disconnect());
     _setupListeners();
   }
 
+  late StreamSubscription<SerialDeviceEvent> _deviceListenrer;
   late SerialDeviceRepository _serialDeviceRepository;
 
   @override
-  Stream<AppState> mapEventToState(
-    AppEvent event,
-  ) async* {
-    // Setup listeners
-    // if (event is AppInitEvent) {
-    //   yield* mapAppInitialToState(event);
-    // }
-
-    if (event is ChangePageEvent) {
-      yield AppState(event.appPage);
-    }
-
-    if (event is ReconnectEvent) {
-      this._reconnect();
-    }
-
-    if (event is DisconnectEvent) {
-      this._disconnect();
-    }
+  Future<void> close() {
+    // Cancel streams
+    _deviceListenrer.cancel();
+    this._disconnect();
+    return super.close();
   }
 
   _setupListeners() {
@@ -62,14 +50,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       default:
         this.add(ChangePageEvent(AppPage.devices));
     }
-  }
-
-  @override
-  Future<void> close() {
-    // Cancel streams
-    _deviceListenrer.cancel();
-    this._disconnect();
-    return super.close();
   }
 
   void _disconnect() {

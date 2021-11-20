@@ -17,19 +17,12 @@ class ArmFlagBloc extends Bloc<ArmFlagEvent, ArmFlagState> {
   ArmFlagBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
         super(ArmFlagState.init()) {
+    on<GotStatusEvent>((event, emit) => _mapGotStatusEvent(event, emit));
+
     _setupListeners();
   }
 
   final SerialDeviceRepository _serialDeviceRepository;
-
-  @override
-  Stream<ArmFlagState> mapEventToState(
-    ArmFlagEvent event,
-  ) async* {
-    if (event is GotStatusEvent) {
-      yield* _mapGotStatusEvent(event.inavStatus);
-    }
-  }
 
   _setupListeners() {
     this._streamListener = _serialDeviceRepository
@@ -65,9 +58,10 @@ class ArmFlagBloc extends Bloc<ArmFlagEvent, ArmFlagState> {
     }
   }
 
-  Stream<ArmFlagState> _mapGotStatusEvent(MSPINavStatus inavStatus) async* {
-    var allFlags = ArmFlags.allFlags;
-    var armingFlags = inavStatus.armingFlags;
+  _mapGotStatusEvent(GotStatusEvent event, emit) {
+    MSPINavStatus inavStatus = event.inavStatus;
+    List<ArmFlag> allFlags = ArmFlags.allFlags;
+    int armingFlags = inavStatus.armingFlags;
 
     // Go through each flag and create a list if they are enabled
     List<ArmFlag> preArmChecks = allFlags.map((ArmFlag armFlag) {
@@ -77,8 +71,8 @@ class ArmFlagBloc extends Bloc<ArmFlagEvent, ArmFlagState> {
     // Put errors at the top
     preArmChecks.sort((a, b) => a.enabled == false ? 0 : 1);
 
-    yield ArmFlagState.gotStatus(
-        inavStatus: inavStatus, armFlags: preArmChecks);
+    emit(
+        ArmFlagState.gotStatus(inavStatus: inavStatus, armFlags: preArmChecks));
   }
 }
 

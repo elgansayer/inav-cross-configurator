@@ -13,15 +13,21 @@ part 'calibration_event.dart';
 part 'calibration_state.dart';
 
 class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
-  late Timer _getDataTimer;
-
   CalibrationBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
         super(CalibrationState.init()) {
+    on<ClearCalibrationData>(
+        (event, emit) => _clearCalibrationData(event, emit));
+    on<GotMSPCalibrationData>(
+        (event, emit) => _getCalibrationData(event, emit));
+    on<StartAccCalibration>((event, emit) => _startCalibrating(event, emit));
+    on<FinishedCalibrationMode>((event, emit) => _setupGetDatTimer());
+
     this._setupListeners();
     this._setupGetDatTimer();
   }
 
+  late Timer _getDataTimer;
   final SerialDeviceRepository _serialDeviceRepository;
   late StreamSubscription<MSPDataHandler> _streamListener;
 
@@ -30,27 +36,6 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
     this._getDataTimer.cancel();
     this._streamListener.cancel();
     return super.close();
-  }
-
-  @override
-  Stream<CalibrationState> mapEventToState(
-    CalibrationEvent event,
-  ) async* {
-    if (event is ClearCalibrationData) {
-      yield* _clearCalibrationData();
-    }
-
-    if (event is GotMSPCalibrationData) {
-      yield* _getCalibrationData(event.calibrationData);
-    }
-
-    if (event is StartAccCalibration) {
-      yield* _startCalibrating();
-    }
-
-    if (event is FinishedCalibrationMode) {
-      _setupGetDatTimer();
-    }
   }
 
   void _setupListeners() {
@@ -69,7 +54,7 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
     });
   }
 
-  Stream<CalibrationState> _startCalibrating() async* {
+  _startCalibrating(event, emit) {
     if (this._getDataTimer.isActive) {
       this._getDataTimer.cancel();
     }
@@ -86,7 +71,9 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
     this.add(ClearCalibrationData());
     _serialDeviceRepository.writeBuilder(setCalibrationData);
 
-    yield CalibrationState.init().copyWith(accCalibration: true);
+    CalibrationState calibrationState =
+        CalibrationState.init().copyWith(accCalibration: true);
+    emit(calibrationState);
 
     Future.delayed(Duration(seconds: 2), () {
       _doCalibrating();
@@ -127,29 +114,29 @@ class CalibrationBloc extends Bloc<CalibrationEvent, CalibrationState> {
     }
   }
 
-  Stream<CalibrationState> _clearCalibrationData() async* {
+  void _clearCalibrationData(event, emit) {
     List<AccCalibrationState> accCalibrationStates = this
         .state
         .accCalibrationStates
         .map((e) => AccCalibrationState(false))
         .toList();
 
-    yield this.state.copyWith(
+    emit(this.state.copyWith(
           accCalibrationStates: accCalibrationStates,
-        );
+        ));
   }
 
-  Stream<CalibrationState> _getCalibrationData(
-      MSPCalibrationData calibrationData) async* {
+  void _getCalibrationData(event, emit) {
+    MSPCalibrationData calibrationData = event.calibrationData;
     List<AccCalibrationState> accCalibrationStates =
         calibrationData.acc.map((int e) {
       return AccCalibrationState(e == 1);
     }).toList();
 
-    yield this.state.copyWith(
+    emit(this.state.copyWith(
         accCalibration:
             !accCalibrationStates.every((state) => state.completed == true),
         accCalibrationStates: accCalibrationStates,
-        calibrationData: calibrationData);
+        calibrationData: calibrationData));
   }
 }

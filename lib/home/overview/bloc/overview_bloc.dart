@@ -13,7 +13,9 @@ part 'overview_state.dart';
 class InfoBloc extends Bloc<InfoEvent, InfoState> {
   InfoBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
-        super(InfoState.init());
+        super(InfoState.init()) {
+    on<GotStatusEvent>((event, emit) => _mapGotStatusEvent(event, emit));
+  }
 
   final SerialDeviceRepository _serialDeviceRepository;
   late StreamSubscription<MSPMessageResponse> _streamListener;
@@ -23,15 +25,6 @@ class InfoBloc extends Bloc<InfoEvent, InfoState> {
     //cancel streams
     // this._streamListener.cancel();
     return super.close();
-  }
-
-  @override
-  Stream<InfoState> mapEventToState(
-    InfoEvent event,
-  ) async* {
-    if (event is GotStatusEvent) {
-      yield* _mapGotStatusEvent(event.inavStatus);
-    }
   }
 
   // _setupListeners() {
@@ -61,16 +54,17 @@ class InfoBloc extends Bloc<InfoEvent, InfoState> {
   //   }
   // }
 
-  Stream<InfoState> _mapGotStatusEvent(MSPINavStatus inavStatus) async* {
-    var allFlags = ArmFlags.allFlags;
-    var armingFlags = inavStatus.armingFlags;
+  _mapGotStatusEvent(event, emit) {
+    MSPINavStatus inavStatus = event.inavStatus;
+    List<ArmFlag> allFlags = ArmFlags.allFlags;
+    int armingFlags = inavStatus.armingFlags;
 
     // Go through each flag and create a list if they are enabled
     Iterable<ArmFlag> preArmChecks = allFlags.map((ArmFlag armFlag) {
       return armFlag.copyWith(enabled: armFlag.isEnabled(armingFlags));
     }).toList();
 
-    yield InfoState.gotStatus(inavStatus: inavStatus, armFlags: preArmChecks);
+    emit(InfoState.gotStatus(inavStatus: inavStatus, armFlags: preArmChecks));
   }
 }
 
