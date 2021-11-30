@@ -4,10 +4,10 @@ enum ConnectionScreenState { idle, connecting, connected }
 
 @immutable
 abstract class DevicesPageState {
+  DevicesPageState(this.serialPorts, this.state);
+
   final List<SerialPortInfo> serialPorts;
   final ConnectionScreenState state;
-
-  DevicesPageState(this.serialPorts, this.state);
 }
 
 class DevicesPageInitial extends DevicesPageState {
@@ -21,19 +21,22 @@ class FoundDevicesState extends DevicesPageState {
 }
 
 class ConnectingState extends DevicesPageState {
-  final SerialPortInfo serialPort;
   ConnectingState(List<SerialPortInfo> serialPorts, this.serialPort)
       : super(serialPorts, ConnectionScreenState.connecting);
+
+  final SerialPortInfo serialPort;
 }
 
 class ConnectedState extends DevicesPageState {
-  final SerialPortInfo serialPort;
   ConnectedState(List<SerialPortInfo> serialPorts, this.serialPort)
       : super(serialPorts, ConnectionScreenState.connected);
+
+  final SerialPortInfo serialPort;
 }
 
 class ErrorConnectionState extends DevicesPageState {
-  final String errorMessage;
   ErrorConnectionState(this.errorMessage, List<SerialPortInfo> serialPorts)
       : super(serialPorts, ConnectionScreenState.idle);
+
+  final String errorMessage;
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dart_periphery/dart_periphery.dart';
 import 'package:libserialport/libserialport.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SerialDeviceProviderPeriphery {
   SerialDeviceProviderPeriphery();
@@ -12,15 +13,17 @@ class SerialDeviceProviderPeriphery {
   // final StreamController<List<int>> _readStream =
   //     new StreamController<List<int>>();
 
-  final StreamController<List<int>> _dataStream =
-      new StreamController<List<int>>();
+  final BehaviorSubject<List<int>> _dataStream =
+      new BehaviorSubject<List<int>>();
 
   late Serial _serial;
   late Timer _streamTimer;
+
   // final identifier = new Queue<int>();
   // Stream<List<int>> get data => _readStream.stream;
 
-  Stream<List<int>> get dataStream => _dataStream.stream;
+  ValueStream<List<int>> get dataStream => _dataStream.stream;
+
   StreamSink<List<int>> get dataSink => _dataStream.sink;
 
   bool connect(String path) {
@@ -132,6 +135,12 @@ class SerialDeviceProviderPeriphery {
     print("Closing serial device");
     // _readStream.close();
     this._streamTimer.cancel();
+    this._serial.dispose();
+  }
+
+  dispose() {
+    this.close();
+    this._dataStream.close();
   }
 
   disconnect() {

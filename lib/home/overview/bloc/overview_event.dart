@@ -4,9 +4,9 @@ part of 'overview_bloc.dart';
 abstract class InfoEvent {}
 
 class GotStatusEvent extends InfoEvent {
-  final MSPINavStatus inavStatus;
-
   GotStatusEvent({
     required this.inavStatus,
   });
+
+  final MSPINavStatus inavStatus;
 }

@@ -19,19 +19,6 @@ class IMUScreen extends StatefulWidget {
 class IMUScreenState extends State<IMUScreen> {
   IMUScreenState();
 
-  @override
-  Widget build(BuildContext context) {
-    return AppScaffold(
-      title: "IMU",
-      actions: [IconButton(onPressed: null, icon: Icon(Icons.more_vert))],
-      body: Center(
-        child: Stack(
-          children: [_buildModelView(), _buildinfoGraph()],
-        ),
-      ),
-    );
-  }
-
   _buildModelView() {
     return InkWell(
       child: ImuViewer(),
@@ -58,6 +45,19 @@ class IMUScreenState extends State<IMUScreen> {
           )),
         );
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AppScaffold(
+      title: "IMU",
+      actions: [IconButton(onPressed: null, icon: Icon(Icons.more_vert))],
+      body: Center(
+        child: Stack(
+          children: [_buildModelView(), _buildinfoGraph()],
+        ),
+      ),
     );
   }
 }

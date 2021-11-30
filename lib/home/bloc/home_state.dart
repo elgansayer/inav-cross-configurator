@@ -1,8 +1,6 @@
 part of 'home_bloc.dart';
 
 class HomeState {
-  final TabPage? tabPage;
-
   HomeState({
     this.tabPage,
   });
@@ -10,4 +8,6 @@ class HomeState {
   factory HomeState.init() {
     return HomeState();
   }
+
+  final TabPage? tabPage;
 }

@@ -18,16 +18,6 @@ class ServosScreen extends StatefulWidget {
 class ServosScreenState extends State<ServosScreen> {
   ServosScreenState();
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ServosBloc, ServosState>(builder: (
-      BuildContext context,
-      ServosState currentState,
-    ) {
-      return AppScaffold(title: "Servos", body: _body());
-    });
-  }
-
   _body() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(50, 8, 50, 8),
@@ -36,5 +26,15 @@ class ServosScreenState extends State<ServosScreen> {
         children: <Widget>[],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ServosBloc, ServosState>(builder: (
+      BuildContext context,
+      ServosState currentState,
+    ) {
+      return AppScaffold(title: "Servos", body: _body());
+    });
   }
 }

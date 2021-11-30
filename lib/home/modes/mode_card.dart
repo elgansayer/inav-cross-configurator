@@ -10,15 +10,10 @@ class ModeCard extends StatelessWidget {
       required this.onRemovePressed,
       required this.modeInfo})
       : super(key: key);
-  final ModeInfo modeInfo;
 
+  final ModeInfo modeInfo;
   final VoidCallback? onChannelSelect;
   final VoidCallback? onRemovePressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return _card(context);
-  }
 
   _card(BuildContext context) {
     return Card(
@@ -108,5 +103,10 @@ class ModeCard extends StatelessWidget {
 
   _slider(context) {
     return ModeSlider(range: this.modeInfo.range);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _card(context);
   }
 }

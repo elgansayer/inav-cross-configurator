@@ -60,6 +60,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void _reconnect() {
     // Disconnect first
     _serialDeviceRepository.reconnect();
-    this.add(ChangePageEvent(AppPage.devices));
+    // this.add(ChangePageEvent(AppPage.devices));
   }
 }

@@ -2,24 +2,24 @@ part of 'imu_bloc.dart';
 
 @immutable
 class Kinematics {
-  final double heading;
-  final double roll;
-  final double pitch;
+  Kinematics(this.heading, this.roll, this.pitch);
 
   factory Kinematics.zero() {
     return Kinematics(0, 0, 0);
   }
 
-  Kinematics(this.heading, this.roll, this.pitch);
+  final double heading;
+  final double pitch;
+  final double roll;
 }
 
 @immutable
 class ImuViewState {
+  ImuViewState(this.object, this.scene, this.kinematics);
+
+  final Kinematics kinematics;
   final Object? object;
   final Scene? scene;
-  final Kinematics kinematics;
-
-  ImuViewState(this.object, this.scene, this.kinematics);
 }
 
 class ImuViewInitial extends ImuViewState {

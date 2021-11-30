@@ -19,21 +19,6 @@ class InfoScreen extends StatefulWidget {
 class InfoScreenState extends State<InfoScreen> {
   InfoScreenState();
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<InfoBloc, InfoState>(builder: (
-      BuildContext context,
-      InfoState currentState,
-    ) {
-      return AppScaffold(
-        title: "Overview",
-        body: SafeArea(
-          child: _buildBody(currentState),
-        ),
-      );
-    });
-  }
-
   _buildBody(InfoState currentState) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -62,5 +47,20 @@ class InfoScreenState extends State<InfoScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<InfoBloc, InfoState>(builder: (
+      BuildContext context,
+      InfoState currentState,
+    ) {
+      return AppScaffold(
+        title: "Overview",
+        body: SafeArea(
+          child: _buildBody(currentState),
+        ),
+      );
+    });
   }
 }

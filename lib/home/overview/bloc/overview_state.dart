@@ -2,17 +2,10 @@ part of 'overview_bloc.dart';
 
 @immutable
 class InfoState {
-  final MSPINavStatus? inavStatus;
-  final Iterable<ArmFlag> armFlags;
-
   InfoState({
     required this.inavStatus,
     required this.armFlags,
   });
-
-  factory InfoState.init() {
-    return InfoState(inavStatus: null, armFlags: []);
-  }
 
   factory InfoState.gotStatus(
       {required MSPINavStatus inavStatus,
@@ -22,4 +15,11 @@ class InfoState {
       armFlags: armFlags,
     );
   }
+
+  factory InfoState.init() {
+    return InfoState(inavStatus: null, armFlags: []);
+  }
+
+  final Iterable<ArmFlag> armFlags;
+  final MSPINavStatus? inavStatus;
 }

@@ -4,7 +4,7 @@ part of 'home_bloc.dart';
 abstract class HomeEvent {}
 
 class ChangeHomePageEvent extends HomeEvent {
-  final TabPage tabPage;
-
   ChangeHomePageEvent({required this.tabPage});
+
+  final TabPage tabPage;
 }

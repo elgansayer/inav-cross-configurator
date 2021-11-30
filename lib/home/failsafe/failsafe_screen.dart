@@ -16,21 +16,11 @@ class FailsafeScreen extends StatefulWidget {
 }
 
 class FailsafeScreenState extends State<FailsafeScreen> {
-  late TextEditingController _delayController = new TextEditingController();
-  late TextEditingController _throttleController = new TextEditingController();
-  late TextEditingController _guardTimeController = new TextEditingController();
-
   FailsafeScreenState();
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<FailsafeBloc, FailsafeState>(builder: (
-      BuildContext context,
-      FailsafeState currentState,
-    ) {
-      return AppScaffold(title: "Failsafe", body: _body());
-    });
-  }
+  late TextEditingController _delayController = new TextEditingController();
+  late TextEditingController _guardTimeController = new TextEditingController();
+  late TextEditingController _throttleController = new TextEditingController();
 
   _body() {
     var _currencies = [
@@ -107,5 +97,15 @@ class FailsafeScreenState extends State<FailsafeScreen> {
         )
       ],
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FailsafeBloc, FailsafeState>(builder: (
+      BuildContext context,
+      FailsafeState currentState,
+    ) {
+      return AppScaffold(title: "Failsafe", body: _body());
+    });
   }
 }

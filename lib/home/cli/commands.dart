@@ -1,8 +1,8 @@
 class CliCommand {
+  CliCommand(this.cmd, this.description);
+
   final String cmd;
   final String description;
-
-  CliCommand(this.cmd, this.description);
 
   @override
   String toString() {
@@ -11,15 +11,6 @@ class CliCommand {
 }
 
 class CliCommands {
-  static List<CliCommand> findCommands(String query) {
-    List<CliCommand> matches = <CliCommand>[];
-    matches.addAll(commands);
-
-    matches
-        .retainWhere((s) => s.cmd.toLowerCase().contains(query.toLowerCase()));
-    return matches;
-  }
-
   static List<CliCommand> commands = [
     CliCommand('clear', 'clear the console'),
     CliCommand('1wire <esc>', 'passthrough 1wire to the specified esc'),
@@ -55,4 +46,13 @@ class CliCommands {
     CliCommand('wp', 'list or configure waypoints'),
     CliCommand('version', 'Displays version information')
   ];
+
+  static List<CliCommand> findCommands(String query) {
+    List<CliCommand> matches = <CliCommand>[];
+    matches.addAll(commands);
+
+    matches
+        .retainWhere((s) => s.cmd.toLowerCase().contains(query.toLowerCase()));
+    return matches;
+  }
 }

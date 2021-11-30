@@ -2,17 +2,10 @@ part of 'arm_flag_bloc.dart';
 
 @immutable
 class ArmFlagState {
-  final MSPINavStatus? inavStatus;
-  final Iterable<ArmFlag> armFlags;
-
   ArmFlagState({
     required this.inavStatus,
     required this.armFlags,
   });
-
-  factory ArmFlagState.init() {
-    return ArmFlagState(inavStatus: null, armFlags: []);
-  }
 
   factory ArmFlagState.gotStatus(
       {required MSPINavStatus inavStatus,
@@ -22,4 +15,11 @@ class ArmFlagState {
       armFlags: armFlags,
     );
   }
+
+  factory ArmFlagState.init() {
+    return ArmFlagState(inavStatus: null, armFlags: []);
+  }
+
+  final Iterable<ArmFlag> armFlags;
+  final MSPINavStatus? inavStatus;
 }

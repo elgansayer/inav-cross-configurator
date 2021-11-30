@@ -7,19 +7,6 @@ import '../msp_message.dart';
 import 'base_data_handler.dart';
 
 class MSPRawImu implements MSPDataHandler {
-  final MSPMessageResponse messageResponse;
-  final int code = MSPCodes.mspRawImu;
-
-  // A 3-vector value containing the raw accelerometer values
-  // in the x, y and z axes respectively. The units depend on the device.
-  final Vector3 accelerometer = new Vector3.zero();
-  // A 3-vector value containing the raw gyroscope values
-  // in the x, y and z axes respectively. The units depend on the device.
-  final Vector3 gyroscope = new Vector3.zero();
-  // A 3-vector value containing the raw magnetometer values
-  // in the x, y and z axes respectively. The units depend on the device.
-  final Vector3 magnetometer = new Vector3.zero();
-
   MSPRawImu(this.messageResponse) {
     ByteData byteData = this.messageResponse.payload;
     // ByteData byteData = new ByteData.view(payload.buffer);
@@ -44,4 +31,19 @@ class MSPRawImu implements MSPDataHandler {
     double magZ = (byteData.getInt16(16, Endian.little) / 1090);
     this.magnetometer.setValues(magX, magY, magZ);
   }
+
+  // A 3-vector value containing the raw accelerometer values
+  // in the x, y and z axes respectively. The units depend on the device.
+  final Vector3 accelerometer = new Vector3.zero();
+
+  final int code = MSPCodes.mspRawImu;
+  // A 3-vector value containing the raw gyroscope values
+  // in the x, y and z axes respectively. The units depend on the device.
+  final Vector3 gyroscope = new Vector3.zero();
+
+  // A 3-vector value containing the raw magnetometer values
+  // in the x, y and z axes respectively. The units depend on the device.
+  final Vector3 magnetometer = new Vector3.zero();
+
+  final MSPMessageResponse messageResponse;
 }

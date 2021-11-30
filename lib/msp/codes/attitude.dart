@@ -5,11 +5,6 @@ import '../codes.dart';
 import '../msp_message.dart';
 
 class MSPAttitude implements MSPDataHandler {
-  final MSPMessageResponse messageResponse;
-  final int code = MSPCodes.mspAttitude;
-
-  final Vector3 kinematics = new Vector3.zero();
-
   MSPAttitude(this.messageResponse) {
     ByteData payload = this.messageResponse.payload;
 
@@ -19,4 +14,8 @@ class MSPAttitude implements MSPDataHandler {
 
     this.kinematics.setValues(roll, pitch, heading);
   }
+
+  final int code = MSPCodes.mspAttitude;
+  final Vector3 kinematics = new Vector3.zero();
+  final MSPMessageResponse messageResponse;
 }

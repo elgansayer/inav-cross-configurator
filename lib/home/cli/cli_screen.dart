@@ -28,23 +28,14 @@ class CliScreen extends StatefulWidget {
 }
 
 class CliScreenState extends State<CliScreen> {
-  final TextEditingController _textInputController =
-      new TextEditingController();
+  CliScreenState();
 
+  CodeController? _codeController;
   final TextEditingController _textConsoleController =
       new TextEditingController();
 
-  CodeController? _codeController;
-
-  CliScreenState();
-
-  @override
-  void initState() {
-    super.initState();
-    // Instantiate the CodeController
-    _codeController =
-        CodeController(language: cliSyntax, theme: monokaiSublimeTheme);
-  }
+  final TextEditingController _textInputController =
+      new TextEditingController();
 
   @override
   void dispose() {
@@ -53,24 +44,11 @@ class CliScreenState extends State<CliScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<CliBloc, CliState>(
-      listener: (context, state) {
-        _textConsoleController.text = state.message;
-
-        _codeController = CodeController(
-            text: state.message,
-            language: cliSyntax,
-            theme: monokaiSublimeTheme);
-
-        if (state.excitedCli) {
-          Navigator.pop(context);
-        }
-      },
-      builder: (context, CliState state) {
-        return _buildBar(state);
-      },
-    );
+  void initState() {
+    super.initState();
+    // Instantiate the CodeController
+    _codeController =
+        CodeController(language: cliSyntax, theme: monokaiSublimeTheme);
   }
 
   _buildBar(CliState state) {
@@ -358,5 +336,26 @@ class CliScreenState extends State<CliScreen> {
 
   void _send(String cliCmd) {
     BlocProvider.of<CliBloc>(context).add(SendCliCmdEvent(cliCmd: cliCmd));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<CliBloc, CliState>(
+      listener: (context, state) {
+        _textConsoleController.text = state.message;
+
+        _codeController = CodeController(
+            text: state.message,
+            language: cliSyntax,
+            theme: monokaiSublimeTheme);
+
+        if (state.excitedCli) {
+          Navigator.pop(context);
+        }
+      },
+      builder: (context, CliState state) {
+        return _buildBar(state);
+      },
+    );
   }
 }

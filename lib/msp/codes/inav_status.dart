@@ -4,17 +4,6 @@ import '../codes.dart';
 import '../msp_message.dart';
 
 class MSPINavStatus implements MSPDataHandler {
-  final MSPMessageResponse messageResponse;
-  final int code = MSPCodes.mspv2InavStatus;
-
-  late int cycleTime;
-  late int i2cError;
-  late int activeSensors;
-  late int profile;
-  late int cpuload;
-  late int armingFlags;
-  late int batteryProfile;
-
   MSPINavStatus(this.messageResponse) {
     ByteData payload = this.messageResponse.payload;
 
@@ -29,4 +18,14 @@ class MSPINavStatus implements MSPDataHandler {
 
     this.armingFlags = payload.getUint32(9, Endian.little);
   }
+
+  late int activeSensors;
+  late int armingFlags;
+  late int batteryProfile;
+  final int code = MSPCodes.mspv2InavStatus;
+  late int cpuload;
+  late int cycleTime;
+  late int i2cError;
+  final MSPMessageResponse messageResponse;
+  late int profile;
 }

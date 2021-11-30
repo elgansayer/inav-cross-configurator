@@ -11,26 +11,10 @@ class ModeChannelPickerScreen extends StatefulWidget {
 
 class ModeChannelPickerScreenState extends State<ModeChannelPickerScreen> {
   ModeChannelPickerScreenState();
-  late int selectedChannel = -1;
-  final _formKey = GlobalKey<FormState>();
 
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context, this.selectedChannel);
-        return false;
-      },
-      child: Scaffold(
-          appBar: AppBar(title: _getTitle(), actions: [
-            // IconButton(
-            //   icon: Icon(Icons.help),
-            //   onPressed: () {},
-            // )
-          ]),
-          body: _body()),
-    );
-  }
+  late int selectedChannel = -1;
+
+  final _formKey = GlobalKey<FormState>();
 
   Widget _body() {
     return Form(
@@ -73,6 +57,24 @@ class ModeChannelPickerScreenState extends State<ModeChannelPickerScreen> {
     return this.selectedChannel > 0
         ? Text("Selected channel ${this.selectedChannel}")
         : Text("Channel Selector");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, this.selectedChannel);
+        return false;
+      },
+      child: Scaffold(
+          appBar: AppBar(title: _getTitle(), actions: [
+            // IconButton(
+            //   icon: Icon(Icons.help),
+            //   onPressed: () {},
+            // )
+          ]),
+          body: _body()),
+    );
   }
 }
 

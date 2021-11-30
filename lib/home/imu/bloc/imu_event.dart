@@ -4,13 +4,15 @@ part of 'imu_bloc.dart';
 abstract class ImuViewEvent {}
 
 class ImuAdd3DObjectEvent extends ImuViewEvent {
-  final Object mdlObject;
   ImuAdd3DObjectEvent(this.mdlObject);
+
+  final Object mdlObject;
 }
 
 class ImuAddSceneEvent extends ImuViewEvent {
-  final Scene scene;
   ImuAddSceneEvent(this.scene);
+
+  final Scene scene;
 }
 
 class ResetYawEvent extends ImuViewEvent {
@@ -18,6 +20,7 @@ class ResetYawEvent extends ImuViewEvent {
 }
 
 class UpdateKinematicsEvent extends ImuViewEvent {
-  final Kinematics kinematics;
   UpdateKinematicsEvent(this.kinematics);
+
+  final Kinematics kinematics;
 }

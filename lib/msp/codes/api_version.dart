@@ -5,17 +5,6 @@ import '../msp_message.dart';
 import 'base_data_handler.dart';
 
 class MSPApiVersion implements MSPDataHandler {
-  final MSPMessageResponse messageResponse;
-  final int code = MSPCodes.mspApiVersion;
-
-  late int mspProtocolVersion;
-  late int apiVersionMajor;
-  late int apiVersionMinor;
-  late int apiVersionPatch;
-
-  String get apiVersion =>
-      "${this.apiVersionMajor}.${this.apiVersionMinor}.${this.apiVersionPatch}";
-
   MSPApiVersion(this.messageResponse) {
     ByteData payload = this.messageResponse.payload;
 
@@ -24,4 +13,14 @@ class MSPApiVersion implements MSPDataHandler {
     this.apiVersionMinor = payload.getInt8(2);
     this.apiVersionPatch = 0;
   }
+
+  late int apiVersionMajor;
+  late int apiVersionMinor;
+  late int apiVersionPatch;
+  final int code = MSPCodes.mspApiVersion;
+  final MSPMessageResponse messageResponse;
+  late int mspProtocolVersion;
+
+  String get apiVersion =>
+      "${this.apiVersionMajor}.${this.apiVersionMinor}.${this.apiVersionPatch}";
 }

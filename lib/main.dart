@@ -40,6 +40,24 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  _doNastyStuffsBeforeExit(BuildContext context) {
+    var repo = RepositoryProvider.of<SerialDeviceRepository>(context);
+    repo.disconnect();
+    return true;
+  }
+
+  // _connectingView() {
+  //   return ConnectingScreen();
+  // }
+
+  _homeView() {
+    return HomePage();
+  }
+
+  _devicesPageView() {
+    return DevicesPage();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -81,23 +99,5 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  _doNastyStuffsBeforeExit(BuildContext context) {
-    var repo = RepositoryProvider.of<SerialDeviceRepository>(context);
-    repo.disconnect();
-    return true;
-  }
-
-  // _connectingView() {
-  //   return ConnectingScreen();
-  // }
-
-  _homeView() {
-    return HomePage();
-  }
-
-  _devicesPageView() {
-    return DevicesPage();
   }
 }

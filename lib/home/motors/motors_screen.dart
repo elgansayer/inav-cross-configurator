@@ -18,16 +18,6 @@ class MotorsScreen extends StatefulWidget {
 class MotorsScreenState extends State<MotorsScreen> {
   MotorsScreenState();
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<MotorsBloc, MotorsState>(builder: (
-      BuildContext context,
-      MotorsState currentState,
-    ) {
-      return AppScaffold(title: "Motors", body: _body());
-    });
-  }
-
   _body() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(50, 8, 50, 8),
@@ -36,5 +26,15 @@ class MotorsScreenState extends State<MotorsScreen> {
         children: <Widget>[],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<MotorsBloc, MotorsState>(builder: (
+      BuildContext context,
+      MotorsState currentState,
+    ) {
+      return AppScaffold(title: "Motors", body: _body());
+    });
   }
 }

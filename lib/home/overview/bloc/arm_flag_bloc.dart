@@ -12,8 +12,6 @@ part 'arm_flag_event.dart';
 part 'arm_flag_state.dart';
 
 class ArmFlagBloc extends Bloc<ArmFlagEvent, ArmFlagState> {
-  late StreamSubscription<MSPMessageResponse> _streamListener;
-
   ArmFlagBloc({required SerialDeviceRepository serialDeviceRepository})
       : _serialDeviceRepository = serialDeviceRepository,
         super(ArmFlagState.init()) {
@@ -23,6 +21,14 @@ class ArmFlagBloc extends Bloc<ArmFlagEvent, ArmFlagState> {
   }
 
   final SerialDeviceRepository _serialDeviceRepository;
+  late StreamSubscription<MSPMessageResponse> _streamListener;
+
+  @override
+  Future<void> close() {
+    //cancel streams
+    this._streamListener.cancel();
+    return super.close();
+  }
 
   _setupListeners() {
     this._streamListener = _serialDeviceRepository
@@ -40,13 +46,6 @@ class ArmFlagBloc extends Bloc<ArmFlagEvent, ArmFlagState> {
     });
 
     _sendRequest();
-  }
-
-  @override
-  Future<void> close() {
-    //cancel streams
-    this._streamListener.cancel();
-    return super.close();
   }
 
   Future<void> _sendRequest() async {
@@ -77,17 +76,17 @@ class ArmFlagBloc extends Bloc<ArmFlagEvent, ArmFlagState> {
 }
 
 class ArmFlag {
-  final String name;
-  final ArmIds id;
-  final int flag;
-  final bool enabled;
-
   ArmFlag({
     required this.id,
     required this.flag,
     required this.name,
     required this.enabled,
   });
+
+  final bool enabled;
+  final int flag;
+  final ArmIds id;
+  final String name;
 
   bool isEnabled(int armingFlags) {
     return !((armingFlags >> this.flag) % 2 != 0);
@@ -125,42 +124,19 @@ enum ArmIds {
 }
 
 class ArmFlags {
-  static const OkToArm = 0;
-  static const PreventArming = 1;
   static const Armed = 2;
-  static const WasEverArmed = 3;
-  static const BlockedUAVNotLevel = 8;
-  static const BlockedSensorsCalibrating = 9;
-  static const BlockedSystemOverloaded = 10;
-  static const BlockedNavigationSafety = 11;
-  static const BlockedCompassNotCalibrated = 12;
   static const BlockedAccelerometerNotCalibrated = 13;
-  static const None = 14;
+  static const BlockedCompassNotCalibrated = 12;
   static const BlockedHardwareFailure = 15;
   static const BlockedInvalidSetting = 26;
-
-  // Names for translation
-  static Map<ArmIds, String> names = {
-    ArmIds.OkToArm: 'OkToArm',
-    ArmIds.PreventArming: 'PreventArming',
-    ArmIds.Armed: 'Armed',
-    ArmIds.WasEverArmed: 'WasEverArmed',
-    ArmIds.BlockedUAVNotLevel: 'BlockedUAVNotLevel',
-    ArmIds.BlockedSensorsCalibrating: 'BlockedSensorsCalibrating',
-    ArmIds.BlockedSystemOverloaded: 'BlockedSystemOverloaded',
-    ArmIds.BlockedNavigationSafety: 'BlockedNavigationSafety',
-    ArmIds.BlockedCompassNotCalibrated: 'BlockedCompassNotCalibrated',
-    ArmIds.BlockedAccelerometerNotCalibrated:
-        'BlockedAccelerometerNotCalibrated',
-    ArmIds.None: 'None',
-    ArmIds.BlockedHardwareFailure: 'BlockedHardwareFailure',
-    ArmIds.BlockedInvalidSetting: 'BlockedInvalidSetting',
-  };
-
-  static String name(ArmIds id) {
-    return ArmFlags.names[id] ?? '';
-  }
-
+  static const BlockedNavigationSafety = 11;
+  static const BlockedSensorsCalibrating = 9;
+  static const BlockedSystemOverloaded = 10;
+  static const BlockedUAVNotLevel = 8;
+  static const None = 14;
+  static const OkToArm = 0;
+  static const PreventArming = 1;
+  static const WasEverArmed = 3;
   static List<ArmFlag> allFlags = [
     ArmFlag(
         enabled: false,
@@ -228,6 +204,28 @@ class ArmFlags {
         id: ArmIds.BlockedInvalidSetting,
         flag: ArmFlags.BlockedInvalidSetting),
   ];
+
+  // Names for translation
+  static Map<ArmIds, String> names = {
+    ArmIds.OkToArm: 'OkToArm',
+    ArmIds.PreventArming: 'PreventArming',
+    ArmIds.Armed: 'Armed',
+    ArmIds.WasEverArmed: 'WasEverArmed',
+    ArmIds.BlockedUAVNotLevel: 'BlockedUAVNotLevel',
+    ArmIds.BlockedSensorsCalibrating: 'BlockedSensorsCalibrating',
+    ArmIds.BlockedSystemOverloaded: 'BlockedSystemOverloaded',
+    ArmIds.BlockedNavigationSafety: 'BlockedNavigationSafety',
+    ArmIds.BlockedCompassNotCalibrated: 'BlockedCompassNotCalibrated',
+    ArmIds.BlockedAccelerometerNotCalibrated:
+        'BlockedAccelerometerNotCalibrated',
+    ArmIds.None: 'None',
+    ArmIds.BlockedHardwareFailure: 'BlockedHardwareFailure',
+    ArmIds.BlockedInvalidSetting: 'BlockedInvalidSetting',
+  };
+
+  static String name(ArmIds id) {
+    return ArmFlags.names[id] ?? '';
+  }
 }
 
 // class BetterArmFlag {

@@ -4,13 +4,6 @@ import '../codes.dart';
 import 'base_data_writer.dart';
 
 class SetCalibrationData extends MSPRequestBuilder {
-  List<int> acc;
-  Vector3 accGain;
-  Vector3 accZero;
-  Vector3 magGain;
-  Vector3 magZero;
-  double opflowScale;
-
   SetCalibrationData({
     required this.acc,
     required this.accGain,
@@ -22,7 +15,13 @@ class SetCalibrationData extends MSPRequestBuilder {
     _build();
   }
 
+  List<int> acc;
+  Vector3 accGain;
+  Vector3 accZero;
   final int code = MSPCodes.mspSetCalibrationData;
+  Vector3 magGain;
+  Vector3 magZero;
+  double opflowScale;
 
   _build() {
     this.buffer = [];

@@ -4,9 +4,9 @@ part of 'calibration_bloc.dart';
 abstract class CalibrationEvent {}
 
 class GotMSPCalibrationData extends CalibrationEvent {
-  final MSPCalibrationData calibrationData;
-
   GotMSPCalibrationData(this.calibrationData);
+
+  final MSPCalibrationData calibrationData;
 }
 
 class ClearCalibrationData extends CalibrationEvent {

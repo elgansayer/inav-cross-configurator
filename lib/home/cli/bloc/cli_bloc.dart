@@ -25,6 +25,7 @@ class CliBloc extends Bloc<CliEvent, CliState> {
 
   final AppBloc appBloc;
   final SerialDeviceRepository serialDeviceRepository;
+
   late StreamSubscription<List<int>> _rawListener;
 
   @override
@@ -41,6 +42,7 @@ class CliBloc extends Bloc<CliEvent, CliState> {
     // Now reconnect after a short display delay
     Timer(Duration(milliseconds: 250), () {
       this.appBloc.add(ReconnectEvent());
+      emit(CliState.init());
     });
   }
 

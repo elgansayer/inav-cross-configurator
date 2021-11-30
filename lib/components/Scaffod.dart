@@ -13,23 +13,10 @@ class AppScaffold extends StatelessWidget {
       this.appBar})
       : super(key: key);
 
-  final String title;
-  final Widget body;
   final List<Widget>? actions;
   final PreferredSizeWidget? appBar;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: this.appBar ??
-          AppBar(
-            title: _title(),
-            actions: actions,
-          ),
-      body: body,
-      drawer: SideDrawer(),
-    );
-  }
+  final Widget body;
+  final String title;
 
   _title() {
     return Row(
@@ -71,5 +58,18 @@ class AppScaffold extends StatelessWidget {
   _armedIcon() {
     return SvgPicture.asset('assets/images/icons/cf_icon_armed_grey.svg',
         color: Colors.grey, height: 24, fit: BoxFit.fitHeight);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: this.appBar ??
+          AppBar(
+            title: _title(),
+            actions: actions,
+          ),
+      body: body,
+      drawer: SideDrawer(),
+    );
   }
 }

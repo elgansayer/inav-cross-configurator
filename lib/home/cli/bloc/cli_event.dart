@@ -4,18 +4,19 @@ part of 'cli_bloc.dart';
 abstract class CliEvent {}
 
 class SendCliCmdEvent extends CliEvent {
-  final String cliCmd;
-
   SendCliCmdEvent({
     required this.cliCmd,
   });
+
+  final String cliCmd;
 }
 
 class RecievedRawCliEvent extends CliEvent {
-  final List<int> data;
   RecievedRawCliEvent({
     required this.data,
   });
+
+  final List<int> data;
 }
 
 class ExitCliEvent extends CliEvent {

@@ -2,11 +2,6 @@ part of 'modes_bloc.dart';
 
 @immutable
 class ModesState {
-  final List<ModeInfo> modes;
-  final List<ModeRange> modeRanges;
-  final List<String> names;
-  final List<int> ids;
-
   ModesState({
     required this.modes,
     required this.modeRanges,
@@ -17,6 +12,11 @@ class ModesState {
   factory ModesState.initial() {
     return new ModesState(modeRanges: [], modes: [], names: [], ids: []);
   }
+
+  final List<int> ids;
+  final List<ModeRange> modeRanges;
+  final List<ModeInfo> modes;
+  final List<String> names;
 
   ModesState copyWith({
     List<ModeInfo>? modes,

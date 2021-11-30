@@ -18,16 +18,6 @@ class PIDTuningScreen extends StatefulWidget {
 class PIDTuningScreenState extends State<PIDTuningScreen> {
   PIDTuningScreenState();
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<PIDTuningBloc, PIDTuningState>(builder: (
-      BuildContext context,
-      PIDTuningState currentState,
-    ) {
-      return AppScaffold(title: "PIDTuning", body: _body());
-    });
-  }
-
   _body() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(50, 8, 50, 8),
@@ -36,5 +26,15 @@ class PIDTuningScreenState extends State<PIDTuningScreen> {
         children: <Widget>[],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<PIDTuningBloc, PIDTuningState>(builder: (
+      BuildContext context,
+      PIDTuningState currentState,
+    ) {
+      return AppScaffold(title: "PIDTuning", body: _body());
+    });
   }
 }

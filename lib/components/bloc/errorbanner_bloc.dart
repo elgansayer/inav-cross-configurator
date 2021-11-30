@@ -7,8 +7,6 @@ part 'errorbanner_event.dart';
 part 'errorbanner_state.dart';
 
 class ErrorBannerBloc extends Bloc<ErrorbannerEvent, ErrorBannerState> {
-  final ErrorMessageRepository _errorMessageRepository;
-
   ErrorBannerBloc({required ErrorMessageRepository errorMessageRepository})
       : _errorMessageRepository = errorMessageRepository,
         super(ErrorBannerState.init()) {
@@ -18,6 +16,8 @@ class ErrorBannerBloc extends Bloc<ErrorbannerEvent, ErrorBannerState> {
 
     this.listenToErrors();
   }
+
+  final ErrorMessageRepository _errorMessageRepository;
 
   listenToErrors() {
     _errorMessageRepository.errors.listen((error) {

@@ -1,8 +1,9 @@
 part of 'calibration_bloc.dart';
 
 class AccCalibrationState {
-  final bool completed;
   AccCalibrationState(this.completed);
+
+  final bool completed;
 }
 
 class CalibrationState {
@@ -20,9 +21,9 @@ class CalibrationState {
             List.generate(6, (index) => AccCalibrationState(false)));
   }
 
-  MSPCalibrationData? calibrationData;
-  List<AccCalibrationState> accCalibrationStates;
   bool accCalibration;
+  List<AccCalibrationState> accCalibrationStates;
+  MSPCalibrationData? calibrationData;
 
   CalibrationState copyWith({
     MSPCalibrationData? calibrationData,

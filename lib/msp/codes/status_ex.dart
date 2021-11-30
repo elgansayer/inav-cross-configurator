@@ -4,16 +4,6 @@ import '../codes.dart';
 import '../msp_message.dart';
 
 class MSPStatusEx implements MSPDataHandler {
-  final MSPMessageResponse messageResponse;
-  final int code = MSPCodes.mspStatusEx;
-
-  late int cycleTime;
-  late int i2cError;
-  late int activeSensors;
-  late int profile;
-  late int cpuload;
-  late int armingFlags;
-
   MSPStatusEx(this.messageResponse) {
     ByteData payload = this.messageResponse.payload;
 
@@ -24,4 +14,13 @@ class MSPStatusEx implements MSPDataHandler {
     this.cpuload = payload.getInt16(11, Endian.little);
     this.armingFlags = payload.getInt16(13, Endian.little);
   }
+
+  late int activeSensors;
+  late int armingFlags;
+  final int code = MSPCodes.mspStatusEx;
+  late int cpuload;
+  late int cycleTime;
+  late int i2cError;
+  final MSPMessageResponse messageResponse;
+  late int profile;
 }

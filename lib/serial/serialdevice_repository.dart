@@ -14,6 +14,7 @@ import 'package:inavconfigurator/serial/periphery_provider.dart';
 import '../msp/data_transformers.dart';
 import '../msp/msp_message.dart';
 import 'serialport_model.dart';
+import 'serialport_provider.dart';
 
 enum SerialDeviceEventType { connected, connecting, disconnected }
 
@@ -312,8 +313,48 @@ class SerialDeviceRepository {
     return _provider.disconnect();
   }
 
-  void reconnect() {
-    // return _provider.reconnect();
+  void reconnect() async {
+    final SerialPortInfo serialPortInfo = this.serialPortInfo;
+
+    // Close everything!
+    this.disconnect();
+
+    Completer<SerialPortInfo> completer = new Completer<SerialPortInfo>();
+    SerialPortProvider serialPortProvider = new SerialPortProvider();
+
+    Duration duration = new Duration(seconds: 1);
+    Timer.periodic(duration, (timer) async {
+      List<SerialPortInfo> allPosrts = serialPortProvider.ports;
+
+      // Avoid exceptions
+      SerialPortInfo portAvilable = allPosrts.firstWhere(
+          (element) => element.serialNumber == serialPortInfo.serialNumber,
+          orElse: () {
+        return new SerialPortInfo.empty();
+      });
+
+      // An empty SerialPortInfo has an address of -1
+      if (portAvilable.address != -1) {
+        timer.cancel();
+        completer.complete(portAvilable);
+      }
+    });
+
+    // Wait for confirmation the port is back up!
+    // but is it? We kinda need tow ait for it to init too
+    SerialPortInfo portSelected = await completer.future;
+    await Future.delayed(Duration(seconds: 1));
+
+    // Wait a few more seconds and try to connect
+    Duration connectDuration = new Duration(seconds: 1);
+    Timer.periodic(connectDuration, (Timer conTimer) async {
+      try {
+        bool didConnect = await this.connect(portSelected);
+        if (didConnect) {
+          conTimer.cancel();
+        }
+      } catch (e) {}
+    });
   }
 
   void flush() {

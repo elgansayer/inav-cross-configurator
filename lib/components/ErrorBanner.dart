@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/errorbanner_bloc.dart';
 
 class ErrorWrapper extends StatelessWidget {
-  final Widget child;
-
   const ErrorWrapper({Key? key, required this.child}) : super(key: key);
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {

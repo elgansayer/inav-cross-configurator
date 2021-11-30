@@ -18,16 +18,6 @@ class RecieverScreen extends StatefulWidget {
 class RecieverScreenState extends State<RecieverScreen> {
   RecieverScreenState();
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<RecieverBloc, RecieverState>(builder: (
-      BuildContext context,
-      RecieverState currentState,
-    ) {
-      return AppScaffold(title: "Reciever", body: _body());
-    });
-  }
-
   _body() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(50, 8, 50, 8),
@@ -36,5 +26,15 @@ class RecieverScreenState extends State<RecieverScreen> {
         children: <Widget>[],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<RecieverBloc, RecieverState>(builder: (
+      BuildContext context,
+      RecieverState currentState,
+    ) {
+      return AppScaffold(title: "Reciever", body: _body());
+    });
   }
 }

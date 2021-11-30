@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter_cube/flutter_cube.dart';
 import 'package:inavconfigurator/msp/codes.dart';
 import 'package:inavconfigurator/msp/codes/base_data_handler.dart';
 import 'package:inavconfigurator/msp/codes/calibration_data.dart';
-import 'package:inavconfigurator/msp/writers/set_calibration_data.dart';
 import 'package:inavconfigurator/serial/serialdevice_repository.dart';
 import 'package:meta/meta.dart';
 

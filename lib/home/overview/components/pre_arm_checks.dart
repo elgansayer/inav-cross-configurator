@@ -10,6 +10,33 @@ class PreArmChecks extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  _listView() {
+    return BlocBuilder<ArmFlagBloc, ArmFlagState>(
+      builder: (context, state) {
+        return ListView.builder(
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: state.armFlags.length,
+          itemBuilder: (context, index) {
+            ArmFlag armFlag = state.armFlags.elementAt(index);
+
+            Icon icon = (!armFlag.enabled)
+                ? Icon(Icons.error_outline, color: Colors.red)
+                : Icon(Icons.check_circle, color: Colors.green);
+
+            String name = AppLocalizations.of(context)!.armChecks(armFlag.name);
+
+            return ListTile(
+              leading: Icon(Icons.info),
+              title: Text(name),
+              trailing: icon,
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // final Size _size = MediaQuery.of(context).size;
@@ -39,33 +66,6 @@ class PreArmChecks extends StatelessWidget {
       ],
     );
   }
-
-  _listView() {
-    return BlocBuilder<ArmFlagBloc, ArmFlagState>(
-      builder: (context, state) {
-        return ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: state.armFlags.length,
-          itemBuilder: (context, index) {
-            ArmFlag armFlag = state.armFlags.elementAt(index);
-
-            Icon icon = (!armFlag.enabled)
-                ? Icon(Icons.error_outline, color: Colors.red)
-                : Icon(Icons.check_circle, color: Colors.green);
-
-            String name = AppLocalizations.of(context)!.armChecks(armFlag.name);
-
-            return ListTile(
-              leading: Icon(Icons.info),
-              title: Text(name),
-              trailing: icon,
-            );
-          },
-        );
-      },
-    );
-  }
 }
 
 class ArmFlagInfoCardGridView extends StatelessWidget {
@@ -75,8 +75,8 @@ class ArmFlagInfoCardGridView extends StatelessWidget {
     this.childAspectRatio = 1,
   }) : super(key: key);
 
-  final int crossAxisCount;
   final double childAspectRatio;
+  final int crossAxisCount;
 
   @override
   Widget build(BuildContext context) {

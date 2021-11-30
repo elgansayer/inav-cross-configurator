@@ -24,7 +24,6 @@ class DevicesPageBloc extends Bloc<DevicesPageEvent, DevicesPageState> {
     on<FoundDevicesEvent>((event, emit) {
       emit(new FoundDevicesState(event.serialPorts));
     });
-
     on<ConnectedDeviceEvent>((event, emit) {
       this._serialPortRepository.cancelPolling();
     });

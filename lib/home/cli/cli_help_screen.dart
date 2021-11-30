@@ -11,12 +11,6 @@ class CliHelpScreen extends StatefulWidget {
 }
 
 class _CliHelpScreenState extends State<CliHelpScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text("CLI Reference")), body: _buildBody());
-  }
-
   _buildBody() {
     final theme = Theme.of(context);
 
@@ -110,5 +104,11 @@ class _CliHelpScreenState extends State<CliHelpScreen> {
   void _launchGitHelp() async {
     String url = "https://github.com/iNavFlight/inav/blob/master/docs/Cli.md";
     await canLaunch(url);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: Text("CLI Reference")), body: _buildBody());
   }
 }

@@ -6,10 +6,6 @@ import '../msp_message.dart';
 import 'base_data_handler.dart';
 
 class MSPModeRanges implements MSPDataHandler {
-  final MSPMessageResponse messageResponse;
-  final int code = MSPCodes.mspModeRanges;
-  final List<ModeRange> modes = [];
-
   MSPModeRanges(this.messageResponse) {
     ByteData payload = this.messageResponse.payload;
 
@@ -31,4 +27,8 @@ class MSPModeRanges implements MSPDataHandler {
       this.modes.add(mode);
     }
   }
+
+  final int code = MSPCodes.mspModeRanges;
+  final MSPMessageResponse messageResponse;
+  final List<ModeRange> modes = [];
 }

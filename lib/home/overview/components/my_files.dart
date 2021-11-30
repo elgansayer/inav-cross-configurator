@@ -59,8 +59,8 @@ class FileInfoCardGridView extends StatelessWidget {
     this.childAspectRatio = 1,
   }) : super(key: key);
 
-  final int crossAxisCount;
   final double childAspectRatio;
+  final int crossAxisCount;
 
   @override
   Widget build(BuildContext context) {

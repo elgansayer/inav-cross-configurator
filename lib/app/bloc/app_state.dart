@@ -4,10 +4,11 @@ enum AppPage { devices, home }
 
 @immutable
 class AppState {
-  final AppPage appPage;
-
   AppState(this.appPage);
+
   factory AppState.init() => AppInitial();
+
+  final AppPage appPage;
 }
 
 class AppInitial extends AppState {

@@ -2,26 +2,29 @@ part of 'devices_bloc.dart';
 
 @immutable
 abstract class DevicesPageEvent {
-  factory DevicesPageEvent.getPorts() {
-    return new GetDevicesEvent();
-  }
+  DevicesPageEvent();
 
   factory DevicesPageEvent.connectToDeviceEvent(SerialPortInfo serialPortInfo) {
     return new ConnectToDeviceEvent(serialPortInfo);
   }
-  DevicesPageEvent();
+
+  factory DevicesPageEvent.getPorts() {
+    return new GetDevicesEvent();
+  }
 }
 
 class GetDevicesEvent extends DevicesPageEvent {}
 
 class FoundDevicesEvent extends DevicesPageEvent {
-  final List<SerialPortInfo> serialPorts;
   FoundDevicesEvent(this.serialPorts);
+
+  final List<SerialPortInfo> serialPorts;
 }
 
 class ConnectToDeviceEvent extends DevicesPageEvent {
-  final SerialPortInfo serialPortInfo;
   ConnectToDeviceEvent(this.serialPortInfo);
+
+  final SerialPortInfo serialPortInfo;
 }
 
 class ConnectedDeviceEvent extends DevicesPageEvent {
@@ -29,6 +32,7 @@ class ConnectedDeviceEvent extends DevicesPageEvent {
 }
 
 class ErrorConnectionEvent extends DevicesPageEvent {
-  final String error;
   ErrorConnectionEvent(this.error);
+
+  final String error;
 }

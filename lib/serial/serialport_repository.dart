@@ -4,13 +4,13 @@ import 'serialport_model.dart';
 import 'serialport_provider.dart';
 
 class SerialPortRepository {
-  final SerialPortProvider _serialPortsProvider = SerialPortProvider();
-  Timer? _timer;
-
   SerialPortRepository();
 
+  final SerialPortProvider _serialPortsProvider = SerialPortProvider();
   final _serialPortsStreamController =
       StreamController<List<SerialPortInfo>>.broadcast();
+
+  Timer? _timer;
 
   StreamSink<List<SerialPortInfo>> get _serialPortsSink =>
       _serialPortsStreamController.sink;

@@ -42,9 +42,9 @@ class MSPCalibrationData implements MSPDataHandler {
   late List<int> acc;
   late Vector3 accGain;
   late Vector3 accZero;
+  final int code = MSPCodes.mspCalibrationData;
   late Vector3 magGain;
   late Vector3 magZero;
-  late double opflowScale;
-  final int code = MSPCodes.mspCalibrationData;
   final MSPMessageResponse messageResponse;
+  late double opflowScale;
 }

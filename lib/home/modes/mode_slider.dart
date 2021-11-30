@@ -3,6 +3,7 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class ModeSlider extends StatefulWidget {
   ModeSlider({Key? key, required this.range}) : super(key: key);
+
   final RangeValues range;
 
   @override
@@ -16,11 +17,6 @@ class _ModeSliderState extends State<ModeSlider> {
   void initState() {
     this.range = widget.range;
     super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _slider(context);
   }
 
   _slider(BuildContext context) {
@@ -101,5 +97,10 @@ class _ModeSliderState extends State<ModeSlider> {
             });
           }),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _slider(context);
   }
 }

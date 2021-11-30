@@ -3,12 +3,12 @@ import 'dart:typed_data';
 import 'package:inavconfigurator/msp/msp_message.dart';
 
 class MSPRequestBuilder {
-  late List<int> buffer;
-  late int code;
-
   MSPRequestBuilder() {
     this.buffer = [];
   }
+
+  late List<int> buffer;
+  late int code;
 
   toRequest() {
     // int code, {Uint8List? payloadData
