@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inavconfigurator/home/modes/mode_card.dart';
 import 'package:inavconfigurator/models/mode_info.dart';
 
-import '../../components/Scaffod.dart';
+import '../../components/scaffod.dart';
 import 'bloc/modes_bloc.dart';
 import 'modes_channel_picker_screen.dart';
 import 'modes_picker_screen.dart';

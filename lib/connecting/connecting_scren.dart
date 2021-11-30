@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/ErrorBanner.dart';
+import '../components/error_banner.dart';
 
 class ConnectingScreen extends StatefulWidget {
   const ConnectingScreen({

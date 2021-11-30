@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../components/Scaffod.dart';
+import '../../components/scaffod.dart';
 import 'bloc/imu_bloc.dart';
 import 'imu_view_screen.dart';
 

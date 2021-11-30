@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../components/ErrorBanner.dart';
+import '../components/error_banner.dart';
 import '../components/bloc/errormessage_repository.dart';
 import '../serial/serialdevice_repository.dart';
 import '../serial/serialport_repository.dart';
